@@ -14,7 +14,8 @@ module Dryopteris
       doc.xpath("html/body/*").each do |node| 
         traverse_conditionally_top_down(node, self.method(:sanitize_node).to_proc)
       end
-      doc.xpath("html/body").first.inner_html
+      snippet = doc.xpath("html/body").first
+      snippet.nil? ? "" : snippet.inner_html
     end
     
     private
@@ -50,6 +51,8 @@ module Dryopteris
       when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
         return false
       end
+      replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
+      node.add_next_sibling(replacement_killer)
       node.remove
       return true
     end
@@ -91,7 +94,7 @@ module Dryopteris
       next unless WhiteList.module_eval("#{constant}").is_a?(Array)
       module_eval <<-CODE
         #{constant} = {}
-        WhiteList::#{constant}.each { |c| #{constant}[c] = true }
+        WhiteList::#{constant}.each { |c| #{constant}[c] = true ; #{constant}[c.downcase] = true }
       CODE
     end
   end
