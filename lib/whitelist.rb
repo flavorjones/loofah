@@ -131,5 +131,18 @@ module Dryopteris
     ALLOWED_SVG_PROPERTIES = ACCEPTABLE_SVG_PROPERTIES
     ALLOWED_PROTOCOLS = ACCEPTABLE_PROTOCOLS
 
+    VOID_ELEMENTS = %w[
+      base
+      link
+      meta
+      hr
+      br
+      img
+      embed
+      param
+      area
+      col
+      input
+    ]
   end
 end

@@ -32,7 +32,7 @@ class SanitizeTest < Test::Unit::TestCase
         htmloutput = "<img title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
-      elsif VOID_ELEMENTS.include?(tag_name)
+      elsif WhiteList::VOID_ELEMENTS.include?(tag_name)
         htmloutput = "<#{tag_name} title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         htmloutput += '<br/>' if tag_name == 'br'
