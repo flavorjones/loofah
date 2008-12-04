@@ -38,7 +38,11 @@ class SanitizeTest < Test::Unit::TestCase
 #         xhtmloutput = htmloutput
 #         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
       if WhiteList::VOID_ELEMENTS.include?(tag_name)
-        htmloutput = "<#{tag_name} title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
+        if Nokogiri::LIBXML_VERSION >= "2.6.16"
+          htmloutput = "<#{tag_name} title='1'/><p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+        else
+          htmloutput = "<#{tag_name} title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
+        end
         xhtmloutput = htmloutput
 #        htmloutput += '<br/>' if tag_name == 'br'
         rexmloutput =  "<#{tag_name} title='1' />"
@@ -62,6 +66,7 @@ class SanitizeTest < Test::Unit::TestCase
 
   WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
     next if attribute_name == 'style'
+    next if attribute_name =~ /:/ && Nokogiri::LIBXML_VERSION <= '2.6.16'
     define_method "test_should_allow_#{attribute_name}_attribute" do
       input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
       output = "<p #{attribute_name}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
@@ -97,14 +102,16 @@ class SanitizeTest < Test::Unit::TestCase
     end
   end
 
-  def test_should_handle_astral_plane_characters
-    input = "<p>&#x1d4b5; &#x1d538;</p>"
-    output = "<p>\360\235\222\265 \360\235\224\270</p>"
-    check_sanitization(input, output, output, output)
-
-    input = "<p><tspan>\360\235\224\270</tspan> a</p>"
-    output = "<p><tspan>\360\235\224\270</tspan> a</p>"
-    check_sanitization(input, output, output, output)
+  if Nokogiri::LIBXML_VERSION > '2.6.16'
+    def test_should_handle_astral_plane_characters
+      input = "<p>&#x1d4b5; &#x1d538;</p>"
+      output = "<p>\360\235\222\265 \360\235\224\270</p>"
+      check_sanitization(input, output, output, output)
+      
+      input = "<p><tspan>\360\235\224\270</tspan> a</p>"
+      output = "<p><tspan>\360\235\224\270</tspan> a</p>"
+      check_sanitization(input, output, output, output)
+    end
   end
 
 # This affects only NS4. Is it worth fixing?
