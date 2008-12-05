@@ -9,6 +9,11 @@ require File.join(File.dirname(__FILE__), 'whitelist')
 module Dryopteris
 
   class << self
+    def strip_tags(string_or_io, encoding=nil)
+      doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
+      doc.text
+    end
+    
     def sanitize(string_or_io, encoding=nil)
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
       doc.xpath("html/body/*").each do |node| 
