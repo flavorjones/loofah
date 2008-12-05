@@ -13,7 +13,11 @@ module Dryopteris
       return "" if string_or_io.strip.size == 0
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
-      doc.text
+      doc.xpath("html/body/*").each do |node| 
+        traverse_conditionally_top_down(node, :remove_tags_from_node)
+      end
+      snippet = doc.xpath("html/body").first
+      snippet.nil? ? "" : snippet.inner_html
     end
     
     def sanitize(string_or_io, encoding=nil)
@@ -34,6 +38,12 @@ module Dryopteris
       node.children.each {|j| traverse_conditionally_top_down(j, method_name)}
     end
 
+    def remove_tags_from_node(node)
+      replacement_killer = Nokogiri::XML::Text.new(node.text, node.document)
+      node.add_next_sibling(replacement_killer)
+      node.remove
+      return true
+    end
 
     def sanitize_node(node)
       case node.type
