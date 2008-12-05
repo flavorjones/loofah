@@ -38,7 +38,7 @@ class SanitizeTest < Test::Unit::TestCase
 #         xhtmloutput = htmloutput
 #         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
       if WhiteList::VOID_ELEMENTS.include?(tag_name)
-        if Nokogiri::LIBXML_VERSION >= "2.6.16"
+        if Nokogiri::LIBXML_VERSION <= "2.6.16"
           htmloutput = "<#{tag_name} title='1'/><p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         else
           htmloutput = "<#{tag_name} title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"

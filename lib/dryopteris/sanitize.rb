@@ -13,11 +13,12 @@ module Dryopteris
       return "" if string_or_io.strip.size == 0
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
-      doc.xpath("html/body/*").each do |node| 
+      body = doc.xpath("/html/body").first
+      return "" if body.nil?
+      body.children.each do |node| 
         traverse_conditionally_top_down(node, :remove_tags_from_node)
       end
-      snippet = doc.xpath("html/body").first
-      snippet.nil? ? "" : snippet.inner_html
+      body.inner_html
     end
     
     def sanitize(string_or_io, encoding=nil)
@@ -25,11 +26,12 @@ module Dryopteris
       return "" if string_or_io.strip.size == 0
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
-      doc.xpath("html/body/*").each do |node| 
+      body = doc.xpath("/html/body").first
+      return "" if body.nil?
+      body.children.each do |node| 
         traverse_conditionally_top_down(node, :sanitize_node)
       end
-      snippet = doc.xpath("html/body").first
-      snippet.nil? ? "" : snippet.inner_html
+      body.inner_html
     end
     
     private
