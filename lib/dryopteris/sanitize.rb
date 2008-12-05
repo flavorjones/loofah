@@ -22,16 +22,16 @@ module Dryopteris
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
       doc.xpath("html/body/*").each do |node| 
-        traverse_conditionally_top_down(node, self.method(:sanitize_node).to_proc)
+        traverse_conditionally_top_down(node, :sanitize_node)
       end
       snippet = doc.xpath("html/body").first
       snippet.nil? ? "" : snippet.inner_html
     end
     
     private
-    def traverse_conditionally_top_down(node, proc)
-      return if proc.call(node)
-      node.children.each {|j| traverse_conditionally_top_down(j, proc)}
+    def traverse_conditionally_top_down(node, method_name)
+      return if send(method_name, node)
+      node.children.each {|j| traverse_conditionally_top_down(j, method_name)}
     end
 
 
