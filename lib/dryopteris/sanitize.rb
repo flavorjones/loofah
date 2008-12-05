@@ -9,11 +9,17 @@ module Dryopteris
 
   class << self
     def strip_tags(string_or_io, encoding=nil)
+      return nil if string_or_io.nil?
+      return "" if string_or_io.strip.size == 0
+      
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
       doc.text
     end
     
     def sanitize(string_or_io, encoding=nil)
+      return nil if string_or_io.nil?
+      return "" if string_or_io.strip.size == 0
+      
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
       doc.xpath("html/body/*").each do |node| 
         traverse_conditionally_top_down(node, self.method(:sanitize_node).to_proc)
