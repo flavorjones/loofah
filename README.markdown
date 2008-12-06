@@ -22,10 +22,15 @@ Oooh, that could be bad. Here's how to fix it:
 Yeah, it's that easy.
 
 
-Standing on the Shoulder of Giants
+Standing on the Shoulders of Giants
 -----
 
 Dryopteris uses [Nokogiri](http://nokogiri.rubyforge.org/) and [libxml2](http://xmlsoft.org/), so it's fast.
 
 Dryopteris also takes its tag and tag attribute whitelists and its CSS sanitizer directly from [HTML5](http://code.google.com/p/html5lib/).
 
+
+Authors
+-----
+* [Bryan Helmkamp](http://www.brynary.com/)
+* [Mike Dalessio](http://mike.daless.io/) [(twitter)](http://twitter.com/flavorjones)
