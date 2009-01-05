@@ -10,6 +10,10 @@ class TestBasic < Test::Unit::TestCase
     assert_equal Dryopteris.sanitize(""), ""
   end
   
+  # def test_dont_wrap_in_an_html_element
+  #   assert_equal Dryopteris.sanitize("Hello"), "Hello"
+  # end
+  
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag
@@ -19,7 +23,7 @@ class TestBasic < Test::Unit::TestCase
     sane = Nokogiri::HTML(Dryopteris.sanitize(html))
     assert sane.xpath("//jim").empty?
   end
-
+  
   def test_removal_of_illegal_attribute
     html = "<p class=bar foo=bar abbr=bar />"
     sane = Nokogiri::HTML(Dryopteris.sanitize(html))
@@ -28,7 +32,7 @@ class TestBasic < Test::Unit::TestCase
     assert node.attributes['abbr']
     assert_nil node.attributes['foo']
   end
-
+  
   def test_removal_of_illegal_url_in_href
     html = <<-HTML
       <a href='jimbo://jim.jim/'>this link should have its href removed because of illegal url</a>
@@ -39,7 +43,7 @@ class TestBasic < Test::Unit::TestCase
     assert_nil nodes.first.attributes['href']
     assert nodes.last.attributes['href']
   end
-
+  
   def test_css_sanitization
     html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
     sane = Nokogiri::HTML(Dryopteris.sanitize(html))
