@@ -7,11 +7,11 @@ class TestBasic < Test::Unit::TestCase
   end
   
   def test_empty_string
-    assert_equal Dryopteris.sanitize(""), ""
+    assert_equal "", Dryopteris.sanitize("")
   end
-  
-  # def test_dont_wrap_in_an_html_element
-  #   assert_equal Dryopteris.sanitize("Hello"), "Hello"
+
+  # def test_preserve_whitespace
+  #   assert_equal "<b>Foo</b>\n<i>Bar</i>", Dryopteris.sanitize("<b>Foo</b>\n<i>Bar</i>")
   # end
   
   def test_removal_of_illegal_tag
