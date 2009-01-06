@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
-class TestBasic < Test::Unit::TestCase
+class TestStripTags < Test::Unit::TestCase
 
   def test_nil
     assert_nil Dryopteris.strip_tags(nil)
