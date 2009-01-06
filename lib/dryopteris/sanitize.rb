@@ -13,12 +13,7 @@ module Dryopteris
       return "" if string_or_io.strip.size == 0
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
-      body = doc.xpath("/html/body").first
-      return "" if body.nil?
-      body.children.each do |node| 
-        traverse_conditionally_top_down(node, :remove_tags_from_node)
-      end
-      body.inner_html
+      doc.at("/html/body").inner_text
     end
     
     def sanitize(string_or_io, encoding=nil)

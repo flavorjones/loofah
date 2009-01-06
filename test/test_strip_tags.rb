@@ -18,4 +18,14 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "What's up doc?".strip, stripped.strip
   end
   
+  def test_dont_remove_whitespace
+    html = "Foo\nBar"
+    assert_equal html, Dryopteris.strip_tags(html)
+  end
+  
+  def test_dont_remove_whitespace_between_tags
+    html = "<p>Foo</p>\n<p>Bar</p>"
+    assert_equal "Foo\nBar", Dryopteris.strip_tags(html)
+  end
+  
 end
