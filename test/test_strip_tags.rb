@@ -10,6 +10,10 @@ class TestStripTags < Test::Unit::TestCase
     assert_equal Dryopteris.strip_tags(""), ""
   end
   
+  def test_return_empty_string_when_nothing_left
+    assert_equal "", Dryopteris.strip_tags('<script>test</script>')
+  end
+  
   def test_removal_of_all_tags
     html = <<-HTML
       What's up <strong>doc</strong>?

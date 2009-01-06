@@ -13,7 +13,9 @@ module Dryopteris
       return "" if string_or_io.strip.size == 0
       
       doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
-      doc.at("/html/body").inner_text
+      body_element = doc.at("/html/body")
+      return "" if body_element.nil?
+      body_element.inner_text
     end
     
     def sanitize(string_or_io, encoding=nil)
