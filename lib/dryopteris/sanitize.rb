@@ -28,7 +28,7 @@ module Dryopteris
       body.children.each do |node| 
         traverse_conditionally_top_down(node, :sanitize_node)
       end
-      body.inner_html
+      body.children.map { |x| x.to_xml }.join
     end
     
     private
@@ -54,7 +54,7 @@ module Dryopteris
           node.attributes.each do |attr|
             if HashedWhiteList::ATTR_VAL_IS_URI[attr.first]
               # this block lifted nearly verbatim from HTML5 sanitization
-              val_unescaped = CGI.unescapeHTML(attr.last).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+              val_unescaped = CGI.unescapeHTML(attr.last.to_s).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
                 node.remove_attribute(attr.first)
               end
