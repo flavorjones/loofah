@@ -34,3 +34,10 @@ Authors
 -----
 * [Bryan Helmkamp](http://www.brynary.com/)
 * [Mike Dalessio](http://mike.daless.io/) [(twitter)](http://twitter.com/flavorjones)
+
+
+Quotes About
+-----
+
+> "dryopteris shields you from xss attacks using nokogiri and NY attitude"
+>  - [hasmanyjosh](http://blog.hasmanythrough.com/)
