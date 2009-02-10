@@ -18,11 +18,12 @@ module Dryopteris
       body_element.inner_text
     end
     
-    def sanitize(string_or_io, encoding=nil)
-      return nil if string_or_io.nil?
-      return "" if string_or_io.strip.size == 0
+    def sanitize(string, encoding=nil)
+      return nil if string.nil?
+      return "" if string.strip.size == 0
       
-      doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
+      string = "<html><body>" + string + "</body></html>"
+      doc = Nokogiri::HTML.parse(string, nil, encoding)
       body = doc.xpath("/html/body").first
       return "" if body.nil?
       body.children.each do |node| 
