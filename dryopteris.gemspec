@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors = ["Bryan Helmkamp", "Mike Dalessio"]
   s.date = %q{2009-02-10}
   s.description = %q{Dryopteris erythrosora is the Japanese Shield Fern. It also can be used to sanitize HTML to help prevent XSS attacks.}
-  s.email = %q{bryan@brynary.com}
-  s.files = ["README.markdown", "lib/dryopteris", "lib/dryopteris/rails_extension.rb", "lib/dryopteris/sanitize.rb", "lib/dryopteris/whitelist.rb", "lib/dryopteris.rb", "test/helper.rb", "test/test_basic.rb", "test/test_sanitizer.rb", "test/test_strip_tags.rb"]
+  s.email = ["bryan@brynary.com", "mike.dalessio@gmail.com"]
+  s.files = ["README.markdown", "VERSION.yml", "lib/dryopteris", "lib/dryopteris/rails_extension.rb", "lib/dryopteris/sanitize.rb", "lib/dryopteris/whitelist.rb", "lib/dryopteris.rb", "test/test_basic.rb", "test/test_strip_tags.rb", "test/helper.rb", "test/test_sanitizer.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/brynary/dryopteris/tree/master}
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]

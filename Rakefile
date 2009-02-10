@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |s|
     s.name = "dryopteris"
     s.summary = "HTML sanitization using Nokogiri"
-    s.email = "bryan@brynary.com"
+    s.email = ["bryan@brynary.com", "mike.dalessio@gmail.com"]
     s.homepage = "http://github.com/brynary/dryopteris/tree/master"
     s.description = "Dryopteris erythrosora is the Japanese Shield Fern. It also can be used to sanitize HTML to help prevent XSS attacks."
     s.authors = ["Bryan Helmkamp", "Mike Dalessio"]
