@@ -7,9 +7,16 @@ class SanitizeTest < Test::Unit::TestCase
     Dryopteris.sanitize(stream)
   end
 
+  def sanitize_doc stream
+    Dryopteris.sanitize_document(stream)
+  end
+
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     #  libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
     assert_equal htmloutput, sanitize_html(input).gsub(/"/,"'"), input
+
+    doc = sanitize_doc(input).gsub(/"/,"'")
+    assert doc.include?(htmloutput), "#{input}:\n#{doc}\nshould include:\n#{htmloutput}"
   end
 
   WhiteList::ALLOWED_ELEMENTS.each do |tag_name|

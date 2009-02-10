@@ -32,6 +32,19 @@ module Dryopteris
       body.children.map { |x| x.to_xml }.join
     end
     
+    def sanitize_document(string_or_io, encoding=nil)
+      return nil if string_or_io.nil?
+      return "" if string_or_io.strip.size == 0
+      
+      doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
+      elements = doc.xpath("/html/head/*","/html/body/*")
+      return "" if (elements.nil? || elements.empty?)
+      elements.each do |node| 
+        traverse_conditionally_top_down(node, :sanitize_node)
+      end
+      doc.root.to_xml
+    end
+
     private
     def traverse_conditionally_top_down(node, method_name)
       return if send(method_name, node)
