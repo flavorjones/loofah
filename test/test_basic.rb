@@ -10,10 +10,6 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "", Dryopteris.sanitize("")
   end
 
-  # def test_preserve_whitespace
-  #   assert_equal "<b>Foo</b>\n<i>Bar</i>", Dryopteris.sanitize("<b>Foo</b>\n<i>Bar</i>")
-  # end
-  
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag
@@ -51,4 +47,16 @@ class TestBasic < Test::Unit::TestCase
     assert_no_match(/foo\.com/, sane.inner_html)
   end
 
+  def test_fragment_with_no_tags
+    assert_equal "This fragment has no tags.", Dryopteris.sanitize("This fragment has no tags.")
+  end
+
+  def test_fragment_in_p_tag
+    assert_equal "<p>This fragment is in a p.</p>", Dryopteris.sanitize("<p>This fragment is in a p.</p>")
+  end
+
+  def test_fragment_in_a_nontrivial_p_tag
+    assert_equal "<p>This fragment is in a p.</p>", Dryopteris.sanitize("  \n<p foo='bar'>This fragment is in a p.</p>")
+  end
+  
 end
