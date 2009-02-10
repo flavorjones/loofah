@@ -58,5 +58,9 @@ class TestBasic < Test::Unit::TestCase
   def test_fragment_in_a_nontrivial_p_tag
     assert_equal "<p>This fragment is in a p.</p>", Dryopteris.sanitize("  \n<p foo='bar'>This fragment is in a p.</p>")
   end
+
+  def test_fragment_in_p_tag_plus_stuff
+    assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Dryopteris.sanitize("  \n<p foo='bar'>This fragment is in a p.</p>foo<strong>bar</strong>")
+  end
   
 end
