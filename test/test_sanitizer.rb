@@ -46,8 +46,6 @@ class SanitizeTest < Test::Unit::TestCase
         xhtmloutput = htmloutput
 #        htmloutput += '<br/>' if tag_name == 'br'
         rexmloutput =  "<#{tag_name} title='1' />"
-      elsif tag_name == 'title'
-        htmloutput = "" # libxml2 does not accept <title> tags in the body
       end
       check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     end
