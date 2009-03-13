@@ -62,5 +62,14 @@ class TestBasic < Test::Unit::TestCase
   def test_fragment_in_p_tag_plus_stuff
     assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Dryopteris.sanitize("<p>This fragment is in a p.</p>foo<strong>bar</strong>")
   end
+
+  def test_fragment_with_text_nodes_leading_and_trailing
+    assert_equal "text<p>fragment</p>text", Dryopteris.sanitize("text<p>fragment</p>text")
+  end
   
+  def test_fragment_with_body_tags
+    # ignore second open body tag, use first close body tag, ignore everything after that
+    assert_equal "textfragment", Dryopteris.sanitize("text<body>fragment</body>text")
+  end
+
 end
