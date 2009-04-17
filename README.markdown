@@ -51,6 +51,19 @@ The returned string will contain exactly one (1) well-formed HTML document, with
 
 Coolness: <tt>dangerous\_html\_document</tt> can be a string OR an IO object (a file, or a socket, or ...). Which makes it particularly easy to sanitize large numbers of docs.
 
+### Whitewashing HTML
+
+Other times, you may want to allow a user to submit HTML, and remove all styling, attributes and invalid HTML tags. I like to call this "whitewashing", since it's putting a new layer of paint on top of the user's HTML input to make it look nice.
+
+One use case for this feature is to clean up HTML that was cut-and-pasted from Microsoft(tm) Word into a WYSIWYG editor/textarea. Microsoft's editor is famous for injecting all kinds of cruft into its HTML output. Who needs that? Certainly not me.
+
+    whitewashed_html = Dryopteris.whitewash(ugly_microsoft_html_snippet)
+
+Please note that whitewashing implicitly also sanitizes your HTML, as it uses the same HTML tag whitelist as <tt>sanitize()</tt>. It's implementation is:
+
+ 1. unless the tag is on the whitelist, remove it from the document
+ 2. if the tag has an XML namespace on it, remove it from the document
+ 2. remove all attributes from the node
 
 Standing on the Shoulders of Giants
 -----

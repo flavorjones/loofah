@@ -18,6 +18,19 @@ module Dryopteris
       body_element.inner_text
     end
     
+    def whitewash(string_or_io, encoding=nil)
+      return nil if string_or_io.nil?
+      return "" if string_or_io.strip.size == 0
+
+      doc = Nokogiri::HTML.parse(string_or_io, nil, encoding)
+      body = doc.xpath("/html/body").first
+      return "" if body.nil?
+      body.children.each do |node|
+        traverse_conditionally_top_down(node, :whitewash_node)
+      end
+      body.children.map { |x| x.to_xml }.join
+    end
+
     def sanitize(string, encoding=nil)
       return nil if string.nil?
       return "" if string.strip.size == 0
@@ -46,6 +59,7 @@ module Dryopteris
     end
 
     private
+
     def traverse_conditionally_top_down(node, method_name)
       return if send(method_name, node)
       node.children.each {|j| traverse_conditionally_top_down(j, method_name)}
@@ -86,6 +100,32 @@ module Dryopteris
       end
       replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
       node.add_next_sibling(replacement_killer)
+      node.remove
+      return true
+    end
+
+
+    def whitewash_node(node)
+      case node.type
+      when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+        if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+          node.attributes.each { |attr| node.remove_attribute(attr.first) }
+          has_no_namespaces = true
+          begin
+            has_no_namespaces = node.namespaces.empty?
+          rescue
+            # older versions of nokogiri raise an exception when there
+            # is a namespace on the node that is not declared with an href.
+            # see http://github.com/tenderlove/nokogiri/commit/395d7971304e1489e92c494b9c50609f4b4c4ab0
+            has_no_namespaces = false
+          end
+          return false if has_no_namespaces
+        end
+      when 3 # Nokogiri::XML::Node::TEXT_NODE
+        return false
+      when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+        return false
+      end
       node.remove
       return true
     end
