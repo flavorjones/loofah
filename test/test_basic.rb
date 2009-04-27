@@ -1,5 +1,11 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
+if defined? Nokogiri::VERSION_INFO
+  puts "=> running with Nokogiri #{Nokogiri::VERSION_INFO.inspect}"
+else
+  puts "=> running with Nokogiri #{Nokogiri::VERSION} / libxml #{Nokogiri::LIBXML_PARSER_VERSION}"
+end
+
 class TestBasic < Test::Unit::TestCase
 
   def test_nil
@@ -67,11 +73,6 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "text<p>fragment</p>text", Dryopteris.sanitize("text<p>fragment</p>text")
   end
   
-  def test_fragment_with_body_tags
-    # ignore second open body tag, use first close body tag, ignore everything after that
-    assert_equal "textfragment", Dryopteris.sanitize("text<body>fragment</body>text")
-  end
-
   def test_whitewash_on_microsofty_markup
     html = <<-EOHTML
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="ProgId" content="Word.Document"><meta name="Generator" content="Microsoft Word 11"><meta name="Originator" content="Microsoft Word 11"><link rel="File-List" href="file:///C:%5CDOCUME%7E1%5CNICOLE%7E1%5CLOCALS%7E1%5CTemp%5Cmsohtml1%5C01%5Cclip_filelist.xml"><!--[if gte mso 9]><xml>
