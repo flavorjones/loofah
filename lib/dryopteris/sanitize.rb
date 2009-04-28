@@ -18,7 +18,22 @@ module Dryopteris
       body_element.inner_text
     end
     
-    def whitewash(string_or_io, encoding=nil)
+
+    def whitewash(string, encoding=nil)
+      return nil if string.nil?
+      return "" if string.strip.size == 0
+
+      string = "<html><body>" + string + "</body></html>"      
+      doc = Nokogiri::HTML.parse(string, nil, encoding)
+      body = doc.xpath("/html/body").first
+      return "" if body.nil?
+      body.children.each do |node|
+        traverse_conditionally_top_down(node, :whitewash_node)
+      end
+      body.children.map { |x| x.to_xml }.join
+    end
+
+    def whitewash_document(string_or_io, encoding=nil)
       return nil if string_or_io.nil?
       return "" if string_or_io.strip.size == 0
 
@@ -30,6 +45,7 @@ module Dryopteris
       end
       body.children.map { |x| x.to_xml }.join
     end
+
 
     def sanitize(string, encoding=nil)
       return nil if string.nil?

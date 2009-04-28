@@ -73,6 +73,12 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "text<p>fragment</p>text", Dryopteris.sanitize("text<p>fragment</p>text")
   end
   
+  def test_whitewash_on_fragment
+    html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
+    whitewashed = Dryopteris.whitewash_document(html)
+    assert_equal "<p>safe</p><b>description</b>", whitewashed
+  end
+
   def test_whitewash_on_microsofty_markup
     html = <<-EOHTML
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="ProgId" content="Word.Document"><meta name="Generator" content="Microsoft Word 11"><meta name="Originator" content="Microsoft Word 11"><link rel="File-List" href="file:///C:%5CDOCUME%7E1%5CNICOLE%7E1%5CLOCALS%7E1%5CTemp%5Cmsohtml1%5C01%5Cclip_filelist.xml"><!--[if gte mso 9]><xml>
@@ -140,7 +146,7 @@ mso-bidi-language:#0400;}
 <p class="MsoNormal">Foo <b style="">BOLD<o:p></o:p></b></p>
     EOHTML
 
-    whitewashed = Dryopteris.whitewash(html)
+    whitewashed = Dryopteris.whitewash_document(html)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
   end
 
