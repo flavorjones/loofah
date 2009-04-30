@@ -23,7 +23,7 @@ module Dryopteris
       return nil if string.nil?
       return "" if string.strip.size == 0
 
-      string = "<html><body>" + string + "</body></html>"      
+      string = "<html><body>" + string + "</body></html>"
       doc = Nokogiri::HTML.parse(string, nil, encoding)
       body = doc.xpath("/html/body").first
       return "" if body.nil?
