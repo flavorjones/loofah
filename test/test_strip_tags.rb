@@ -32,4 +32,9 @@ class TestStripTags < Test::Unit::TestCase
     assert_equal "Foo\nBar", Dryopteris.strip_tags(html)
   end
   
+  def test_removal_of_entities
+    html = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p>"
+    assert_equal 'this is < that "&" the other > boo\'ya', Dryopteris.strip_tags(html)
+  end
+  
 end
