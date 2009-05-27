@@ -1,11 +1,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
-if defined? Nokogiri::VERSION_INFO
-  puts "=> running with Nokogiri #{Nokogiri::VERSION_INFO.inspect}"
-else
-  puts "=> running with Nokogiri #{Nokogiri::VERSION} / libxml #{Nokogiri::LIBXML_PARSER_VERSION}"
-end
-
 class TestBasic < Test::Unit::TestCase
 
   def test_nil
