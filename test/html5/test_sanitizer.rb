@@ -1,4 +1,10 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+#
+#  these tests taken from the HTML5 sanitization project and modified for use with Dryopteris
+#  see the original here: http://code.google.com/p/html5lib/source/browse/ruby/test/test_sanitizer.rb
+#
+#  license text at the bottom of this file
+#
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
 class SanitizeTest < Test::Unit::TestCase
   include Dryopteris
@@ -122,7 +128,7 @@ class SanitizeTest < Test::Unit::TestCase
 # This affects only NS4. Is it worth fixing?
 #  def test_javascript_includes
 #    input = %(<div size="&{alert('XSS')}">foo</div>)
-#    output = "<div>foo</div>"    
+#    output = "<div>foo</div>"
 #    check_sanitization(input, output, output, output)
 #  end
 
@@ -139,3 +145,41 @@ class SanitizeTest < Test::Unit::TestCase
   #  end
   #end
 end
+
+# <html5_license>
+#
+# Copyright (c) 2006-2008 The Authors
+#
+# Contributors:
+# James Graham - jg307@cam.ac.uk
+# Anne van Kesteren - annevankesteren@gmail.com
+# Lachlan Hunt - lachlan.hunt@lachy.id.au
+# Matt McDonald - kanashii@kanashii.ca
+# Sam Ruby - rubys@intertwingly.net
+# Ian Hickson (Google) - ian@hixie.ch
+# Thomas Broyer - t.broyer@ltgt.net
+# Jacques Distler - distler@golem.ph.utexas.edu
+# Henri Sivonen - hsivonen@iki.fi
+# The Mozilla Foundation (contributions from Henri Sivonen since 2008)
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# </html5_license>
