@@ -145,4 +145,15 @@ module Dryopteris
       input
     ]
   end
+
+  module HashedWhiteList
+    #  turn each of the whitelist arrays into a hash for faster lookup
+    WhiteList.constants.each do |constant|
+      next unless WhiteList.module_eval("#{constant}").is_a?(Array)
+      module_eval <<-CODE
+        #{constant} = {}
+        WhiteList::#{constant}.each { |c| #{constant}[c] = true ; #{constant}[c.downcase] = true }
+      CODE
+    end
+  end
 end
