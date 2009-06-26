@@ -2,6 +2,100 @@ require 'cgi'
 
 module Dryopteris
 
+  module Sanitizer
+
+    def sanitize(*args)
+      method = args.first
+      case method
+      when :escape, :prune
+        __sanitize_root.children.each do |node|
+          Sanitizer.__traverse_conditionally_top_down(node, "__dryopteris_#{method}".to_sym)
+        end
+      else
+        raise ArgumentError, "unknown sanitize filter '#{method}'"
+      end
+      self
+    end
+
+    private
+
+    class << self
+
+      def __traverse_conditionally_top_down(node, method_name)
+        return if send(method_name, node)
+        node.children.each {|j| __traverse_conditionally_top_down(j, method_name)}
+      end
+
+      def __dryopteris_escape(node)
+        case node.type
+        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+            node.attributes.each do |attr|
+              node.remove_attribute(attr.first) unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr.first]
+            end
+            node.attributes.each do |attr|
+              if HashedWhiteList::ATTR_VAL_IS_URI[attr.first]
+                # this block lifted nearly verbatim from HTML5 sanitization
+                val_unescaped = CGI.unescapeHTML(attr.last.to_s).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+                if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
+                  node.remove_attribute(attr.first)
+                end
+              end
+            end
+            if node.attributes['style']
+              node['style'] = sanitize_css(node.attributes['style'])
+            end
+            return false
+          end
+        when 3 # Nokogiri::XML::Node::TEXT_NODE
+          return false
+        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+          return false
+        end
+        replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
+        node.add_next_sibling(replacement_killer)
+        node.remove
+        return true
+      end
+
+      def __dryopteris_prune(node)
+        case node.type
+        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+            node.attributes.each do |attr|
+              node.remove_attribute(attr.first) unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr.first]
+            end
+            node.attributes.each do |attr|
+              if HashedWhiteList::ATTR_VAL_IS_URI[attr.first]
+                # this block lifted nearly verbatim from HTML5 sanitization
+                val_unescaped = CGI.unescapeHTML(attr.last.to_s).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+                if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
+                  node.remove_attribute(attr.first)
+                end
+              end
+            end
+            if node.attributes['style']
+              node['style'] = sanitize_css(node.attributes['style'])
+            end
+            return false
+          end
+        when 3 # Nokogiri::XML::Node::TEXT_NODE
+          return false
+        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+          return false
+        end
+        node.remove
+        return true
+      end
+
+    end
+
+  end
+end
+
+
+module Dryopteris
+
   class << self
     def strip_tags(string_or_io, encoding=nil)
       return nil if string_or_io.nil?
