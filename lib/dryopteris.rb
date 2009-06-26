@@ -7,7 +7,6 @@ require 'nokogiri'
 require 'dryopteris/whitelist'
 require 'dryopteris/sanitize'
 require 'dryopteris/html'
-require 'dryopteris/xml'
 
 module Dryopteris
   VERSION = '0.1'
