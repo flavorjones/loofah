@@ -7,7 +7,7 @@ module Dryopteris
     def sanitize(*args)
       method = args.first
       case method
-      when :escape, :prune
+      when :escape, :prune, :whitewash
         __sanitize_root.children.each do |node|
           Sanitizer.__traverse_conditionally_top_down(node, "__dryopteris_#{method}".to_sym)
         end
@@ -100,6 +100,22 @@ module Dryopteris
           return false
         end
         replacement_killer = node.before node.inner_html
+        node.remove
+        return true
+      end
+
+      def __dryopteris_whitewash(node)
+        case node.type
+        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+            node.attributes.each { |attr| node.remove_attribute(attr.first) }
+            return false if node.namespaces.empty?
+          end
+        when 3 # Nokogiri::XML::Node::TEXT_NODE
+          return false
+        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+          return false
+        end
         node.remove
         return true
       end

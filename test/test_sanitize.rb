@@ -14,6 +14,9 @@ class TestSanitize < Test::Unit::TestCase
   INVALID_PRUNED   = "<div>quux</div>"
   INVALID_YANKED   = "foo<p>bar</p>bazz<div>quux</div>"
 
+  WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid>"
+  WHITEWASH_RESULT   = "<div>foo</div>"
+
   def test_document_escape_bad_tags
     doc = Dryopteris::HTML::Document "<html><body>#{INVALID_FRAGMENT}</body></html>"
     result = doc.sanitize :escape
@@ -62,32 +65,20 @@ class TestSanitize < Test::Unit::TestCase
     assert_equal doc, result
   end
 
-#   def test_yanking_bad_tags_from_document
-#     doc = Dryopteris("<html><body><invalid>foo<p>bar<invalid>fuzz</invalid>wuzz</p>bazz</invalid></body></html>")
-#     result = doc.sanitize(:yank)
+  def test_document_whitewash
+    doc = Dryopteris::HTML::Document "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
+    result = doc.sanitize :whitewash
 
-#     assert_equal "<body>foo<p>barfuzzwuzz</p>bazz</body>", doc.xpath('/html/body').first.to_html
-#     assert_equal doc, result
-#   end
+    assert_equal WHITEWASH_RESULT, doc.xpath('/html/body').inner_html
+    assert_equal doc, result
+  end
 
-#   def test_yanking_bad_tags_from_fragment
-#     doc = Dryopteris::Fragment("<div><invalid>foo<p>bar<invalid>fuzz</invalid>wuzz</p>bazz</invalid></div>")
-#     result = doc.sanitize(:yank)
+  def test_fragment_whitewash
+    doc = Dryopteris::HTML::DocumentFragment "<div>#{WHITEWASH_FRAGMENT}</div>"
+    result = doc.sanitize :whitewash
 
-#     assert_equal "<div>foo<p>barfuzzwuzz</p>bazz</div>", doc.xpath('./div').first.to_html
-#     assert_equal doc, result
-#   end
-
-  #   def test_unfiltered_output
-  #     doc.to_html
-  #   end
-
-  #   def test_removing_attributes_output
-  #     doc.to_html(:scrub => true)
-  #   end
-
-  #   def test_printable_text_output
-  #     doc.to_s
-  #   end
+    assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
+    assert_equal doc, result
+  end
 
 end
