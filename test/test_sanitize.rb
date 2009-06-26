@@ -12,6 +12,7 @@ class TestSanitize < Test::Unit::TestCase
   INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
   INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
   INVALID_PRUNED   = "<div>quux</div>"
+  INVALID_YANKED   = "foo<p>bar</p>bazz<div>quux</div>"
 
   def test_document_escape_bad_tags
     doc = Dryopteris::HTML::Document "<html><body>#{INVALID_FRAGMENT}</body></html>"
@@ -45,6 +46,21 @@ class TestSanitize < Test::Unit::TestCase
     assert_equal doc, result
   end
 
+  def test_document_yank_bad_tags
+    doc = Dryopteris::HTML::Document "<html><body>#{INVALID_FRAGMENT}</body></html>"
+    result = doc.sanitize :yank
+
+    assert_equal INVALID_YANKED, doc.xpath('/html/body').inner_html
+    assert_equal doc, result
+  end
+
+  def test_fragment_yank_bad_tags
+    doc = Dryopteris::HTML::DocumentFragment "<div>#{INVALID_FRAGMENT}</div>"
+    result = doc.sanitize :yank
+
+    assert_equal INVALID_YANKED, doc.xpath("./div").inner_html
+    assert_equal doc, result
+  end
 
 #   def test_yanking_bad_tags_from_document
 #     doc = Dryopteris("<html><body><invalid>foo<p>bar<invalid>fuzz</invalid>wuzz</p>bazz</invalid></body></html>")

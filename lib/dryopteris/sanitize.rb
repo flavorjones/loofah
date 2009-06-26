@@ -11,6 +11,10 @@ module Dryopteris
         __sanitize_root.children.each do |node|
           Sanitizer.__traverse_conditionally_top_down(node, "__dryopteris_#{method}".to_sym)
         end
+      when :yank
+        __sanitize_root.children.each do |node|
+          Sanitizer.__traverse_conditionally_bottom_up(node, "__dryopteris_#{method}".to_sym)
+        end
       else
         raise ArgumentError, "unknown sanitize filter '#{method}'"
       end
@@ -24,6 +28,11 @@ module Dryopteris
       def __traverse_conditionally_top_down(node, method_name)
         return if send(method_name, node)
         node.children.each {|j| __traverse_conditionally_top_down(j, method_name)}
+      end
+
+      def __traverse_conditionally_bottom_up(node, method_name)
+        node.children.each {|j| __traverse_conditionally_bottom_up(j, method_name)}
+        return if send(method_name, node)
       end
 
       def __scrub_attributes(node)
@@ -48,7 +57,7 @@ module Dryopteris
         case node.type
         when 1 # Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            __scrub_attributes(node)
+            __scrub_attributes node
             return false
           end
         when 3 # Nokogiri::XML::Node::TEXT_NODE
@@ -57,7 +66,7 @@ module Dryopteris
           return false
         end
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
-        node.add_next_sibling(replacement_killer)
+        node.add_next_sibling replacement_killer
         node.remove
         return true
       end
@@ -66,7 +75,7 @@ module Dryopteris
         case node.type
         when 1 # Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            __scrub_attributes(node)
+            __scrub_attributes node
             return false
           end
         when 3 # Nokogiri::XML::Node::TEXT_NODE
@@ -74,6 +83,23 @@ module Dryopteris
         when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
+        node.remove
+        return true
+      end
+
+      def __dryopteris_yank(node)
+        case node.type
+        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+            __scrub_attributes node
+            return false
+          end
+        when 3 # Nokogiri::XML::Node::TEXT_NODE
+          return false
+        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+          return false
+        end
+        replacement_killer = node.before node.inner_html
         node.remove
         return true
       end
