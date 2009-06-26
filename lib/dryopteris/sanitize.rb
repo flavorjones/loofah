@@ -55,14 +55,12 @@ module Dryopteris
 
       def __dryopteris_escape(node)
         case node.type
-        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+        when Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             __scrub_attributes node
             return false
           end
-        when 3 # Nokogiri::XML::Node::TEXT_NODE
-          return false
-        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
@@ -73,14 +71,12 @@ module Dryopteris
 
       def __dryopteris_prune(node)
         case node.type
-        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+        when Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             __scrub_attributes node
             return false
           end
-        when 3 # Nokogiri::XML::Node::TEXT_NODE
-          return false
-        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
         node.remove
@@ -89,14 +85,12 @@ module Dryopteris
 
       def __dryopteris_yank(node)
         case node.type
-        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+        when Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             __scrub_attributes node
             return false
           end
-        when 3 # Nokogiri::XML::Node::TEXT_NODE
-          return false
-        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
         replacement_killer = node.before node.inner_html
@@ -106,14 +100,12 @@ module Dryopteris
 
       def __dryopteris_whitewash(node)
         case node.type
-        when 1 # Nokogiri::XML::Node::ELEMENT_NODE
+        when Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             node.attributes.each { |attr| node.remove_attribute(attr.first) }
             return false if node.namespaces.empty?
           end
-        when 3 # Nokogiri::XML::Node::TEXT_NODE
-          return false
-        when 4 # Nokogiri::XML::Node::CDATA_SECTION_NODE
+        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
         node.remove
