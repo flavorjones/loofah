@@ -2,10 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestStripTags < Test::Unit::TestCase
 
-  def test_nil
-    assert_nil Dryopteris.strip_tags(nil)
-  end
-  
   def test_empty_string
     assert_equal Dryopteris.strip_tags(""), ""
   end

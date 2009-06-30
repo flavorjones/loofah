@@ -2,10 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestBasic < Test::Unit::TestCase
 
-  def test_nil
-    assert_nil Dryopteris.sanitize(nil)
-  end
-  
   def test_empty_string
     assert_equal "", Dryopteris.sanitize("")
   end
