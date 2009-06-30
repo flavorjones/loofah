@@ -3,8 +3,8 @@ module Dryopteris
     class Document < Nokogiri::HTML::Document
       include Dryopteris::Sanitizer
 
-      def __sanitize_root
-        xpath("/html/body").first
+      def __sanitize_roots
+        xpath("/html/head/*","/html/body/*")
       end
 
     end

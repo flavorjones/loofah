@@ -9,8 +9,8 @@ module Dryopteris
         end
       end
 
-      def __sanitize_root
-        self
+      def __sanitize_roots
+        self.children
       end
 
     end
