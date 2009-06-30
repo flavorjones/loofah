@@ -1,23 +1,19 @@
-# -*- ruby -*-
-
 require 'rubygems'
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |s|
-    s.name = "dryopteris"
-    s.summary = "HTML sanitization using Nokogiri"
-    s.email = ["bryan@brynary.com", "mike.dalessio@gmail.com"]
-    s.homepage = "http://github.com/brynary/dryopteris/tree/master"
-    s.description = "Dryopteris erythrosora is the Japanese Shield Fern. It also can be used to sanitize HTML to help prevent XSS attacks."
-    s.authors = ["Bryan Helmkamp", "Mike Dalessio"]
-  end
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+gem 'hoe', '>= 2.3.0'
+require 'hoe'
+
+Hoe.plugin :git
+
+Hoe.spec "dryopteris" do
+  developer "Mike Dalessio", "mike.dalessio@gmail.com"
+  developer "Bryan Helmkamp", "bryan@brynary.com"
+
+  self.extra_rdoc_files = FileList["*.rdoc"]
+  self.history_file     = "CHANGELOG.markdown"
+  self.readme_file      = "README.markdown"
+
+  extra_deps << ["nokogiri", "~> 1.3.0"]
 end
-
-
-require 'rake'
-require 'rake/testtask'
 
 Rake::TestTask.new do |t|
   t.libs << 'lib'
@@ -28,4 +24,3 @@ Rake::TestTask.new do |t|
 end
 
 task :default => :test
-
