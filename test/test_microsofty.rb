@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), 'helper')
+
 class TestMicrosofty < Test::Unit::TestCase
 
   MSWORD_HTML = <<-EOHTML
