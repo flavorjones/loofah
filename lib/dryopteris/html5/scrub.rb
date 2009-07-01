@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Dryopteris
   module HTML5
     module Scrub

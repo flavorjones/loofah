@@ -1,5 +1,3 @@
-require 'cgi'
-
 module Dryopteris
 
   module SanitizerInstanceMethods
