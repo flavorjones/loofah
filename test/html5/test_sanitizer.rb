@@ -25,7 +25,7 @@ class SanitizeTest < Test::Unit::TestCase
     assert doc.include?(htmloutput), "#{input}:\n#{doc}\nshould include:\n#{htmloutput}"
   end
 
-  WhiteList::ALLOWED_ELEMENTS.each do |tag_name|
+  HTML5::WhiteList::ALLOWED_ELEMENTS.each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
       input       = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
       htmloutput  = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
@@ -50,7 +50,7 @@ class SanitizeTest < Test::Unit::TestCase
 #         htmloutput = "<image title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
 #         xhtmloutput = htmloutput
 #         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
-      if WhiteList::VOID_ELEMENTS.include?(tag_name)
+      if HTML5::WhiteList::VOID_ELEMENTS.include?(tag_name)
         if Nokogiri::LIBXML_VERSION <= "2.6.16"
           htmloutput = "<#{tag_name} title='1'/><p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         else
@@ -67,7 +67,7 @@ class SanitizeTest < Test::Unit::TestCase
 ##
 ##  libxml2 downcases tag names as it parses, so this is unnecessary.
 ##
-#   WhiteList::ALLOWED_ELEMENTS.each do |tag_name|
+#   HTML5::WhiteList::ALLOWED_ELEMENTS.each do |tag_name|
 #     define_method "test_should_forbid_#{tag_name.upcase}_tag" do
 #       input = "<#{tag_name.upcase} title='1'>foo <bad>bar</bad> baz</#{tag_name.upcase}>"
 #       output = "&lt;#{tag_name.upcase} title=\"1\"&gt;foo &lt;bad&gt;bar&lt;/bad&gt; baz&lt;/#{tag_name.upcase}&gt;"
@@ -75,7 +75,7 @@ class SanitizeTest < Test::Unit::TestCase
 #     end
 #   end
 
-  WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
+  HTML5::WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
     next if attribute_name == 'style'
     next if attribute_name =~ /:/ && Nokogiri::LIBXML_VERSION <= '2.6.16'
     define_method "test_should_allow_#{attribute_name}_attribute" do
@@ -89,7 +89,7 @@ class SanitizeTest < Test::Unit::TestCase
 ##
 ##  libxml2 downcases attributes as it parses, so this is unnecessary.
 ##
-#   WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
+#   HTML5::WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
 #     define_method "test_should_forbid_#{attribute_name.upcase}_attribute" do
 #       input = "<p #{attribute_name.upcase}='display: none;'>foo <bad>bar</bad> baz</p>"
 #       output =  "<p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
@@ -97,7 +97,7 @@ class SanitizeTest < Test::Unit::TestCase
 #     end
 #   end
 
-  WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
+  HTML5::WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
     define_method "test_should_allow_#{protocol}_uris" do
       input = %(<a href="#{protocol}">foo</a>)
       output = "<a href='#{protocol}'>foo</a>"
@@ -105,7 +105,7 @@ class SanitizeTest < Test::Unit::TestCase
     end
   end
 
-  WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
+  HTML5::WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
     define_method "test_should_allow_uppercase_#{protocol}_uris" do
       input = %(<a href="#{protocol.upcase}">foo</a>)
       output = "<a href='#{protocol.upcase}'>foo</a>"

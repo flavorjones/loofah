@@ -4,7 +4,7 @@ require 'rubygems'
 gem     'nokogiri', '>=1.3.0'
 require 'nokogiri'
 
-require 'dryopteris/whitelist'
+require 'dryopteris/html5'
 require 'dryopteris/sanitize'
 require 'dryopteris/html'
 
