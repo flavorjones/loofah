@@ -2,7 +2,7 @@ require 'cgi'
 
 module Dryopteris
 
-  module Sanitizer
+  module SanitizerInstanceMethods
 
     def sanitize(*args)
       method = args.first
@@ -21,6 +21,9 @@ module Dryopteris
       self
     end
 
+  end
+
+  module Sanitizer
     class << self
 
       def sanitize(node)

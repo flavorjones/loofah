@@ -1,7 +1,7 @@
 module Dryopteris
   module HTML
     class Document < Nokogiri::HTML::Document
-      include Dryopteris::Sanitizer
+      include Dryopteris::SanitizerInstanceMethods
 
       private
 

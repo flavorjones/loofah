@@ -1,7 +1,7 @@
 module Dryopteris
   module HTML
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
-      include Dryopteris::Sanitizer
+      include Dryopteris::SanitizerInstanceMethods
 
       class << self
         def parse tags
