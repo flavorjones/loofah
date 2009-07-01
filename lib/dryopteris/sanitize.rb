@@ -9,11 +9,11 @@ module Dryopteris
       case method
       when :escape, :prune, :whitewash
         __sanitize_roots.each do |node|
-          Sanitizer.__traverse_conditionally_top_down(node, "__dryopteris_#{method}".to_sym)
+          Sanitizer.traverse_conditionally_top_down(node, method.to_sym)
         end
       when :yank
         __sanitize_roots.each do |node|
-          Sanitizer.__traverse_conditionally_bottom_up(node, "__dryopteris_#{method}".to_sym)
+          Sanitizer.traverse_conditionally_bottom_up(node, method.to_sym)
         end
       else
         raise ArgumentError, "unknown sanitize filter '#{method}'"
@@ -23,7 +23,7 @@ module Dryopteris
 
     class << self
 
-      def __dryopteris_sanitize(node)
+      def sanitize(node)
         case node.type
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
@@ -36,28 +36,28 @@ module Dryopteris
         true
       end
 
-      def __dryopteris_escape(node)
-        return false unless __dryopteris_sanitize(node)
+      def escape(node)
+        return false unless sanitize(node)
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
         return true
       end
 
-      def __dryopteris_prune(node)
-        return false unless __dryopteris_sanitize(node)
+      def prune(node)
+        return false unless sanitize(node)
         node.remove
         return true
       end
 
-      def __dryopteris_yank(node)
-        return false unless __dryopteris_sanitize(node)
+      def yank(node)
+        return false unless sanitize(node)
         replacement_killer = node.before node.inner_html
         node.remove
         return true
       end
 
-      def __dryopteris_whitewash(node)
+      def whitewash(node)
         case node.type
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
@@ -71,13 +71,13 @@ module Dryopteris
         return true
       end
 
-      def __traverse_conditionally_top_down(node, method_name)
+      def traverse_conditionally_top_down(node, method_name)
         return if send(method_name, node)
-        node.children.each {|j| __traverse_conditionally_top_down(j, method_name)}
+        node.children.each {|j| traverse_conditionally_top_down(j, method_name)}
       end
 
-      def __traverse_conditionally_bottom_up(node, method_name)
-        node.children.each {|j| __traverse_conditionally_bottom_up(j, method_name)}
+      def traverse_conditionally_bottom_up(node, method_name)
+        node.children.each {|j| traverse_conditionally_bottom_up(j, method_name)}
         return if send(method_name, node)
       end
 
