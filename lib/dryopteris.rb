@@ -9,5 +9,5 @@ require 'dryopteris/sanitize'
 require 'dryopteris/html'
 
 module Dryopteris
-  VERSION = '0.1'
+  VERSION = '0.2.0'
 end
