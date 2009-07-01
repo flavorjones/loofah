@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'open-uri'
 require 'hpricot'
-require File.expand_path(File.dirname(__FILE__) + "/lib/dryopteris")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/dryopteris")
 require 'benchmark'
 require "action_view"
 require "sanitize"
@@ -31,8 +31,7 @@ class HTML5libSanitize
   end
 end
 
-uri = URI.parse('http://www.slashdot.com/')
-content = uri.read
+content = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
  
 N = 100 #0
  
