@@ -21,11 +21,9 @@ module Dryopteris
       self
     end
 
-    private
-
     class << self
 
-      def __dryopteris_escape(node)
+      def __dryopteris_sanitize(node)
         case node.type
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
@@ -35,6 +33,11 @@ module Dryopteris
         when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
           return false
         end
+        true
+      end
+
+      def __dryopteris_escape(node)
+        return false unless __dryopteris_sanitize(node)
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
@@ -42,29 +45,13 @@ module Dryopteris
       end
 
       def __dryopteris_prune(node)
-        case node.type
-        when Nokogiri::XML::Node::ELEMENT_NODE
-          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            __scrub_attributes node
-            return false
-          end
-        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return false
-        end
+        return false unless __dryopteris_sanitize(node)
         node.remove
         return true
       end
 
       def __dryopteris_yank(node)
-        case node.type
-        when Nokogiri::XML::Node::ELEMENT_NODE
-          if HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            __scrub_attributes node
-            return false
-          end
-        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return false
-        end
+        return false unless __dryopteris_sanitize(node)
         replacement_killer = node.before node.inner_html
         node.remove
         return true
