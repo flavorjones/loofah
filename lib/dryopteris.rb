@@ -8,6 +8,8 @@ require 'dryopteris/html5'
 require 'dryopteris/sanitize'
 require 'dryopteris/html'
 
+require 'dryopteris/deprecated'
+
 module Dryopteris
   VERSION = '0.2.0'
 end
