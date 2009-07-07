@@ -12,4 +12,15 @@ require 'dryopteris/deprecated'
 
 module Dryopteris
   VERSION = '0.2.0'
+
+  class << self
+    def document(*args, &block)
+      Dryopteris::HTML::Document.parse *args, &block
+    end
+
+    def fragment(*args, &block)
+      Dryopteris::HTML::DocumentFragment.parse *args, &block
+    end
+  end
+
 end

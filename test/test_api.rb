@@ -4,34 +4,19 @@ class TestApi < Test::Unit::TestCase
 
   HTML = "<div>a</div>\n<div>b</div>"
 
-#   def test_dryopteris_method
-#     # Dryopteris(HTML)
-#     flunk "not implemented"
-#   end
-
-#   def test_dryopteris_html_method
-#     # Dryopteris::HTML(HTML)
-#     flunk "not implemented"
-#   end
-
-#   def test_dryopteris_xml_method
-#     # Dryopteris::XML(XML)
-#     flunk "not implemented"
-#   end
-
-  def test_dryopteris_html_document_method
-    doc = Dryopteris::HTML::Document(HTML)
+  def test_dryopteris_document
+    doc = Dryopteris.document(HTML)
     assert_html_documentish doc
+  end
+
+  def test_dryopteris_fragment
+    doc = Dryopteris.fragment(HTML)
+    assert_html_fragmentish doc
   end
 
   def test_dryopteris_html_document_parse_method
     doc = Dryopteris::HTML::Document.parse(HTML)
     assert_html_documentish doc
-  end
-
-  def test_dryopteris_html_document_fragment_method
-    doc = Dryopteris::HTML::DocumentFragment(HTML)
-    assert_html_fragmentish doc
   end
 
   def test_dryopteris_html_document_fragment_parse_method
