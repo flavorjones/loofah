@@ -96,7 +96,13 @@ module Dryopteris
     end
     
     def whitewash(string, encoding=nil)
-      Dryopteris::HTML::DocumentFragment.parse(string).sanitize(:whitewash).to_xml
+      doc = Dryopteris::HTML::DocumentFragment.parse(string).sanitize(:whitewash)
+      body = doc.xpath("./body").first
+      if body
+        body.children.to_xml
+      else
+        doc.to_xml
+      end
     end
 
     def whitewash_document(string_or_io, encoding=nil)
