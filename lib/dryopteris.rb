@@ -15,11 +15,11 @@ module Dryopteris
 
   class << self
     def document(*args, &block)
-      Dryopteris::HTML::Document.parse *args, &block
+      Dryopteris::HTML::Document.parse(*args, &block)
     end
 
     def fragment(*args, &block)
-      Dryopteris::HTML::DocumentFragment.parse *args, &block
+      Dryopteris::HTML::DocumentFragment.parse(*args, &block)
     end
   end
 

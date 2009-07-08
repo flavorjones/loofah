@@ -14,13 +14,3 @@ Hoe.spec "dryopteris" do
 
   extra_deps << ["nokogiri", "~> 1.3.0"]
 end
-
-Rake::TestTask.new do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.test_files = FileList['test/**/*.rb']
-  t.verbose = true
-  t.warning = true 
-end
-
-task :default => :test
