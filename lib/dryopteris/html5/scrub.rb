@@ -7,8 +7,13 @@ module Dryopteris
       class << self
 
         def scrub_attributes(node)
-          node.attributes.each do |attr|
-            node.remove_attribute(attr.first) unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr.first]
+          node.attribute_nodes.each do |attr|
+            attr_name = if attr.namespace
+                          "#{attr.namespace.prefix}:#{attr.node_name}"
+                        else
+                          attr.node_name
+                        end
+            attr.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr_name]
           end
           node.attributes.each do |attr|
             if HashedWhiteList::ATTR_VAL_IS_URI[attr.first]
