@@ -51,10 +51,6 @@ class TestBasic < Test::Unit::TestCase
     assert_equal "<p>This fragment is in a p.</p>", Dryopteris.sanitize("<p>This fragment is in a p.</p>")
   end
 
-  def test_fragment_in_a_nontrivial_p_tag
-    assert_equal "  \n<p>This fragment is in a p.</p>", Dryopteris.sanitize("  \n<p foo='bar'>This fragment is in a p.</p>")
-  end
-
   def test_fragment_in_p_tag_plus_stuff
     assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Dryopteris.sanitize("<p>This fragment is in a p.</p>foo<strong>bar</strong>")
   end
@@ -66,7 +62,7 @@ class TestBasic < Test::Unit::TestCase
   def test_whitewash_on_fragment
     html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
     whitewashed = Dryopteris.whitewash_document(html)
-    assert_equal "<p>safe</p><b>description</b>", whitewashed
+    assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n","")
   end
 
 end
