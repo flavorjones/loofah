@@ -7,21 +7,25 @@ module Dryopteris
       class << self
 
         def scrub_attributes(node)
-          node.attribute_nodes.each do |attr|
-            attr_name = if attr.namespace
-                          "#{attr.namespace.prefix}:#{attr.node_name}"
+          node.attribute_nodes.each do |attr_node|
+            attr_name = if attr_node.namespace
+                          "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
                         else
-                          attr.node_name
+                          attr_node.node_name
                         end
-            attr.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr_name]
-          end
-          node.attributes.each do |attr|
-            if HashedWhiteList::ATTR_VAL_IS_URI[attr.first]
+            attr_node.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr_name]
+            if HashedWhiteList::ATTR_VAL_IS_URI[attr_name]
               # this block lifted nearly verbatim from HTML5 sanitization
-              val_unescaped = CGI.unescapeHTML(attr.last.to_s).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
-                node.remove_attribute(attr.first)
+                attr_node.remove
               end
+            end
+            if HashedWhiteList::SVG_ATTR_VAL_ALLOWS_REF[attr_name]
+              attr_node.value = attr_node.value.gsub(/url\s*\(\s*[^#\s][^)]+?\)/m, ' ') if attr_node.value
+            end
+            if HashedWhiteList::SVG_ALLOW_LOCAL_HREF[node.name] && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
+              attr_node.remove
             end
           end
           if node.attributes['style']
