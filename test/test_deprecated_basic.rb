@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
-class TestBasic < Test::Unit::TestCase
+class TestDeprecatedBasic < Test::Unit::TestCase
 
   def test_empty_string
     assert_equal "", Dryopteris.sanitize("")

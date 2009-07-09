@@ -6,7 +6,7 @@
 #
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class SanitizeTest < Test::Unit::TestCase
+class HTML5TestDeprecatedSanitizer < Test::Unit::TestCase
   include Dryopteris
 
   def sanitize_html stream
