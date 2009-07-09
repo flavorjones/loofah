@@ -3,6 +3,11 @@ module Dryopteris
   module SanitizerInstanceMethods
 
     def sanitize(*args)
+      doc = self.dup
+      doc.sanitize!(*args)
+    end
+
+    def sanitize!(*args)
       method = args.first
       case method
       when :escape, :prune, :whitewash
