@@ -68,13 +68,23 @@ mso-bidi-language:#0400;}
 <p class="MsoNormal">Foo <b style="">BOLD<o:p></o:p></b></p>
   EOHTML
 
-  def test_whitewash_fragment_on_microsofty_markup
+  def test_deprecated_whitewash_fragment_on_microsofty_markup
     whitewashed = Dryopteris.whitewash(MSWORD_HTML.chomp)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
   end
 
-  def test_whitewash_on_microsofty_markup
+  def test_deprecated_whitewash_on_microsofty_markup
     whitewashed = Dryopteris.whitewash_document(MSWORD_HTML)
+    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
+  end
+
+  def test_fragment_whitewash_on_microsofty_markup
+    whitewashed = Dryopteris.fragment(MSWORD_HTML.chomp).sanitize(:whitewash).xpath('./body/*').to_html
+    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
+  end
+
+  def test_document_whitewash_on_microsofty_markup
+    whitewashed = Dryopteris.document(MSWORD_HTML.chomp).sanitize(:whitewash).xpath('//body/*').to_html
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
   end
 
