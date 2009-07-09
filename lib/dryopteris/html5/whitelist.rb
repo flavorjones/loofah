@@ -51,13 +51,14 @@ module Dryopteris
       strike strong sub sup table tbody td textarea tfoot th thead tr tt u
       ul var]
 
-      MATHML_ELEMENTS = %w[maction math merror mfrac mi mmultiscripts mn mo
-      mover mpadded mphantom mprescripts mroot mrow mspace msqrt mstyle msub
-      msubsup msup mtable mtd mtext mtr munder munderover none]
+      MATHML_ELEMENTS = %w[annotation annotation-xml maction math merror mfrac
+      mfenced mi mmultiscripts mn mo mover mpadded mphantom mprescripts mroot mrow
+      mspace msqrt mstyle msub msubsup msup mtable mtd mtext mtr munder
+      munderover none semantics]
 
       SVG_ELEMENTS = %w[a animate animateColor animateMotion animateTransform
-      circle defs desc ellipse font-face font-face-name font-face-src g
-      glyph hkern image linearGradient line marker metadata missing-glyph
+      circle defs desc ellipse font-face font-face-name font-face-src foreignObject
+      g glyph hkern linearGradient line marker metadata missing-glyph
       mpath path polygon polyline radialGradient rect set stop svg switch
       text title tspan use]
 
@@ -70,20 +71,20 @@ module Dryopteris
       selected shape size span src start style summary tabindex target title
       type usemap valign value vspace width xml:lang]
 
-      MATHML_ATTRIBUTES = %w[actiontype align columnalign columnalign
+      MATHML_ATTRIBUTES = %w[actiontype align close columnalign columnalign
       columnalign columnlines columnspacing columnspan depth display
-      displaystyle equalcolumns equalrows fence fontstyle fontweight frame
-      height linethickness lspace mathbackground mathcolor mathvariant
-      mathvariant maxsize minsize other rowalign rowalign rowalign rowlines
-      rowspacing rowspan rspace scriptlevel selection separator stretchy
-      width width xlink:href xlink:show xlink:type xmlns xmlns:xlink]
+      displaystyle encoding equalcolumns equalrows fence fontstyle fontweight
+      frame height linethickness lspace mathbackground mathcolor mathvariant
+      mathvariant maxsize minsize open other rowalign rowalign rowalign rowlines
+      rowspacing rowspan rspace scriptlevel selection separator separators
+      stretchy width width xlink:href xlink:show xlink:type xmlns xmlns:xlink]
 
       SVG_ATTRIBUTES = %w[accent-height accumulate additive alphabetic
        arabic-form ascent attributeName attributeType baseProfile bbox begin
        by calcMode cap-height class color color-rendering content cx cy d dx
-       dy descent display dur end fill fill-rule font-family font-size
-       font-stretch font-style font-variant font-weight from fx fy g1 g2
-       glyph-name gradientUnits hanging height horiz-adv-x horiz-origin-x id
+       dy descent display dur end fill fill-opacity fill-rule font-family
+       font-size font-stretch font-style font-variant font-weight from fx fy g1
+       g2 glyph-name gradientUnits hanging height horiz-adv-x horiz-origin-x id
        ideographic k keyPoints keySplines keyTimes lang marker-end
        marker-mid marker-start markerHeight markerUnits markerWidth
        mathematical max min name offset opacity orient origin
@@ -101,6 +102,13 @@ module Dryopteris
        xmlns:xlink y y1 y2 zoomAndPan]
 
       ATTR_VAL_IS_URI = %w[href src cite action longdesc xlink:href xml:base]
+
+      SVG_ATTR_VAL_ALLOWS_REF = %w[clip-path color-profile cursor fill
+      filter marker marker-start marker-mid marker-end mask stroke]
+
+      SVG_ALLOW_LOCAL_HREF = %w[altGlyph animate animateColor animateMotion
+      animateTransform cursor feImage filter linearGradient pattern
+      radialGradient textpath tref set use]
 
       ACCEPTABLE_CSS_PROPERTIES = %w[azimuth background-color
       border-bottom-color border-collapse border-color border-left-color
@@ -133,19 +141,19 @@ module Dryopteris
       ALLOWED_PROTOCOLS = ACCEPTABLE_PROTOCOLS
 
       VOID_ELEMENTS = %w[
-      base
-      link
-      meta
-      hr
-      br
-      img
-      embed
-      param
-      area
-      col
-      input
-    ]
-    end
+        base
+        link
+        meta
+        hr
+        br
+        img
+        embed
+        param
+        area
+        col
+        input
+      ]
+    end      
 
     module HashedWhiteList
       #  turn each of the whitelist arrays into a hash for faster lookup
