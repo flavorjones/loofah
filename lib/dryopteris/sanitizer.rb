@@ -2,8 +2,7 @@ module Dryopteris
 
   module SanitizerInstanceMethods
 
-    def sanitize!(*args)
-      method = args.first
+    def sanitize!(method)
       case method
       when :escape, :prune, :whitewash
         __sanitize_roots.children.each do |node|
