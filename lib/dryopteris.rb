@@ -5,7 +5,7 @@ gem     'nokogiri', '>=1.3.0'
 require 'nokogiri'
 
 require 'dryopteris/html5'
-require 'dryopteris/sanitize'
+require 'dryopteris/sanitizer'
 require 'dryopteris/html'
 
 require 'dryopteris/deprecated'

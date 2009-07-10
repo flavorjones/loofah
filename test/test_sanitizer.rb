@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
-class TestSanitize < Test::Unit::TestCase
+class TestSanitizer < Test::Unit::TestCase
 
   [ Dryopteris::HTML::Document, Dryopteris::HTML::DocumentFragment ].each do |klass|
     define_method "test_#{klass}_bad_sanitize_method" do
@@ -79,24 +79,6 @@ class TestSanitize < Test::Unit::TestCase
 
     assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
     assert_equal doc, result
-  end
-
-  def test_document_sanitize_versus_sanitize!
-    doc = Dryopteris::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-    result = doc.sanitize :yank
-
-    assert_equal INVALID_FRAGMENT, doc.xpath('/html/body').inner_html
-    assert_equal INVALID_YANKED,   result.xpath('/html/body').inner_html
-    assert_not_equal doc, result
-  end
-
-  def test_fragment_sanitize_versus_sanitize!
-    doc = Dryopteris::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
-    result = doc.sanitize :yank
-
-    assert_equal INVALID_FRAGMENT, doc.xpath("./div").inner_html
-    assert_equal INVALID_YANKED,   result.xpath("./div").inner_html
-    assert_not_equal doc, result
   end
 
 end

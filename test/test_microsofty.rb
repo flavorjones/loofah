@@ -79,13 +79,13 @@ mso-bidi-language:#0400;}
   end
 
   def test_fragment_whitewash_on_microsofty_markup
-    whitewashed = Dryopteris.fragment(MSWORD_HTML.chomp).sanitize(:whitewash).xpath('./body/*').to_html
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
+    whitewashed = Dryopteris.fragment(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 
   def test_document_whitewash_on_microsofty_markup
-    whitewashed = Dryopteris.document(MSWORD_HTML.chomp).sanitize(:whitewash).xpath('//body/*').to_html
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
+    whitewashed = Dryopteris.document(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 
 end

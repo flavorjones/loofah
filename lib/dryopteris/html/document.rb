@@ -6,7 +6,7 @@ module Dryopteris
       private
 
       def __sanitize_roots
-        xpath("/html/head/*","/html/body/*")
+        xpath("/html/head","/html/body")
       end
 
     end

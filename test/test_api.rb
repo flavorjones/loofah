@@ -24,6 +24,16 @@ class TestApi < Test::Unit::TestCase
     assert_html_fragmentish doc
   end
 
+  def test_dryopteris_document_sanitize!
+    doc = Dryopteris.document(HTML).sanitize!(:yank)
+    assert_html_documentish doc
+  end
+
+  def test_dryopteris_fragment_sanitize!
+    doc = Dryopteris.fragment(HTML).sanitize!(:yank)
+    assert_html_fragmentish doc
+  end
+
   private
 
   def assert_html_documentish(doc)

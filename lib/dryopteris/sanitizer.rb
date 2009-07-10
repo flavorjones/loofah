@@ -2,20 +2,15 @@ module Dryopteris
 
   module SanitizerInstanceMethods
 
-    def sanitize(*args)
-      doc = self.dup
-      doc.sanitize!(*args)
-    end
-
     def sanitize!(*args)
       method = args.first
       case method
       when :escape, :prune, :whitewash
-        __sanitize_roots.each do |node|
+        __sanitize_roots.children.each do |node|
           Sanitizer.traverse_conditionally_top_down(node, method.to_sym)
         end
       when :yank
-        __sanitize_roots.each do |node|
+        __sanitize_roots.children.each do |node|
           Sanitizer.traverse_conditionally_bottom_up(node, method.to_sym)
         end
       else
@@ -24,6 +19,16 @@ module Dryopteris
       self
     end
 
+    def to_s
+      __sanitize_roots.children.to_s
+    end
+    alias :serialize :to_s
+
+    def inner_text
+      __sanitize_roots.children.inner_text
+    end
+    alias :text    :inner_text
+    alias :to_str  :inner_text
   end
 
   module Sanitizer

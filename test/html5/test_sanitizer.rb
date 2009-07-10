@@ -11,11 +11,11 @@ class Html5TestSanitizer < Test::Unit::TestCase
   include Dryopteris
 
   def sanitize_xhtml stream
-    Dryopteris.fragment(stream).sanitize(:escape).to_xhtml
+    Dryopteris.fragment(stream).sanitize!(:escape).to_xhtml
   end
 
   def sanitize_html stream
-    Dryopteris.fragment(stream).sanitize(:escape).to_html
+    Dryopteris.fragment(stream).sanitize!(:escape).to_html
   end
 
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)

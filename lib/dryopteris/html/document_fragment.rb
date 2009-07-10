@@ -12,13 +12,7 @@ module Dryopteris
       private
 
       def __sanitize_roots
-        self.children
-        maybe = xpath("./body").first
-        if maybe
-          maybe.children
-        else
-          self.children
-        end
+        xpath("./body").first || self
       end
 
     end
