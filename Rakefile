@@ -9,8 +9,8 @@ Hoe.spec "dryopteris" do
   developer "Bryan Helmkamp", "bryan@brynary.com"
 
   self.extra_rdoc_files = FileList["*.rdoc"]
-  self.history_file     = "CHANGELOG.markdown"
-  self.readme_file      = "README.markdown"
+  self.history_file     = "CHANGELOG.rdoc"
+  self.readme_file      = "README.rdoc"
 
-  extra_deps << ["nokogiri", "~> 1.3.0"]
+  extra_deps << ["nokogiri", ">= 1.3.3"]
 end
