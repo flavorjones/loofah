@@ -4,7 +4,7 @@ require 'hoe'
 
 Hoe.plugin :git
 
-Hoe.spec "dryopteris" do
+Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
   developer "Bryan Helmkamp", "bryan@brynary.com"
 

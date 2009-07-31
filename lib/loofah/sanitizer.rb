@@ -1,4 +1,4 @@
-module Dryopteris
+module Loofah
 
   module SanitizerInstanceMethods
 

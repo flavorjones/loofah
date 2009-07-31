@@ -1,5 +1,5 @@
 #
-#  these tests taken from the HTML5 sanitization project and modified for use with Dryopteris
+#  these tests taken from the HTML5 sanitization project and modified for use with Loofah
 #  see the original here: http://code.google.com/p/html5lib/source/browse/ruby/test/test_sanitizer.rb
 #
 #  license text at the bottom of this file
@@ -8,14 +8,14 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 require 'json'
 
 class Html5TestSanitizer < Test::Unit::TestCase
-  include Dryopteris
+  include Loofah
 
   def sanitize_xhtml stream
-    Dryopteris.fragment(stream).sanitize!(:escape).to_xhtml
+    Loofah.fragment(stream).sanitize!(:escape).to_xhtml
   end
 
   def sanitize_html stream
-    Dryopteris.fragment(stream).sanitize!(:escape).to_html
+    Loofah.fragment(stream).sanitize!(:escape).to_html
   end
 
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)

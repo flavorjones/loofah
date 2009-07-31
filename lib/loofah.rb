@@ -3,27 +3,27 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 require 'rubygems'
 require 'nokogiri'
 
-require 'dryopteris/html5'
-require 'dryopteris/sanitizer'
-require 'dryopteris/html'
+require 'loofah/html5'
+require 'loofah/sanitizer'
+require 'loofah/html'
 
-require 'dryopteris/deprecated'
+require 'loofah/deprecated'
 
 
 #
-# Dryopteris is an HTML sanitizer wrapped around Nokogiri, an excellent
+# Loofah is an HTML sanitizer wrapped around Nokogiri, an excellent
 # HTML/XML parser. If you don't know how Nokogiri[http://nokogiri.org]
 # works, you might want to pause for a moment and go check it out. I'll
 # wait.
 #
-# Dryopteris subclasses Nokogiri::HTML::Document and ::DocumentFragment,
+# Loofah subclasses Nokogiri::HTML::Document and ::DocumentFragment,
 # so as soon as you parse your document, you get all the markup
 # fixer-uppery and excellent API that Nokogiri gives you.
 #
-#   doc = Dryopteris.fragment(unsafe_html)
+#   doc = Loofah.fragment(unsafe_html)
 #   doc.is_a? Nokogiri::HTML::DocumentFragment # => true
 #
-# Dryopteris adds a #sanitize! method, which can clean up your HTML in a few different ways:
+# Loofah adds a #sanitize! method, which can clean up your HTML in a few different ways:
 #
 #   doc.sanitize!(:yank)        # replaces unknown/unsafe tags with their inner text
 #   doc.sanitize!(:prune)       # removes  unknown/unsafe tags and their children
@@ -33,11 +33,11 @@ require 'dryopteris/deprecated'
 #
 # The above methods simply modify the document in-place. It's not serialized as a string yet!
 #
-# Dryopteris also overrides #to_s to give you your html back:
+# Loofah also overrides #to_s to give you your html back:
 #
 #   unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
 #
-#   doc = Dryopteris.fragment(unsafe_html).sanitize!(:yank)
+#   doc = Loofah.fragment(unsafe_html).sanitize!(:yank)
 #   doc.to_s    # => "hi! <div>div is safe</div> "
 #
 # and #text to give you the plain text version
@@ -55,7 +55,7 @@ require 'dryopteris/deprecated'
 #
 # Oooh, that could be bad. Here's how to fix it:
 #
-#     safe_html_snippet = Dryopteris.sanitize(dangerous_html_snippet)
+#     safe_html_snippet = Loofah.sanitize(dangerous_html_snippet)
 #
 # Yeah, it's that easy.
 #
@@ -64,7 +64,7 @@ require 'dryopteris/deprecated'
 #
 # == Sanitization Usage
 #
-# You're still here? Ok, let me tell you a little something about the two different methods of sanitizing the Dryopteris offers.
+# You're still here? Ok, let me tell you a little something about the two different methods of sanitizing the Loofah offers.
 #
 # === Fragments
 #
@@ -72,7 +72,7 @@ require 'dryopteris/deprecated'
 #
 # Usage is the same as above:
 #
-#     safe_html_snippet = Dryopteris.sanitize(dangerous_html_snippet)
+#     safe_html_snippet = Loofah.sanitize(dangerous_html_snippet)
 #
 # Generally speaking, unless you expect to have &lt;html&gt; and &lt;body&gt; tags in your HTML, this is the sanitizing method to use.
 #
@@ -82,7 +82,7 @@ require 'dryopteris/deprecated'
 #
 # Sometimes you need to sanitize an entire HTML document. (Well, maybe not _you_, but other people, certainly.)
 #
-#     safe_html_document = Dryopteris.sanitize_document(dangerous_html_document)
+#     safe_html_document = Loofah.sanitize_document(dangerous_html_document)
 #
 # The returned string will contain exactly one (1) well-formed HTML document, with all broken HTML fixed and all harmful tags and attributes removed.
 #
@@ -96,7 +96,7 @@ require 'dryopteris/deprecated'
 #
 # One use case for this feature is to clean up HTML that was cut-and-pasted from Microsoft(tm) Word into a WYSIWYG editor/textarea. Microsoft's editor is famous for injecting all kinds of cruft into its HTML output. Who needs that? Certainly not me.
 #
-#     whitewashed_html = Dryopteris.whitewash(ugly_microsoft_html_snippet)
+#     whitewashed_html = Loofah.whitewash(ugly_microsoft_html_snippet)
 #
 # Please note that whitewashing implicitly also sanitizes your HTML, as it uses the same HTML tag whitelist as <tt>sanitize()</tt>. It's implementation is:
 #
@@ -108,14 +108,14 @@ require 'dryopteris/deprecated'
 #
 # Also note the existence of <tt>whitewash\_document</tt>, which is analogous to <tt>sanitize\_document</tt>.
 #
-module Dryopteris
-  # The version of Dryopteris you are using
+module Loofah
+  # The version of Loofah you are using
   VERSION = '0.2.0'
 
   # The minimum required version of Nokogiri
   NOKOGIRI_VERSION = '1.3.3'
 end
 
-if Nokogiri::VERSION < Dryopteris::NOKOGIRI_VERSION
-  raise RuntimeError, "Dryopteris requires Nokogiri #{Dryopteris::NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
+if Nokogiri::VERSION < Loofah::NOKOGIRI_VERSION
+  raise RuntimeError, "Loofah requires Nokogiri #{Loofah::NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end

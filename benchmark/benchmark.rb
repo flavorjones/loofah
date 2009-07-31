@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'open-uri'
 require 'hpricot'
-require File.expand_path(File.dirname(__FILE__) + "/../lib/dryopteris")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/loofah")
 require 'benchmark'
 require "action_view"
 require "action_controller/vendor/html-scanner"
@@ -37,9 +37,9 @@ FRAGMENT = File.read(File.join(File.dirname(__FILE__), "fragment.html"))
 
 def bench(content, ntimes)
   Benchmark.bm(15) do |x|
-    x.report('Dryopteris') do
+    x.report('Loofah') do
       ntimes.times do
-        Dryopteris.sanitize(content)
+        Loofah.sanitize(content)
       end
     end
     

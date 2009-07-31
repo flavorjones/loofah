@@ -1,11 +1,11 @@
-module Dryopteris
+module Loofah
   module HTML
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
-      include Dryopteris::SanitizerInstanceMethods
+      include Loofah::SanitizerInstanceMethods
 
       class << self
         def parse tags
-          self.new(Dryopteris::HTML::Document.new, tags)
+          self.new(Loofah::HTML::Document.new, tags)
         end
       end
 

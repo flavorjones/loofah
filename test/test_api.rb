@@ -4,33 +4,33 @@ class TestApi < Test::Unit::TestCase
 
   HTML = "<div>a</div>\n<div>b</div>"
 
-  def test_dryopteris_document
-    doc = Dryopteris.document(HTML)
+  def test_loofah_document
+    doc = Loofah.document(HTML)
     assert_html_documentish doc
   end
 
-  def test_dryopteris_fragment
-    doc = Dryopteris.fragment(HTML)
+  def test_loofah_fragment
+    doc = Loofah.fragment(HTML)
     assert_html_fragmentish doc
   end
 
-  def test_dryopteris_html_document_parse_method
-    doc = Dryopteris::HTML::Document.parse(HTML)
+  def test_loofah_html_document_parse_method
+    doc = Loofah::HTML::Document.parse(HTML)
     assert_html_documentish doc
   end
 
-  def test_dryopteris_html_document_fragment_parse_method
-    doc = Dryopteris::HTML::DocumentFragment.parse(HTML)
+  def test_loofah_html_document_fragment_parse_method
+    doc = Loofah::HTML::DocumentFragment.parse(HTML)
     assert_html_fragmentish doc
   end
 
-  def test_dryopteris_document_sanitize!
-    doc = Dryopteris.document(HTML).sanitize!(:yank)
+  def test_loofah_document_sanitize!
+    doc = Loofah.document(HTML).sanitize!(:yank)
     assert_html_documentish doc
   end
 
-  def test_dryopteris_fragment_sanitize!
-    doc = Dryopteris.fragment(HTML).sanitize!(:yank)
+  def test_loofah_fragment_sanitize!
+    doc = Loofah.fragment(HTML).sanitize!(:yank)
     assert_html_fragmentish doc
   end
 
@@ -38,13 +38,13 @@ class TestApi < Test::Unit::TestCase
 
   def assert_html_documentish(doc)
     assert_kind_of Nokogiri::HTML::Document,   doc
-    assert_kind_of Dryopteris::HTML::Document, doc
+    assert_kind_of Loofah::HTML::Document, doc
     assert_equal HTML, doc.xpath("/html/body").inner_html
   end
 
   def assert_html_fragmentish(doc)
     assert_kind_of Nokogiri::HTML::DocumentFragment,   doc
-    assert_kind_of Dryopteris::HTML::DocumentFragment, doc
+    assert_kind_of Loofah::HTML::DocumentFragment, doc
     assert_equal HTML, doc.inner_html
   end
 

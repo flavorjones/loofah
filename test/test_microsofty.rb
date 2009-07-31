@@ -69,22 +69,22 @@ mso-bidi-language:#0400;}
   EOHTML
 
   def test_deprecated_whitewash_fragment_on_microsofty_markup
-    whitewashed = Dryopteris.whitewash(MSWORD_HTML.chomp)
+    whitewashed = Loofah.whitewash(MSWORD_HTML.chomp)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
   end
 
   def test_deprecated_whitewash_on_microsofty_markup
-    whitewashed = Dryopteris.whitewash_document(MSWORD_HTML)
+    whitewashed = Loofah.whitewash_document(MSWORD_HTML)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
   end
 
   def test_fragment_whitewash_on_microsofty_markup
-    whitewashed = Dryopteris.fragment(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    whitewashed = Loofah.fragment(MSWORD_HTML.chomp).sanitize!(:whitewash)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 
   def test_document_whitewash_on_microsofty_markup
-    whitewashed = Dryopteris.document(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    whitewashed = Loofah.document(MSWORD_HTML.chomp).sanitize!(:whitewash)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 

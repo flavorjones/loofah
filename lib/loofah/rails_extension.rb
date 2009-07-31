@@ -1,6 +1,6 @@
-require "dryopteris"
+require "loofah"
 
-module Dryopteris
+module Loofah
   module RailsExtension
     def self.included(base)
       base.extend(ClassMethods)
@@ -8,13 +8,13 @@ module Dryopteris
       # sets up default of stripping tags for all fields
       base.class_eval do
         before_save :sanitize_fields
-        class_inheritable_reader :dryopteris_options
+        class_inheritable_reader :loofah_options
       end
     end
 
     module ClassMethods
       def sanitize_fields(options = {})
-        write_inheritable_attribute(:dryopteris_options, {
+        write_inheritable_attribute(:loofah_options, {
           :except     => (options[:except] || []),
           :allow_tags => (options[:allow_tags] || [])
         })
@@ -31,12 +31,12 @@ module Dryopteris
         field = column.name.to_sym
         value = self[field]
 
-        if dryopteris_options && dryopteris_options[:except].include?(field)
+        if loofah_options && loofah_options[:except].include?(field)
           next
-        elsif dryopteris_options && dryopteris_options[:allow_tags].include?(field)
-          self[field] = Dryopteris.sanitize(value)
+        elsif loofah_options && loofah_options[:allow_tags].include?(field)
+          self[field] = Loofah.sanitize(value)
         else
-          self[field] = Dryopteris.strip_tags(value)
+          self[field] = Loofah.strip_tags(value)
         end
       end
       

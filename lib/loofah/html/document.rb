@@ -1,7 +1,7 @@
-module Dryopteris
+module Loofah
   module HTML
     class Document < Nokogiri::HTML::Document
-      include Dryopteris::SanitizerInstanceMethods
+      include Loofah::SanitizerInstanceMethods
 
       private
 

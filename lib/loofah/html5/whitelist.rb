@@ -1,4 +1,4 @@
-module Dryopteris
+module Loofah
   module HTML5
     #
     #  HTML whitelist lifted from HTML5 sanitizer code

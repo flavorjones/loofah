@@ -1,11 +1,11 @@
-= Dryopteris
+= Loofah
 
-* http://rubyforge.org/projects/dryopteris
-* http://github.com/mdalessio/dryopteris
+* http://rubyforge.org/projects/loofah
+* http://github.com/mdalessio/loofah
 
 == DESCRIPTION
 
-Dryopteris is an HTML sanitizer. It will always fix broken markup, but
+Loofah is an HTML sanitizer. It will always fix broken markup, but
 can also sanitize unsafe tags in a few different ways, and transform
 the markup for storage or display.
 
@@ -28,13 +28,13 @@ Internet Experts.</small>
 
 == SYNOPSIS
 
-For a full explanation, see the rdocs for Dryopteris.
+For a full explanation, see the rdocs for Loofah.
 
-  require 'dryopteris'
+  require 'loofah'
 
   unsafe_html = "ohai! <div>a div is safe</div> <script>but script is not</script>"
 
-  doc = Dryopteris.fragment(unsafe_html)
+  doc = Loofah.fragment(unsafe_html)
   
   doc.sanitize!(:prune) # removes unknown/unsafe tags and their children
 
@@ -48,7 +48,7 @@ For a full explanation, see the rdocs for Dryopteris.
 
 == INSTALLATION
 
-* gem install dryopteris
+* gem install loofah
 
 == AUTHORS
 

@@ -1,6 +1,6 @@
 require 'cgi'
 
-module Dryopteris
+module Loofah
   module HTML5
     module Scrub
 
