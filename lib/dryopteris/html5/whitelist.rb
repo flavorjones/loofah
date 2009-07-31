@@ -1,10 +1,9 @@
-#
-#  HTML whitelist lifted from HTML5 sanitizer code
-#    http://code.google.com/p/html5lib/
-#
-
 module Dryopteris
   module HTML5
+    #
+    #  HTML whitelist lifted from HTML5 sanitizer code
+    #    http://code.google.com/p/html5lib/
+    #
     module WhiteList
       # <html5_license>
       #
