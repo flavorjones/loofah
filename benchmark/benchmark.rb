@@ -5,6 +5,7 @@ require 'hpricot'
 require File.expand_path(File.dirname(__FILE__) + "/../lib/dryopteris")
 require 'benchmark'
 require "action_view"
+require "action_controller/vendor/html-scanner"
 require "sanitize"
 
 class RailsSanitize
@@ -31,36 +32,41 @@ class HTML5libSanitize
   end
 end
 
-content = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
- 
-N = 100 #0
- 
-Benchmark.bm do |x|
-  x.report('Dryopteris') do
-    N.times do
-      Dryopteris.sanitize(content)
+BIG_FILE = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
+FRAGMENT = File.read(File.join(File.dirname(__FILE__), "fragment.html"))
+
+def bench(content, ntimes)
+  Benchmark.bm(15) do |x|
+    x.report('Dryopteris') do
+      ntimes.times do
+        Dryopteris.sanitize(content)
+      end
     end
-  end
- 
-  x.report('ActionView') do
-    sanitizer = RailsSanitize.new
     
-    N.times do
-      sanitizer.sanitize(content)
+    x.report('ActionView') do
+      sanitizer = RailsSanitize.new
+      
+      ntimes.times do
+        sanitizer.sanitize(content)
+      end
     end
-  end
-  
-  x.report('Sanitize') do
-    N.times do
-      Sanitize.clean(content, Sanitize::Config::RELAXED)
-    end
-  end
-  
-  x.report('HTML5lib') do
-    sanitizer = HTML5libSanitize.new
     
-    N.times do
-      sanitizer.sanitize(content)
+    x.report('Sanitize') do
+      ntimes.times do
+        Sanitize.clean(content, Sanitize::Config::RELAXED)
+      end
+    end
+    
+    x.report('HTML5lib') do
+      sanitizer = HTML5libSanitize.new
+      
+      ntimes.times do
+        sanitizer.sanitize(content)
+      end
     end
   end
 end
+
+#bench BIG_FILE, 100
+bench FRAGMENT, 1000
+ 
