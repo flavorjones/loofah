@@ -1,0 +1,64 @@
+= Dryopteris
+
+* http://rubyforge.org/projects/dryopteris
+* http://github.com/mdalessio/dryopteris
+
+== DESCRIPTION
+
+Dryopteris is an HTML sanitizer. It will always fix broken markup, but
+can also sanitize unsafe tags in a few different ways, and transform
+the markup for storage or display.
+
+It's built on top of Nokogiri[http://nokogiri.org] and
+libxml2[http://xmlsoft.org/], so it's fast. And it uses
+html5lib's[http://code.google.com/p/html5lib/] whitelist, so it most
+likely won't make your codes less secure.<super>*</super>
+
+<small><super>*</super> These statements have not been evaluated by
+Internet Experts.</small>
+
+== FEATURES
+
+* Yank unsafe tags, leaving behind only the inner text.
+* Prune unsafe tags' subtrees, removing all traces that it ever existed.
+* Escape unsafe tags, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
+* Whitewash the markup, removing all attributes and namespaced nodes.
+* Format the markup as plain text.
+* Rails ActiveRecord extension.
+
+== SYNOPSIS
+
+For a full explanation, see the rdocs for Dryopteris.
+
+  require 'dryopteris'
+
+  unsafe_html = "ohai! <div>a div is safe</div> <script>but script is not</script>"
+
+  doc = Dryopteris.fragment(unsafe_html)
+  
+  doc.sanitize!(:prune) # removes unknown/unsafe tags and their children
+
+  doc.to_s              # => "ohai! <div>div is safe</div> "
+  doc.text              # => "ohai! div is safe "
+
+== REQUIREMENTS
+
+* ruby 1.8 or 1.9
+* Nokogiri >= 1.3.3
+
+== INSTALLATION
+
+* gem install dryopteris
+
+== AUTHORS
+
+* {Mike Dalessio}[mailto:mike.dalessio@gmail.com]
+* {Bryan Helmkamp}[mailto:bryan@brynary.com]
+
+== LICENSE
+
+The MIT License
+
+Copyright (c) 2009 Mike Dalessio, Bryan Helmkamp
+
+See MIT-LICENSE.txt in this directory.
