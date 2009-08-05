@@ -3,9 +3,13 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 require 'rubygems'
 require 'nokogiri'
 
-require 'loofah/html5'
+require 'loofah/html5/whitelist'
+require 'loofah/html5/scrub'
+
 require 'loofah/sanitizer'
-require 'loofah/html'
+
+require 'loofah/html/document'
+require 'loofah/html/document_fragment'
 
 require 'loofah/deprecated'
 
@@ -114,6 +118,18 @@ module Loofah
 
   # The minimum required version of Nokogiri
   NOKOGIRI_VERSION = '1.3.3'
+
+  class << self
+    # Shortcut for Loofah::HTML::Document.parse
+    def document(*args, &block)
+      Loofah::HTML::Document.parse(*args, &block)
+    end
+
+    # Shortcut for Loofah::HTML::DocumentFragment.parse
+    def fragment(*args, &block)
+      Loofah::HTML::DocumentFragment.parse(*args, &block)
+    end
+  end
 end
 
 if Nokogiri::VERSION < Loofah::NOKOGIRI_VERSION
