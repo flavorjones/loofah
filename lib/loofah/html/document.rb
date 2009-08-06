@@ -1,7 +1,7 @@
 module Loofah
   module HTML
     class Document < Nokogiri::HTML::Document
-      include Loofah::SanitizerInstanceMethods
+      include Loofah::ScrubberInstanceMethods
 
       private
 

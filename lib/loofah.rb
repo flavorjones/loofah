@@ -6,7 +6,7 @@ require 'nokogiri'
 require 'loofah/html5/whitelist'
 require 'loofah/html5/scrub'
 
-require 'loofah/sanitizer'
+require 'loofah/scrubber'
 
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
@@ -27,13 +27,13 @@ require 'loofah/deprecated'
 #   doc = Loofah.fragment(unsafe_html)
 #   doc.is_a? Nokogiri::HTML::DocumentFragment # => true
 #
-# Loofah adds a #sanitize! method, which can clean up your HTML in a few different ways:
+# Loofah adds a #scrub! method, which can clean up your HTML in a few different ways:
 #
-#   doc.sanitize!(:yank)        # replaces unknown/unsafe tags with their inner text
-#   doc.sanitize!(:prune)       # removes  unknown/unsafe tags and their children
-#   doc.sanitize!(:whitewash)   # removes  unknown/unsafe/namespaced tags and their children,
+#   doc.scrub!(:yank)        # replaces unknown/unsafe tags with their inner text
+#   doc.scrub!(:prune)       # removes  unknown/unsafe tags and their children
+#   doc.scrub!(:whitewash)   # removes  unknown/unsafe/namespaced tags and their children,
 #                               # and strips all attributes (good for MS Word HTML)
-#   doc.sanitize!(:escape)      # escapes  unknown/unsafe tags, like this: &lt;script&gt;
+#   doc.scrub!(:escape)      # escapes  unknown/unsafe tags, like this: &lt;script&gt;
 #
 # The above methods simply modify the document in-place. It's not serialized as a string yet!
 #
@@ -41,7 +41,7 @@ require 'loofah/deprecated'
 #
 #   unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
 #
-#   doc = Loofah.fragment(unsafe_html).sanitize!(:yank)
+#   doc = Loofah.fragment(unsafe_html).scrub!(:yank)
 #   doc.to_s    # => "hi! <div>div is safe</div> "
 #
 # and #text to give you the plain text version

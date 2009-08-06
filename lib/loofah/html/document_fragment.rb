@@ -1,7 +1,7 @@
 module Loofah
   module HTML
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
-      include Loofah::SanitizerInstanceMethods
+      include Loofah::ScrubberInstanceMethods
 
       class << self
         def parse tags

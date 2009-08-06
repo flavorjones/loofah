@@ -79,12 +79,12 @@ mso-bidi-language:#0400;}
   end
 
   def test_fragment_whitewash_on_microsofty_markup
-    whitewashed = Loofah.fragment(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    whitewashed = Loofah.fragment(MSWORD_HTML.chomp).scrub!(:whitewash)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 
   def test_document_whitewash_on_microsofty_markup
-    whitewashed = Loofah.document(MSWORD_HTML.chomp).sanitize!(:whitewash)
+    whitewashed = Loofah.document(MSWORD_HTML.chomp).scrub!(:whitewash)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 

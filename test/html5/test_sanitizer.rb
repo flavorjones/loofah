@@ -11,11 +11,11 @@ class Html5TestSanitizer < Test::Unit::TestCase
   include Loofah
 
   def sanitize_xhtml stream
-    Loofah.fragment(stream).sanitize!(:escape).to_xhtml
+    Loofah.fragment(stream).scrub!(:escape).to_xhtml
   end
 
   def sanitize_html stream
-    Loofah.fragment(stream).sanitize!(:escape).to_html
+    Loofah.fragment(stream).scrub!(:escape).to_html
   end
 
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)

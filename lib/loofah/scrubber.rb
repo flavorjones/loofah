@@ -1,16 +1,16 @@
 module Loofah
 
-  module SanitizerInstanceMethods
+  module ScrubberInstanceMethods
 
-    def sanitize!(method)
+    def scrub!(method)
       case method
       when :escape, :prune, :whitewash
         __sanitize_roots.children.each do |node|
-          Sanitizer.traverse_conditionally_top_down(node, method.to_sym)
+          Scrubber.traverse_conditionally_top_down(node, method.to_sym)
         end
       when :yank
         __sanitize_roots.children.each do |node|
-          Sanitizer.traverse_conditionally_bottom_up(node, method.to_sym)
+          Scrubber.traverse_conditionally_bottom_up(node, method.to_sym)
         end
       else
         raise ArgumentError, "unknown sanitize filter '#{method}'"
@@ -30,7 +30,7 @@ module Loofah
     alias :to_str  :inner_text
   end
 
-  module Sanitizer
+  module Scrubber
     class << self
 
       def sanitize(node)

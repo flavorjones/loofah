@@ -36,10 +36,10 @@ For a full explanation, see the rdocs for Loofah.
 
   doc = Loofah.fragment(unsafe_html)
   
-  doc.sanitize!(:prune) # removes unknown/unsafe tags and their children
+  doc.scrub!(:prune)  # removes unknown/unsafe tags and their children
 
-  doc.to_s              # => "ohai! <div>div is safe</div> "
-  doc.text              # => "ohai! div is safe "
+  doc.to_s            # => "ohai! <div>div is safe</div> "
+  doc.text            # => "ohai! div is safe "
 
 == REQUIREMENTS
 

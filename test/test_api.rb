@@ -24,13 +24,13 @@ class TestApi < Test::Unit::TestCase
     assert_html_fragmentish doc
   end
 
-  def test_loofah_document_sanitize!
-    doc = Loofah.document(HTML).sanitize!(:yank)
+  def test_loofah_document_scrub!
+    doc = Loofah.document(HTML).scrub!(:yank)
     assert_html_documentish doc
   end
 
-  def test_loofah_fragment_sanitize!
-    doc = Loofah.fragment(HTML).sanitize!(:yank)
+  def test_loofah_fragment_scrub!
+    doc = Loofah.fragment(HTML).scrub!(:yank)
     assert_html_fragmentish doc
   end
 
