@@ -8,7 +8,7 @@ module Loofah
         __sanitize_roots.children.each do |node|
           Scrubber.traverse_conditionally_top_down(node, method.to_sym)
         end
-      when :yank
+      when :strip
         __sanitize_roots.children.each do |node|
           Scrubber.traverse_conditionally_bottom_up(node, method.to_sym)
         end
@@ -60,7 +60,7 @@ module Loofah
         return true
       end
 
-      def yank(node)
+      def strip(node)
         return false unless sanitize(node)
         replacement_killer = node.before node.inner_html
         node.remove

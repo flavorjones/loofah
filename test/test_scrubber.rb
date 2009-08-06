@@ -12,7 +12,7 @@ class TestScrubber < Test::Unit::TestCase
   INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
   INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
   INVALID_PRUNED   = "<div>quux</div>"
-  INVALID_YANKED   = "foo<p>bar</p>bazz<div>quux</div>"
+  INVALID_STRIPPED = "foo<p>bar</p>bazz<div>quux</div>"
 
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid>"
   WHITEWASH_RESULT   = "<div>foo</div>"
@@ -49,19 +49,19 @@ class TestScrubber < Test::Unit::TestCase
     assert_equal doc, result
   end
 
-  def test_document_yank_bad_tags
+  def test_document_strip_bad_tags
     doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-    result = doc.scrub! :yank
+    result = doc.scrub! :strip
 
-    assert_equal INVALID_YANKED, doc.xpath('/html/body').inner_html
+    assert_equal INVALID_STRIPPED, doc.xpath('/html/body').inner_html
     assert_equal doc, result
   end
 
-  def test_fragment_yank_bad_tags
+  def test_fragment_strip_bad_tags
     doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
-    result = doc.scrub! :yank
+    result = doc.scrub! :strip
 
-    assert_equal INVALID_YANKED, doc.xpath("./div").inner_html
+    assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
     assert_equal doc, result
   end
 

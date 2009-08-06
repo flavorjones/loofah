@@ -29,10 +29,10 @@ require 'loofah/deprecated'
 #
 # Loofah adds a #scrub! method, which can clean up your HTML in a few different ways:
 #
-#   doc.scrub!(:yank)        # replaces unknown/unsafe tags with their inner text
+#   doc.scrub!(:strip)       # replaces unknown/unsafe tags with their inner text
 #   doc.scrub!(:prune)       # removes  unknown/unsafe tags and their children
 #   doc.scrub!(:whitewash)   # removes  unknown/unsafe/namespaced tags and their children,
-#                               # and strips all attributes (good for MS Word HTML)
+#                            #          and strips all attributes (good for MS Word HTML)
 #   doc.scrub!(:escape)      # escapes  unknown/unsafe tags, like this: &lt;script&gt;
 #
 # The above methods simply modify the document in-place. It's not serialized as a string yet!
@@ -41,7 +41,7 @@ require 'loofah/deprecated'
 #
 #   unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
 #
-#   doc = Loofah.fragment(unsafe_html).scrub!(:yank)
+#   doc = Loofah.fragment(unsafe_html).scrub!(:strip)
 #   doc.to_s    # => "hi! <div>div is safe</div> "
 #
 # and #text to give you the plain text version

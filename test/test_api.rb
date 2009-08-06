@@ -25,26 +25,26 @@ class TestApi < Test::Unit::TestCase
   end
 
   def test_loofah_document_scrub!
-    doc = Loofah.document(HTML).scrub!(:yank)
+    doc = Loofah.document(HTML).scrub!(:strip)
     assert_html_documentish doc
   end
 
   def test_loofah_fragment_scrub!
-    doc = Loofah.fragment(HTML).scrub!(:yank)
+    doc = Loofah.fragment(HTML).scrub!(:strip)
     assert_html_fragmentish doc
   end
 
   private
 
   def assert_html_documentish(doc)
-    assert_kind_of Nokogiri::HTML::Document,   doc
-    assert_kind_of Loofah::HTML::Document, doc
+    assert_kind_of Nokogiri::HTML::Document, doc
+    assert_kind_of Loofah::HTML::Document,   doc
     assert_equal HTML, doc.xpath("/html/body").inner_html
   end
 
   def assert_html_fragmentish(doc)
-    assert_kind_of Nokogiri::HTML::DocumentFragment,   doc
-    assert_kind_of Loofah::HTML::DocumentFragment, doc
+    assert_kind_of Nokogiri::HTML::DocumentFragment, doc
+    assert_kind_of Loofah::HTML::DocumentFragment,   doc
     assert_equal HTML, doc.inner_html
   end
 
