@@ -117,21 +117,34 @@ module Loofah
   VERSION = '0.2.0'
 
   # The minimum required version of Nokogiri
-  NOKOGIRI_VERSION = '1.3.3'
+  REQUIRED_NOKOGIRI_VERSION = '1.3.3'
 
   class << self
     # Shortcut for Loofah::HTML::Document.parse
+    # This method accepts the same parameters as Nokogiri::HTML::Document.parse
     def document(*args, &block)
       Loofah::HTML::Document.parse(*args, &block)
     end
 
     # Shortcut for Loofah::HTML::DocumentFragment.parse
+    # This method accepts the same parameters as Nokogiri::HTML::DocumentFragment.parse
     def fragment(*args, &block)
       Loofah::HTML::DocumentFragment.parse(*args, &block)
     end
+
+    # Shortcut for Loofah.fragment(string_or_io).scrub!(method)
+    def scrub_fragment(string_or_io, method)
+      Loofah.fragment(string_or_io).scrub!(method)
+    end
+
+    # Shortcut for Loofah.document(string_or_io).scrub!(method)
+    def scrub_document(string_or_io, method)
+      Loofah.document(string_or_io).scrub!(method)
+    end
+
   end
 end
 
-if Nokogiri::VERSION < Loofah::NOKOGIRI_VERSION
-  raise RuntimeError, "Loofah requires Nokogiri #{Loofah::NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
+if Nokogiri::VERSION < Loofah::REQUIRED_NOKOGIRI_VERSION
+  raise RuntimeError, "Loofah requires Nokogiri #{Loofah::REQUIRED_NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end
