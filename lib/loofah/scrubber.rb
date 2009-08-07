@@ -1,7 +1,12 @@
 module Loofah
-
+  #
+  #  Methods that are mixed into Loofah::HTML::Document and Loofah::HTML::DocumentFragment.
+  #
   module ScrubberInstanceMethods
 
+    #
+    #  Clean up the HTML.
+    #
     def scrub!(method)
       case method
       when :escape, :prune, :whitewash

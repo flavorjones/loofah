@@ -1,11 +1,16 @@
 module Loofah
   module HTML
+    #
+    #  Subclass of Nokogiri::HTML::Document.
+    #
+    #  See Loofah::ScrubberInstanceMethods for additional methods.
+    #
     class Document < Nokogiri::HTML::Document
       include Loofah::ScrubberInstanceMethods
 
       private
 
-      def __sanitize_roots
+      def __sanitize_roots # :nodoc:
         xpath("/html/head","/html/body")
       end
 

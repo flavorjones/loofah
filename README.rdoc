@@ -5,7 +5,7 @@
 
 == DESCRIPTION
 
-Loofah is an HTML sanitizer. It will always fix broken markup, but
+Loofah is an HTML sanitizer. It will *always* fix broken markup, but
 can also sanitize unsafe tags in a few different ways, and transform
 the markup for storage or display.
 
@@ -19,9 +19,9 @@ Internet Experts.</small>
 
 == FEATURES
 
-* Yank unsafe tags, leaving behind only the inner text.
-* Prune unsafe tags' subtrees, removing all traces that it ever existed.
-* Escape unsafe tags, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
+* Strip unsafe tags, leaving behind only the inner text.
+* Prune unsafe tags and their subtrees, removing all traces that they ever existed.
+* Escape unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
 * Whitewash the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
 * Rails ActiveRecord extension.

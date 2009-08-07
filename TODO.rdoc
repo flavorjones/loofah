@@ -1,5 +1,9 @@
-# TODO #
+= TODO
 
-* allow devs to implement their own sanitizations
-  * implement a proper visitor pattern
-  * make internal loofah methods available
+* Allow developers to implement their own sanitizations.
+  * Implement a proper visitor pattern.
+  * Make internal loofah methods available.
+
+* Allow a <tt>text</tt> option to insert nice newlines after headers and block elements.
+
+* <tt>to_markdown<tt>

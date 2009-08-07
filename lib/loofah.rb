@@ -20,12 +20,12 @@ require 'loofah/deprecated'
 # works, you might want to pause for a moment and go check it out. I'll
 # wait.
 #
-# Loofah subclasses Nokogiri::HTML::Document and ::DocumentFragment,
+# A Loofah::HTML::Document is a subclass of Nokogiri::HTML::Document,
 # so as soon as you parse your document, you get all the markup
 # fixer-uppery and excellent API that Nokogiri gives you.
 #
-#   doc = Loofah.fragment(unsafe_html)
-#   doc.is_a? Nokogiri::HTML::DocumentFragment # => true
+#   Loofah.document(unsafe_html).is_a?(Nokogiri::HTML::Document)         # => true
+#   Loofah.fragment(unsafe_html).is_a?(Nokogiri::HTML::DocumentFragment) # => true
 #
 # Loofah adds a #scrub! method, which can clean up your HTML in a few different ways:
 #
@@ -37,17 +37,21 @@ require 'loofah/deprecated'
 #
 # The above methods simply modify the document in-place. It's not serialized as a string yet!
 #
-# Loofah also overrides #to_s to give you your html back:
+# Loofah overrides +to_s+ to return html:
 #
 #   unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
 #
 #   doc = Loofah.fragment(unsafe_html).scrub!(:strip)
 #   doc.to_s    # => "hi! <div>div is safe</div> "
 #
-# and #text to give you the plain text version
+# and +text+ to return plain text:
 #
 #   doc.text    # => "hi! div is safe "
 #
+# Or, if you prefer, you can use the shorthand methods:
+#
+#   Loofah.scrub_fragment(:prune, unsafe_html).to_s
+#   Loofah.scrub_document(:strip, unsafe_html).to_s
 #
 # == Usage
 #
@@ -55,62 +59,72 @@ require 'loofah/deprecated'
 #
 # Let's also say some script-kiddie from Norland posts this to your site, in an effort to swipe some credit cards:
 #
-#     <SCRIPT SRC=http://ha.ckers.org/xss.js></SCRIPT>
+#     <script src=http://ha.ckers.org/xss.js></script>
 #
 # Oooh, that could be bad. Here's how to fix it:
 #
-#     safe_html_snippet = Loofah.sanitize(dangerous_html_snippet)
+#     safe_html = Loofah.fragment(dangerous_html).scrub!(:escape).to_s
 #
-# Yeah, it's that easy.
+#     # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
 #
-# In this example, <tt>safe\_html\_snippet</tt> will have all of its <b>broken markup fixed</b> by libxml2, and it will also be completely <b>sanitized of harmful tags and attributes</b>. That's twice as clean!
+# That statement is more complex than the one-shot methods provided by other sanitizing libraries, but that's because Loofah gives you more flexibility. For example, you can retrieve the sanitized markup in both HTML and plain-text formats without incurring the overhead of multiple parsings:
 #
+#     safe_fragment = Loofah.fragment(dangerous_html).scrub!(:strip)
+#     safe_fragment.to_s    # => HTML output
+#     safe_fragment.text    # => plain text output
 #
-# == Sanitization Usage
+# And you can do your own munging using Nokogiri's API, if you like:
 #
-# You're still here? Ok, let me tell you a little something about the two different methods of sanitizing the Loofah offers.
+#     stylized_fragment = Loofah.fragment(dangerous_html).scrub!(:strip) \ 
+#                           .xpath("//a/text()").wrap("<span></span>")
 #
-# === Fragments
+# === Parsing, and Fragments vs Documents
 #
-# The first method is for _html fragments_, which are small snippets of markup such as those used in forum posts, emails and homework assignments.
+# Generally speaking, unless you expect to have \&lt;html\&gt; and \&lt;body\&gt; tags in your HTML, you don't have a *document*, you have a *fragment*.
 #
-# Usage is the same as above:
+# For parsing fragments, you should use Loofah.fragment. Nokogiri won't wrap the result in +html+ and +body+ tags, and will ignore +head+ elements.
 #
-#     safe_html_snippet = Loofah.sanitize(dangerous_html_snippet)
+# Full HTML documents should be parsed with Loofah.document.
 #
-# Generally speaking, unless you expect to have &lt;html&gt; and &lt;body&gt; tags in your HTML, this is the sanitizing method to use.
+# Here's a cool feature: Loofah.document and Loofah.fragment accept any IO object in addition to accepting a string. That IO object could be a file, or a socket, or a StringIO, or anything that responds to +read+ and +close+. Which makes it particularly easy to sanitize mass quantities of docs.
 #
-# The only real limitation on this method is that the snippet must be a string object. (Support for IO objects was sacrificed at the altar of fixer-uppery-ness. If you need to sanitize data that's coming from an IO object, either socket or file, check out the next section on __Documents__).
+# === scrub!(:strip)
 #
-# === Documents
+#     unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
+#     Loofah.fragment(unsafe_html).scrub!(:strip)
 #
-# Sometimes you need to sanitize an entire HTML document. (Well, maybe not _you_, but other people, certainly.)
+#     => "hi! <div>div is safe</div> but script is not"
 #
-#     safe_html_document = Loofah.sanitize_document(dangerous_html_document)
+# === scrub!(:prune)
 #
-# The returned string will contain exactly one (1) well-formed HTML document, with all broken HTML fixed and all harmful tags and attributes removed.
+#     unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
+#     Loofah.fragment(unsafe_html).scrub!(:strip)
 #
-# Coolness: <tt>dangerous\_html\_document</tt> can be a string OR an IO object (a file, or a socket, or ...). Which makes it particularly easy to sanitize large numbers of docs.
+#     => "hi! <div>div is safe</div> "
 #
-# == Whitewashing Usage
+# === scrub!(:escape)
 #
-# === Whitewashing Fragments
+#     unsafe_html = "hi! <div>div is safe</div> <script>but script is not</script>"
+#     Loofah.fragment(unsafe_html).scrub!(:strip)
 #
-# Other times, you may want to remove all styling, attributes and invalid HTML tags. I like to call this "whitewashing", since it's putting a new layer of paint on top of the HTML input to make it look nice.
+#     => "hi! <div>div is safe</div> &lt;script&gt;but script is not&lt;/script&gt;"
 #
-# One use case for this feature is to clean up HTML that was cut-and-pasted from Microsoft(tm) Word into a WYSIWYG editor/textarea. Microsoft's editor is famous for injecting all kinds of cruft into its HTML output. Who needs that? Certainly not me.
+# === scrub!(:whitewash)
 #
-#     whitewashed_html = Loofah.whitewash(ugly_microsoft_html_snippet)
+#     unsafe_html = "hi! <div font='bleargh' style='margin: 10px'>div is heavily styled</div>"
+#     Loofah.fragment(unsafe_html).scrub!(:whitewash)
 #
-# Please note that whitewashing implicitly also sanitizes your HTML, as it uses the same HTML tag whitelist as <tt>sanitize()</tt>. It's implementation is:
+#     => "hi! <div>div is heavily styled</div>"
 #
-#  1. unless the tag is on the whitelist, remove it from the document
-#  2. if the tag has an XML namespace on it, remove it from the document
-#  2. remove all attributes from the node
+# +:whitewash+ removes all comments, styling and attributes in
+# addition to doing markup-fixer-uppery and pruning unsafe tags. I
+# like to call this "whitewashing", since it's like putting a new
+# layer of paint on top of the HTML input to make it look nice.
 #
-# === Whitewashing Documents
-#
-# Also note the existence of <tt>whitewash\_document</tt>, which is analogous to <tt>sanitize\_document</tt>.
+# One use case for this feature is to clean up HTML that was
+# cut-and-pasted from Microsoft Word into a WYSIWYG editor or a rich
+# text editor. Microsoft's software is famous for injecting all kinds
+# of cruft into its HTML output. Who needs that? Certainly not me.
 #
 module Loofah
   # The version of Loofah you are using
