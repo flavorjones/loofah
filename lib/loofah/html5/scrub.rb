@@ -6,6 +6,7 @@ module Loofah
 
       class << self
 
+        #  alternative implementation of the html5lib attribute scrubbing algorithm
         def scrub_attributes(node)
           node.attribute_nodes.each do |attr_node|
             attr_name = if attr_node.namespace
@@ -33,7 +34,7 @@ module Loofah
           end
         end
 
-        #  this liftend nearly verbatim from html5
+        #  lifted nearly verbatim from html5lib
         def scrub_css(style)
           # disallow urls
           style = style.to_s.gsub(/url\s*\(\s*[^\s)]+?\s*\)\s*/, ' ')

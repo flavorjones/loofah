@@ -1,48 +1,48 @@
 module Loofah
   module HTML5
     #
-    #  HTML whitelist lifted from HTML5 sanitizer code
+    #  HTML whitelist lifted from HTML5lib sanitizer code:
+    #
     #    http://code.google.com/p/html5lib/
     #
+    # <html5_license>
+    #
+    #   Copyright (c) 2006-2008 The Authors
+    #
+    #   Contributors:
+    #   James Graham - jg307@cam.ac.uk
+    #   Anne van Kesteren - annevankesteren@gmail.com
+    #   Lachlan Hunt - lachlan.hunt@lachy.id.au
+    #   Matt McDonald - kanashii@kanashii.ca
+    #   Sam Ruby - rubys@intertwingly.net
+    #   Ian Hickson (Google) - ian@hixie.ch
+    #   Thomas Broyer - t.broyer@ltgt.net
+    #   Jacques Distler - distler@golem.ph.utexas.edu
+    #   Henri Sivonen - hsivonen@iki.fi
+    #   The Mozilla Foundation (contributions from Henri Sivonen since 2008)
+    #
+    #   Permission is hereby granted, free of charge, to any person
+    #   obtaining a copy of this software and associated documentation
+    #   files (the "Software"), to deal in the Software without
+    #   restriction, including without limitation the rights to use, copy,
+    #   modify, merge, publish, distribute, sublicense, and/or sell copies
+    #   of the Software, and to permit persons to whom the Software is
+    #   furnished to do so, subject to the following conditions:
+    #
+    #   The above copyright notice and this permission notice shall be
+    #   included in all copies or substantial portions of the Software.
+    #
+    #   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    #   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    #   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    #   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    #   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    #   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    #   DEALINGS IN THE SOFTWARE.
+    #
+    # </html5_license>
     module WhiteList
-      # <html5_license>
-      #
-      #   Copyright (c) 2006-2008 The Authors
-      #
-      #   Contributors:
-      #   James Graham - jg307@cam.ac.uk
-      #   Anne van Kesteren - annevankesteren@gmail.com
-      #   Lachlan Hunt - lachlan.hunt@lachy.id.au
-      #   Matt McDonald - kanashii@kanashii.ca
-      #   Sam Ruby - rubys@intertwingly.net
-      #   Ian Hickson (Google) - ian@hixie.ch
-      #   Thomas Broyer - t.broyer@ltgt.net
-      #   Jacques Distler - distler@golem.ph.utexas.edu
-      #   Henri Sivonen - hsivonen@iki.fi
-      #   The Mozilla Foundation (contributions from Henri Sivonen since 2008)
-      #
-      #   Permission is hereby granted, free of charge, to any person
-      #   obtaining a copy of this software and associated documentation
-      #   files (the "Software"), to deal in the Software without
-      #   restriction, including without limitation the rights to use, copy,
-      #   modify, merge, publish, distribute, sublicense, and/or sell copies
-      #   of the Software, and to permit persons to whom the Software is
-      #   furnished to do so, subject to the following conditions:
-      #
-      #   The above copyright notice and this permission notice shall be
-      #   included in all copies or substantial portions of the Software.
-      #
-      #   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-      #   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-      #   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-      #   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-      #   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-      #   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-      #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-      #   DEALINGS IN THE SOFTWARE.
-      #
-      # </html5_license>
-
       ACCEPTABLE_ELEMENTS = %w[a abbr acronym address area b big blockquote br
       button caption center cite code col colgroup dd del dfn dir div dl dt
       em fieldset font form h1 h2 h3 h4 h5 h6 hr i img input ins kbd label
@@ -154,8 +154,10 @@ module Loofah
       ]
     end      
 
+    #
+    #  The HTML5lib whitelist arrays, transformed into hashes for faster lookup.
+    #
     module HashedWhiteList
-      #  turn each of the whitelist arrays into a hash for faster lookup
       WhiteList.constants.each do |constant|
         next unless WhiteList.module_eval("#{constant}").is_a?(Array)
         module_eval <<-CODE
