@@ -1,7 +1,7 @@
 = Loofah
 
 * http://rubyforge.org/projects/loofah
-* http://github.com/mdalessio/loofah
+* http://github.com/flavorjones/loofah
 
 (Formerly (un)known as Dryopteris)
 
