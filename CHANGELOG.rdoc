@@ -2,8 +2,9 @@
 
 == HEAD
 
-* Hip new name. My agent said <tt>Dryopteris</tt> would never sell out the Copa.
-* Swank new API. Check out my rdocs.
+* Hip new name. (My agent said <tt>Dryopteris</tt> would never sell out the Copa.)
+* Swank new API.
+* Documentation! Hey!
 * Reimplemented to use Nokogiri's <tt>Document</tt> and <tt>DocumentFragment</tt> for parsing.
 * Updated HTML5lib codes and tests to revision 1384:b9d3153d7be7.
 

@@ -5,7 +5,7 @@ module Loofah
   module ScrubberInstanceMethods
 
     #
-    #  Clean up the HTML.
+    #  Clean up the HTML. See Loofah for full usage.
     #
     def scrub!(method)
       case method
@@ -23,16 +23,22 @@ module Loofah
       self
     end
 
+    #
+    #  Returns the HTML markup contained by the fragment or document
+    #
     def to_s
       __sanitize_roots.children.to_s
     end
     alias :serialize :to_s
 
-    def inner_text
+    #
+    #  Returns a plain-text version of the markup contained by the fragment or document
+    #
+    def text
       __sanitize_roots.children.inner_text
     end
-    alias :text    :inner_text
-    alias :to_str  :inner_text
+    alias :inner_text :text
+    alias :to_str     :text
   end
 
   module Scrubber
