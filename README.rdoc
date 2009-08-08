@@ -27,7 +27,7 @@ Internet Experts.</small>
 * Whitewash the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
 * Rails ActiveRecord extension.
-* 99 <sup>44</sup>\&frasl;<sub>100</sub>% Tenderlove-free
+* 99 44/100 % Tenderlove-free
 
 == SYNOPSIS
 
