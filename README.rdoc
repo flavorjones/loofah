@@ -3,6 +3,8 @@
 * http://rubyforge.org/projects/loofah
 * http://github.com/mdalessio/loofah
 
+(Formerly (un)known as Dryopteris)
+
 == DESCRIPTION
 
 Loofah is an HTML sanitizer. It will *always* fix broken markup, but
@@ -12,9 +14,9 @@ the markup for storage or display.
 It's built on top of Nokogiri[http://nokogiri.org] and
 libxml2[http://xmlsoft.org/], so it's fast. And it uses
 html5lib's[http://code.google.com/p/html5lib/] whitelist, so it most
-likely won't make your codes less secure.<sup>*</sup>
+likely won't make your codes less secure.*
 
-<small><sup>*</sup> These statements have not been evaluated by
+<small>* These statements have not been evaluated by
 Internet Experts.</small>
 
 == FEATURES
