@@ -26,8 +26,8 @@ Internet Experts.</small>
 * Escape unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
 * Whitewash the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
-* Rails ActiveRecord extension.
-* 99 44/100 % Tenderlove-free
+* ActiveRecord extension.
+* 99 44/100 % Tenderlove-free!
 
 == SYNOPSIS
 
@@ -45,6 +45,22 @@ OR
   doc.scrub!(:prune)                  # ... with one extra method
   doc.to_s                            # => "ohai! <div>div is safe</div> "
   doc.text                            # => "ohai! div is safe "
+
+=== ACTIVERECORD
+
+  # in environment.rb
+  require 'loofah/active_record'
+
+  # db/schema.rb
+  create_table "posts" do |t|
+    t.string  "title"
+    t.string  "body"
+  end
+
+  # app/model/post.rb
+  class Post < ActiveRecord::Base
+    html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_save
+  end
 
 == REQUIREMENTS
 
