@@ -1,5 +1,6 @@
 = Loofah
 
+* http://loofah.rubyforge.org/
 * http://rubyforge.org/projects/loofah
 * http://github.com/flavorjones/loofah
 
