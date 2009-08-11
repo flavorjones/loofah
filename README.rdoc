@@ -3,21 +3,19 @@
 * http://rubyforge.org/projects/loofah
 * http://github.com/flavorjones/loofah
 
-(Formerly (un)known as Dryopteris)
-
 == DESCRIPTION
 
 Loofah is an HTML sanitizer. It will *always* fix broken markup, but
 can also sanitize unsafe tags in a few different ways, and transform
 the markup for storage or display.
 
-It's built on top of Nokogiri[http://nokogiri.org] and
-libxml2[http://xmlsoft.org/], so it's fast. And it uses
-html5lib's[http://code.google.com/p/html5lib/] whitelist, so it most
-likely won't make your codes less secure.*
+It's built on top of Nokogiri and libxml2, so it's fast. And it uses
+html5lib's whitelist, so it most likely won't make your codes less
+secure.
 
-<small>* These statements have not been evaluated by
-Internet Experts.</small>
+(These statements have not been evaluated by Internet Experts.)
+
+This library was formerly known as Dryopteris.
 
 == FEATURES
 
@@ -46,9 +44,9 @@ OR
   doc.to_s                            # => "ohai! <div>div is safe</div> "
   doc.text                            # => "ohai! div is safe "
 
-=== ACTIVERECORD
+=== ACTIVERECORD EXTENSION
 
-  # in environment.rb
+  # config/environment.rb
   require 'loofah/active_record'
 
   # db/schema.rb
@@ -73,6 +71,24 @@ Unsurprisingly:
 
 * gem install loofah
 
+== SUPPORT
+
+The bug tracker is available here:
+
+  * http://github.com/flavorjones/loofah/issues
+
+You can also try the Nokogiri mailing list:
+
+  * http://groups.google.com/group/nokogiri-talk
+
+And the IRC channel is #nokogiri on freenode.
+
+== RELATED LINKS
+
+* Nokogiri: http://nokogiri.org/
+* libxml2: http://xmlsoft.org/
+* html5lib: http://code.google.com/p/html5lib/
+
 == AUTHORS
 
 * {Mike Dalessio}[mailto:mike.dalessio@gmail.com]
@@ -84,7 +100,6 @@ Featuring code contributed by:
 * John Barnette
 * Josh Owens
 * Paul Dix
-
 
 == LICENSE
 
