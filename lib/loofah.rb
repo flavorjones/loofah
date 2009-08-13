@@ -195,3 +195,9 @@ end
 if Nokogiri::VERSION < Loofah::REQUIRED_NOKOGIRI_VERSION
   raise RuntimeError, "Loofah requires Nokogiri #{Loofah::REQUIRED_NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end
+
+if defined? Rails.configuration
+  Rails.configuration.after_initialize do
+    require 'loofah/active_record'
+  end
+end
