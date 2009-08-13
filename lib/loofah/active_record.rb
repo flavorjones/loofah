@@ -16,7 +16,7 @@ module Loofah
   #     html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_save
   #   end
   #
-  module ActiveRecord
+  module ActiveRecordExtension
     #
     #  scrub an ActiveRecord attribute +attr+ as an HTML fragment
     #  using the method specified in the required +:scrub+ option.
@@ -41,4 +41,4 @@ module Loofah
   end
 end
 
-ActiveRecord::Base.extend(Loofah::ActiveRecord)
+ActiveRecord::Base.extend(Loofah::ActiveRecordExtension)
