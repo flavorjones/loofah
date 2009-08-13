@@ -35,11 +35,15 @@ end
 BIG_FILE = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
 FRAGMENT = File.read(File.join(File.dirname(__FILE__), "fragment.html"))
 
-def bench(content, ntimes)
+def bench(content, ntimes, fragment_p)
   Benchmark.bm(15) do |x|
     x.report('Loofah') do
       ntimes.times do
-        Loofah.sanitize(content)
+        if fragment_p
+          Loofah.scrub_fragment(content, :escape)
+        else
+          Loofah.scrub_document(content, :escape)
+        end
       end
     end
     
@@ -67,6 +71,8 @@ def bench(content, ntimes)
   end
 end
 
-#bench BIG_FILE, 100
-bench FRAGMENT, 1000
+puts "Large document (x100)  =========="
+bench BIG_FILE, 100, false
+puts "Small fragment (x1000) =========="
+bench FRAGMENT, 1000, true
  
