@@ -82,17 +82,17 @@ class TestScrubber < Test::Unit::TestCase
   end
 
   def test_fragment_shortcut
-    doc = mock
-    Loofah.expects(:fragment).with(:string_or_io).returns(doc)
-    doc.expects(:scrub!).with(:method)
+    mock_doc = mock
+    Loofah.expects(:fragment).with(:string_or_io).returns(mock_doc)
+    mock_doc.expects(:scrub!).with(:method)
 
     Loofah.scrub_fragment(:string_or_io, :method)
   end
 
   def test_document_shortcut
-    doc = mock
-    Loofah.expects(:document).with(:string_or_io).returns(doc)
-    doc.expects(:scrub!).with(:method)
+    mock_doc = mock
+    Loofah.expects(:document).with(:string_or_io).returns(mock_doc)
+    mock_doc.expects(:scrub!).with(:method)
 
     Loofah.scrub_document(:string_or_io, :method)
   end

@@ -1,21 +1,55 @@
 module Loofah
   #
-  #  A drop-in replacement for XssTerminate[http://github.com/look/xss_terminate/tree/master],
-  #  XssFoliate will strip all tags from your 
+  #  A replacement for
+  #  XssTerminate[http://github.com/look/xss_terminate/tree/master],
+  #  XssFoliate will strip all tags from your ActiveRecord models'
+  #  string and text attributes.
+  #
+  #  Please read the documentation for the Loofah module for an
+  #  explanation of the different scrubbing methods.
+  #
+  #  If you would like to pick and choose the models that are scrubbed:
+  #
+  #    # config/environment.rb
+  #    require 'loofah/xss_foliate'
+  #
+  #    # db/schema.rb
+  #    create_table "posts" do |t|
+  #      t.string  "title"
+  #      t.text    "body"
+  #    end
+  #    
+  #    # app/model/post.rb
+  #    class Post < ActiveRecord::Base
+  #      xss_foliate  # scrub both title and body down to their inner text
+  #    end
+  #
+  #    OR
+  # 
+  #      xss_foliate :strip => [:title, body]  # strip unsafe tags from both title and body
+  #
+  #    OR
+  # 
+  #      xss_foliate :except => :title         # scrub body but not title
+  #
+  #    OR
+  # 
+  #      # remove all tags from title, remove unsafe tags from body
+  #      xss_foliate :sanitize => [:title], :scrub => [:body]
+  #
+  #    OR
+  #
+  #      # old xss_terminate code will work if you s/_terminate/_foliate/
+  #      # was: xss_terminate :except => [:title], :sanitize => [:body]
+  #      xss_foliate :except => [:title], :sanitize => [:body]
+  #
+  # Alternatively, if you'd like to scrub all fields in all your models:
+  #
+  #    # config/environment.rb
+  #    require 'loofah/xss_foliate'
+  #    ActiveRecord::Base.xss_foliate_all
   #
   module XssFoliate
-    #
-    #  Call this method from your rails environment.rb or initializers
-    #  to xss_foliate all of your models.
-    #
-    #  The default is to remove all HTML tags from the text and string
-    #  attributes. If you'd like to skip a field or scrub it differently,
-    #  use xss_foliate with approprate options.
-    #
-    def self.include_in_active_record_base
-      ActiveRecord::Base.send(:include, Loofah::XssFoliate)
-    end
-
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
       # sets up default of stripping tags for all fields
@@ -23,32 +57,58 @@ module Loofah
     end
 
     module ClassMethods
+      VALID_OPTIONS = [:except, :strip, :escape, :prune, :text, :html5lib_sanitize, :sanitize]
+      ALIASED_OPTIONS = {:html5lib_sanitize => :escape, :sanitize => :strip}
+      REAL_OPTIONS = VALID_OPTIONS - ALIASED_OPTIONS.keys
+
       #
       #  Annotate your model with this method to specify which fields
-      #  you want scrubbed, and how you want them scrubbed.
+      #  you want scrubbed, and how you want them scrubbed. XssFoliate
+      #  assumes all fields are HTLM fragments (as opposed to full
+      #  documents, see Loofah for a full explanation of the
+      #  difference).
       #
       #  Options:
-      #  * :except => [array_of_fields_to_not_scrub]
-      #  * :strip => [array_of_fields_to_strip_unsafe_html_tags_from]
-      #  * :escape => [array_of_fields_to_escape_unsafe_html_tags_from]
-      #  * :html5lib_sanitize => [array_of_fields_to_escape_unsafe_html_tags_from]
-      #  * :sanitize => [array_of_fields_to_strip_ALL_html_tags_from]
+      #  * :except => [fields] # don't scrub these fields
+      #  * :strip  => [fields] # strip unsafe tags from these fields
+      #  * :escape => [fields] # escape unsafe tags from these fields
+      #  * :prune  => [fields] # prune unsafe tags and subtrees from these fields
+      #  * :text   => [fields] # remove everything except the inner text from these fields
       #
-      #  The default is :sanitize for all fields
+      #  XssTerminate compatibility options:
+      #  * :html5lib_sanitize => [fields] # same as :escape
+      #  * :sanitize => [fields]          # same as :strip
+      #  * the default behavior in XssTerminate corresponds to :text
+      #
+      #  The default is :text for all fields unless otherwise specified.
       #
       def xss_foliate(options = {})
         unless callback_already_registered?
-          before_validation :xss_foliate_fields
+          before_validation        :xss_foliate_fields
           class_inheritable_reader :xss_foliate_options
           include Loofah::XssFoliate::InstanceMethods
         end
 
+        options.keys.each do |option|
+          unless VALID_OPTIONS.include?(option)
+            raise ArgumentError, "unknown xss_foliate option #{option}"
+          end
+        end
+
+        REAL_OPTIONS.each { |option| options[option] = Array(options[option]) }
+
+        ALIASED_OPTIONS.each do |option, real|
+          if options[option]
+            options[real] += Array(options.delete(option))
+          end
+        end
+
         write_inheritable_attribute(:xss_foliate_options, {
-            :except => (options[:except] || []),
-            :strip => (options[:strip] || []),
-            :escape => (options[:escape] || []),
-            :html5lib_sanitize => (options[:html5lib_sanitize] || []),
-            :sanitize => (options[:sanitize] || [])
+            :except => options[:except],
+            :strip  => options[:strip],
+            :escape => options[:escape],
+            :prune  => options[:prune],
+            :text   => options[:text]
           })
       end
 
@@ -82,20 +142,27 @@ module Loofah
             fragment = Loofah.scrub_fragment(value, :strip)
             self[field] = fragment.nil? ? "" : fragment.to_s
 
+          elsif xss_foliate_options[:prune].include?(field)
+            fragment = Loofah.scrub_fragment(value, :prune)
+            self[field] = fragment.nil? ? "" : fragment.to_s
+
           elsif xss_foliate_options[:escape].include?(field)
             fragment = Loofah.scrub_fragment(value, :escape)
             self[field] = fragment.nil? ? "" : fragment.to_s
-          elsif xss_foliate_options[:html5lib_sanitize].include?(field)
-            fragment = Loofah.scrub_fragment(value, :escape)
-            self[field] = fragment.nil? ? "" : fragment.to_s
 
-          else # sanitize and use inner_html
+          else # :text
             fragment = Loofah.scrub_fragment(value, :strip)
             self[field] = fragment.nil? ? "" : fragment.text
           end
         end
         
       end
+    end
+  end
+
+  module ActiveRecordXssFoliate
+    def xss_foliate
+      ActiveRecord::Base.send(:include, Loofah::XssFoliate)
     end
   end
 end
