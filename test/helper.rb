@@ -1,7 +1,7 @@
-require 'test/unit'
 require 'rubygems'
-require 'mocha'
+require 'test/unit'
 require 'shoulda'
+require 'mocha'
 require 'acts_as_fu'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "loofah"))
 

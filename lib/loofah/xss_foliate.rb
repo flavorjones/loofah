@@ -8,7 +8,13 @@ module Loofah
   #  Please read the documentation for the Loofah module for an
   #  explanation of the different scrubbing methods.
   #
-  #  If you would like to pick and choose the models that are scrubbed:
+  #  If you'd like to scrub all fields in all your models:
+  #
+  #    # config/environment.rb
+  #    require 'loofah/xss_foliate'
+  #    ActiveRecord::Base.xss_foliate
+  #
+  #  Alternatively, if you would like to pick and choose the models that are scrubbed:
   #
   #    # config/environment.rb
   #    require 'loofah/xss_foliate'
@@ -24,66 +30,61 @@ module Loofah
   #      xss_foliate  # scrub both title and body down to their inner text
   #    end
   #
-  #    OR
+  #  OR
   # 
   #      xss_foliate :strip => [:title, body]  # strip unsafe tags from both title and body
   #
-  #    OR
+  #  OR
   # 
   #      xss_foliate :except => :title         # scrub body but not title
   #
-  #    OR
+  #  OR
   # 
   #      # remove all tags from title, remove unsafe tags from body
   #      xss_foliate :sanitize => [:title], :scrub => [:body]
   #
-  #    OR
+  #  OR
   #
   #      # old xss_terminate code will work if you s/_terminate/_foliate/
   #      # was: xss_terminate :except => [:title], :sanitize => [:body]
   #      xss_foliate :except => [:title], :sanitize => [:body]
   #
-  # Alternatively, if you'd like to scrub all fields in all your models:
-  #
-  #    # config/environment.rb
-  #    require 'loofah/xss_foliate'
-  #    ActiveRecord::Base.xss_foliate_all
-  #
   module XssFoliate
+    VALID_OPTIONS = [:except, :strip, :escape, :prune, :text, :html5lib_sanitize, :sanitize]
+    ALIASED_OPTIONS = {:html5lib_sanitize => :escape, :sanitize => :strip}
+    REAL_OPTIONS = VALID_OPTIONS - ALIASED_OPTIONS.keys
+
     def self.included(base) # :nodoc:
-      base.extend(ClassMethods)
       # sets up default of stripping tags for all fields
       base.send(:xss_foliate)
     end
 
     module ClassMethods
-      VALID_OPTIONS = [:except, :strip, :escape, :prune, :text, :html5lib_sanitize, :sanitize]
-      ALIASED_OPTIONS = {:html5lib_sanitize => :escape, :sanitize => :strip}
-      REAL_OPTIONS = VALID_OPTIONS - ALIASED_OPTIONS.keys
-
       #
       #  Annotate your model with this method to specify which fields
       #  you want scrubbed, and how you want them scrubbed. XssFoliate
-      #  assumes all fields are HTLM fragments (as opposed to full
+      #  assumes all fields are HTML fragments (as opposed to full
       #  documents, see Loofah for a full explanation of the
       #  difference).
       #
       #  Options:
-      #  * :except => [fields] # don't scrub these fields
-      #  * :strip  => [fields] # strip unsafe tags from these fields
-      #  * :escape => [fields] # escape unsafe tags from these fields
-      #  * :prune  => [fields] # prune unsafe tags and subtrees from these fields
-      #  * :text   => [fields] # remove everything except the inner text from these fields
       #
-      #  XssTerminate compatibility options:
-      #  * :html5lib_sanitize => [fields] # same as :escape
-      #  * :sanitize => [fields]          # same as :strip
-      #  * the default behavior in XssTerminate corresponds to :text
+      #   * :except => [fields] # don't scrub these fields
+      #   * :strip  => [fields] # strip unsafe tags from these fields
+      #   * :escape => [fields] # escape unsafe tags from these fields
+      #   * :prune  => [fields] # prune unsafe tags and subtrees from these fields
+      #   * :text   => [fields] # remove everything except the inner text from these fields
+      #
+      #  XssTerminate compatibility options (note that the default
+      #  behavior in XssTerminate corresponds to :text)
+      #
+      #   * :html5lib_sanitize => [fields] # same as :escape
+      #   * :sanitize          => [fields] # same as :strip
       #
       #  The default is :text for all fields unless otherwise specified.
       #
       def xss_foliate(options = {})
-        unless callback_already_registered?
+        unless before_validation_callback_chain.any? {|cb| cb.method == :xss_foliate_fields}
           before_validation        :xss_foliate_fields
           class_inheritable_reader :xss_foliate_options
           include Loofah::XssFoliate::InstanceMethods
@@ -112,12 +113,6 @@ module Loofah
           })
       end
 
-      private
-
-      def callback_already_registered? # :nodoc:
-        return false if before_validation_callback_chain.empty?
-        before_validation_callback_chain.any? {|cb| cb.method == :xss_foliate_fields}
-      end
     end
     
     module InstanceMethods
@@ -160,9 +155,6 @@ module Loofah
     end
   end
 
-  module ActiveRecordXssFoliate
-    def xss_foliate
-      ActiveRecord::Base.send(:include, Loofah::XssFoliate)
-    end
-  end
 end
+
+ActiveRecord::Base.extend(Loofah::XssFoliate::ClassMethods)
