@@ -28,6 +28,10 @@ This library was formerly known as Dryopteris.
 * ActiveRecord extension.
 * 99 44/100 % Tenderlove-free!
 
+Here is a speed test comparing Loofah to other commonly-used sanitization libraries:
+
+* http://gist.github.com/170193
+
 == SYNOPSIS
 
 For a full explanation, see the documentation for Loofah.
