@@ -1,39 +1,9 @@
 #!/usr/bin/env ruby
-require 'rubygems'
-require 'open-uri'
-require 'hpricot'
-require File.expand_path(File.dirname(__FILE__) + "/../lib/loofah")
-require 'benchmark'
-require "action_view"
-require "action_controller/vendor/html-scanner"
-require "sanitize"
-
-class RailsSanitize
-  include ActionView::Helpers::SanitizeHelper
-  extend ActionView::Helpers::SanitizeHelper::ClassMethods
-end
-
-class HTML5libSanitize
-  require 'html5/html5parser'
-  require 'html5/liberalxmlparser'
-  require 'html5/treewalkers'
-  require 'html5/treebuilders'
-  require 'html5/serializer'
-  require 'html5/sanitizer'
-
-  include HTML5
-
-  def sanitize(html)
-    HTMLParser.parse_fragment(html, {
-      :tokenizer  => HTMLSanitizer,
-      :encoding   => 'utf-8',
-      :tree       => TreeBuilders::REXML::TreeBuilder
-    }).to_s
-  end
-end
+require "#{File.dirname(__FILE__)}/helper.rb"
 
 BIG_FILE = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
 FRAGMENT = File.read(File.join(File.dirname(__FILE__), "fragment.html"))
+SNIPPET = "This is typical form field input in <b>length and content."
 
 def bench(content, ntimes, fragment_p)
   Benchmark.bm(15) do |x|
@@ -75,4 +45,5 @@ puts "Large document, #{BIG_FILE.length} bytes (x100)"
 bench BIG_FILE, 100, false
 puts "Small fragment, #{FRAGMENT.length} bytes (x1000)"
 bench FRAGMENT, 1000, true
- 
+puts "Text snippet, #{SNIPPET.length} bytes (x10000)"
+bench SNIPPET, 10000, true
