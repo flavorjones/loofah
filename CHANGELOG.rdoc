@@ -5,11 +5,14 @@
 Enhancements:
 
 * when loaded in a Rails app, automatically extend ActiveRecord::Base
-  with html_fragment and html_document (Thanks Josh Nichols!)
+  with html_fragment and html_document. GH #6 (Thanks Josh Nichols!)
 
 Bugfixes:
 
-* init.rb fixed to support installation as a Rails plugin (Thanks Josh Nichols!)
+* ActiveRecord scrubbing generates strings instead of Document or
+  DocumentFragment objects. GH #5
+* init.rb fixed to support installation as a Rails plugin. GH #6
+  (Thanks Josh Nichols!)
 
 
 == 0.2.0

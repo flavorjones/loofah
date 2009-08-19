@@ -103,6 +103,7 @@ Featuring code contributed by:
 * John Barnette
 * Josh Owens
 * Paul Dix
+* Josh Nichols
 
 == LICENSE
 
