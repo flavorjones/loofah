@@ -1,6 +1,6 @@
 = Changelog
 
-== HEAD
+== 0.2.1 (2009-09-19)
 
 Enhancements:
 
@@ -9,13 +9,12 @@ Enhancements:
 
 Bugfixes:
 
-* ActiveRecord scrubbing generates strings instead of Document or
+* ActiveRecord scrubbing should generate strings instead of Document or
   DocumentFragment objects. GH #5
 * init.rb fixed to support installation as a Rails plugin. GH #6
   (Thanks Josh Nichols!)
 
-
-== 0.2.0
+== 0.2.0 (2009-09-11)
 
 * Swank new API.
 * ActiveRecord extension.
