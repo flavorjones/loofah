@@ -71,8 +71,8 @@ def bench(content, ntimes, fragment_p)
   end
 end
 
-puts "Large document (x100)  =========="
+puts "Large document, #{BIG_FILE.length} bytes (x100)"
 bench BIG_FILE, 100, false
-puts "Small fragment (x1000) =========="
+puts "Small fragment, #{FRAGMENT.length} bytes (x1000)"
 bench FRAGMENT, 1000, true
  
