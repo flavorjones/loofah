@@ -26,7 +26,7 @@ module Loofah
     def html_fragment(attr, options={})
       raise ArgumentError, "html_fragment requires :scrub option" unless method = options[:scrub]
       before_save do |record|
-        record[attr] = Loofah.scrub_fragment(record[attr], method)
+        record[attr] = Loofah.scrub_fragment(record[attr], method).to_s
       end
     end
 
@@ -37,7 +37,7 @@ module Loofah
     def html_document(attr, options={})
       raise ArgumentError, "html_document requires :scrub option" unless method = options[:scrub]
       before_save do |record|
-        record[attr] = Loofah.scrub_document(record[attr], method)
+        record[attr] = Loofah.scrub_document(record[attr], method).to_s
       end
     end
   end
