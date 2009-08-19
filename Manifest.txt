@@ -6,6 +6,7 @@ Rakefile
 TODO.rdoc
 benchmark/benchmark.rb
 benchmark/fragment.html
+benchmark/helper.rb
 benchmark/www.slashdot.com.html
 init.rb
 lib/loofah.rb
