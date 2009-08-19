@@ -3,7 +3,9 @@ module Loofah
   # Loofah can scrub ActiveRecord attributes in a before_save callback:
   #
   #   # in environment.rb
-  #   require 'loofah/active_record'
+  #   Rails::Initializer.run do |config|
+  #     config.gem 'loofah'
+  #   end
   #
   #   # db/schema.rb
   #   create_table "posts" do |t|

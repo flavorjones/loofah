@@ -1,5 +1,17 @@
 = Changelog
 
+== HEAD
+
+Enhancements:
+
+* when loaded in a Rails app, automatically extend ActiveRecord::Base
+  with html_fragment and html_document (Thanks Josh Nichols!)
+
+Bugfixes:
+
+* init.rb fixed to support installation as a Rails plugin (Thanks Josh Nichols!)
+
+
 == 0.2.0
 
 * Swank new API.

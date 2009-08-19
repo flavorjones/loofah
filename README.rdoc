@@ -48,7 +48,9 @@ OR
 === ACTIVERECORD EXTENSION
 
   # config/environment.rb
-  require 'loofah/active_record'
+  Rails::Initializer.run do |config|
+    config.gem 'loofah'
+  end
 
   # db/schema.rb
   create_table "posts" do |t|
