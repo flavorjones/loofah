@@ -27,7 +27,7 @@ module Loofah
 
     private
 
-    def warn_once(message)
+    def warn_once(message) # :nodoc:
       @aooga ||= {}
       unless @aooga.key?(message)
         warn message unless @aooga[message]
