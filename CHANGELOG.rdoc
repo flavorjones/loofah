@@ -1,5 +1,12 @@
 = Changelog
 
+== 0.2.2 (2009-09-30)
+
+Enhancements:
+
+* ActiveRecord extension scrubs fields in a before_validation callback
+  (was previously in a before_save)
+
 == 0.2.1 (2009-09-19)
 
 Enhancements:

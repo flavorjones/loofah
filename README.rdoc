@@ -64,7 +64,7 @@ OR
 
   # app/model/post.rb
   class Post < ActiveRecord::Base
-    html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_save
+    html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_validation
   end
 
 == REQUIREMENTS
