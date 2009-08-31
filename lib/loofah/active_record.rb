@@ -1,6 +1,6 @@
 module Loofah
   #
-  # Loofah can scrub ActiveRecord attributes in a before_save callback:
+  # Loofah can scrub ActiveRecord attributes in a before_validation callback:
   #
   #   # in environment.rb
   #   Rails::Initializer.run do |config|
@@ -15,7 +15,7 @@ module Loofah
   #
   #   # app/model/post.rb
   #   class Post < ActiveRecord::Base
-  #     html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_save
+  #     html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_validation
   #   end
   #
   module ActiveRecordExtension
@@ -25,7 +25,7 @@ module Loofah
     #
     def html_fragment(attr, options={})
       raise ArgumentError, "html_fragment requires :scrub option" unless method = options[:scrub]
-      before_save do |record|
+      before_validation do |record|
         record[attr] = Loofah.scrub_fragment(record[attr], method).to_s
       end
     end
@@ -36,7 +36,7 @@ module Loofah
     #
     def html_document(attr, options={})
       raise ArgumentError, "html_document requires :scrub option" unless method = options[:scrub]
-      before_save do |record|
+      before_validation do |record|
         record[attr] = Loofah.scrub_document(record[attr], method).to_s
       end
     end
