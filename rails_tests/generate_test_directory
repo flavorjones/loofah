@@ -1,0 +1,38 @@
+#! /usr/bin/ruby
+
+unless ARGV[0]
+  puts "USAGE: #{File.basename($0)} <rails-version>"
+  puts
+  puts " e.g., '#{File.basename($0)} 2.3.4'"
+  puts
+  exit 1
+end
+
+version = ARGV[0]
+
+require "rubygems"
+begin
+  gem "rails", "=#{version}"
+rescue Gem::LoadError => e
+  puts "ERROR: could not find rails version #{version}"
+  puts "Try running:"
+  puts "  gem install rails --version=#{version}"
+  exit 1
+end
+
+puts "* successfully detected rails version #{version}"
+
+def run(cmd)
+  puts "* running '#{cmd}'"
+  system cmd
+  raise "command failed" unless $? == 0
+end
+
+flavors = Dir.chdir("common") { Dir["*"] } - ['all']
+
+flavors.each do |flavor|
+  dir = "rails-#{version}-#{flavor}"
+  run "yes | rails _#{version}_ #{dir} > /dev/null"
+  run "rsync -a common/all/ #{dir}"
+  run "rsync -a common/#{flavor}/ #{dir}"
+end
