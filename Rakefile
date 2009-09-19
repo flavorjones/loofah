@@ -13,6 +13,9 @@ Hoe.spec "loofah" do
   self.readme_file      = "README.rdoc"
 
   extra_deps << ["nokogiri", ">= 1.3.3"]
+
+  # note: .hoerc should have the following line to omit rails tests and tmp
+  #   exclude: !ruby/regexp /\/tmp\/|\/rails_tests\/|CVS|TAGS|\.(svn|git|DS_Store)/
 end
 
 task :fake_install => [:gem] do
