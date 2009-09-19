@@ -33,7 +33,9 @@ task :rails_test => [:fake_install] do
     Dir["rails-*"].sort.each do |rails|
       Dir.chdir rails do
         ENV['GEM_HOME'] = File.expand_path("../../tmp")
-        run "rake db:create db:migrate db:test:prepare test"
+        FileUtils.rm Dir['db/*sqlite3']
+        run "touch db/development.sqlite3" # db:create doesn't exist before rails 2.0
+        run "rake db:migrate db:test:prepare test"
       end
     end
   end
