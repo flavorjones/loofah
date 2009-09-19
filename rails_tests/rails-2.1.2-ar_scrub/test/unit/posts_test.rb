@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), "../test_helper")
 
-class PostsTest < ActiveSupport::TestCase
+class PostsTest < Test::Unit::TestCase
   def test_loofah_scrubbing
     post = Post.new :title => "<script>yo dawg</script>", :body => "<script>omgwtfbbq</script>"
     post.save!
