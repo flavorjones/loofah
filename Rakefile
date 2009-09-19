@@ -25,7 +25,7 @@ end
 def run(cmd)
   puts "* running: #{cmd}"
   system cmd
-  raise "ERROR running command" unless $! == 0
+  raise "ERROR running command" unless $? == 0
 end
 
 task :rails_test => [:fake_install] do
