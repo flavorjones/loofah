@@ -32,7 +32,9 @@ flavors = Dir.chdir("common") { Dir["*"] } - ['all']
 
 flavors.each do |flavor|
   dir = "rails-#{version}-#{flavor}"
-  run "yes | rails _#{version}_ #{dir} > /dev/null"
+  unless File.exists?(dir)
+    run "yes | rails _#{version}_ #{dir} > /dev/null"
+  end
   run "rsync -a common/all/ #{dir}"
   run "rsync -a common/#{flavor}/ #{dir}"
 end
