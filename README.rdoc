@@ -14,7 +14,7 @@ It's built on top of Nokogiri and libxml2, so it's fast. And it uses
 html5lib's whitelist, so it most likely won't make your codes less
 secure.
 
-(These statements have not been evaluated by Internet Experts.)
+(These statements have not been evaluated by Netexperts.)
 
 This library was formerly known as Dryopteris.
 
@@ -109,6 +109,8 @@ Featuring code contributed by:
 * Josh Owens
 * Paul Dix
 * Josh Nichols
+
+And a big shout-out to Corey Innis for the name, and feedback on the API.
 
 == LICENSE
 
