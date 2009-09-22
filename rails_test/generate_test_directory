@@ -1,14 +1,16 @@
 #! /usr/bin/ruby
 
 unless ARGV[0]
-  puts "USAGE: #{File.basename($0)} <rails-version>"
+  puts "USAGE: #{File.basename($0)} <rails-version> [flavor]"
   puts
   puts " e.g., '#{File.basename($0)} 2.3.4'"
+  puts "       '#{File.basename($0)} 2.3.4 ar_scrub'"
   puts
   exit 1
 end
 
 version = ARGV[0]
+flavor = ARGV[1]
 
 require "rubygems"
 begin
@@ -28,7 +30,11 @@ def run(cmd)
   raise "command failed" unless $? == 0
 end
 
-flavors = Dir.chdir("common") { Dir["*"] } - ['all']
+if flavor
+  flavors = [flavor]
+else
+  flavors = Dir.chdir("common") { Dir["*"] } - ['all']
+end
 
 flavors.each do |flavor|
   dir = "rails-#{version}-#{flavor}"
