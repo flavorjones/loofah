@@ -18,5 +18,14 @@ Hoe.spec "loofah" do
   #   exclude: !ruby/regexp /\/tmp\/|\/rails_tests\/|CVS|TAGS|\.(svn|git|DS_Store)/
 end
 
-load File.join('rails_test', 'Rakefile')
-
+if File.exist?("rails_test/Rakefile")
+  load "rails_test/Rakefile"
+  desc "Run test suite and the full Rails regression test suite"
+  task "test:all" => [:test, :rails_test]
+else
+  task :test do
+    puts "----------"
+    puts "-- NOTE: An additional Rails regression test suite is available in source repository"
+    puts "----------"
+  end
+end
