@@ -27,3 +27,23 @@ else
     puts "----------"
   end
 end
+
+task :redocs => :fix_css
+task :fix_css do
+  better_css = <<-EOT
+.method-description pre {
+  margin: 1em 0 ;
+}
+
+.method-description ul {
+  padding: .5em 0 .5em 2em ;
+}
+
+.method-description {
+  padding-top: .5em ;
+}
+EOT
+  puts "* fixing css"
+  File.open("doc/rdoc.css", "a") { |f| f.write better_css }
+end
+
