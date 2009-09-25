@@ -1,32 +1,32 @@
 = Loofah
 
-* http://loofah.rubyforge.org/
+* http://loofah.rubyforge.org
 * http://rubyforge.org/projects/loofah
 * http://github.com/flavorjones/loofah
 
 == DESCRIPTION
 
-Loofah is an HTML sanitizer. It will *always* fix broken markup, but
+Loofah is an HTML sanitizer. It will always fix broken markup, but
 can also sanitize unsafe tags in a few different ways, and transform
 the markup for storage or display.
 
 It's built on top of Nokogiri and libxml2, so it's fast. And it uses
 html5lib's whitelist, so it most likely won't make your codes less
-secure.
+secure. \*
 
-(These statements have not been evaluated by Netexperts.)
-
-This library was formerly known as Dryopteris.
+\* These statements have not been evaluated by Netexperts.
 
 == FEATURES
 
-* Strip unsafe tags, leaving behind only the inner text.
-* Prune unsafe tags and their subtrees, removing all traces that they ever existed.
-* Escape unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
-* Whitewash the markup, removing all attributes and namespaced nodes.
+* _Strip_ unsafe tags, leaving behind only the inner text.
+* _Prune_ unsafe tags and their subtrees, removing all traces that they ever existed.
+* _Escape_ unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
+* _Whitewash_ the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
-* ActiveRecord extension.
-* 99 44/100 % Tenderlove-free!
+* TWO, count them, TWO! ActiveRecord extensions:
+  * Loofah::XssFoliate (an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement) is an *opt-out* sanitizer; by default all models and attributes are sanitized.
+  * Loofah::ActiveRecordExtension is an *opt-in* sanitizer; you must explicitly declare attributes to be sanitized.
+* 99 44/100 % pure!
 
 Here is a speed test comparing Loofah to other commonly-used sanitization libraries:
 
@@ -49,7 +49,15 @@ OR
   doc.to_s                            # => "ohai! <div>div is safe</div> "
   doc.text                            # => "ohai! div is safe "
 
-=== ACTIVERECORD EXTENSION
+=== ACTIVERECORD EXTENSION \#1: OPT-IN
+
+See Loofah::ActiveRecordExtension for more documentation. The methods
+mixed into ActiveRecord are:
+
+* Loofah::ActiveRecordExtension.html_document
+* Loofah::ActiveRecordExtension.html_fragment
+
+Example:
 
   # config/environment.rb
   Rails::Initializer.run do |config|
@@ -59,7 +67,8 @@ OR
   # db/schema.rb
   create_table "posts" do |t|
     t.string  "title"
-    t.string  "body"
+    t.text    "body"
+    t.string  "author"
   end
 
   # app/model/post.rb
@@ -67,11 +76,52 @@ OR
     html_fragment :body, :scrub => :prune  # scrubs 'body' in a before_validation
   end
 
+=== ACTIVERECORD EXTENSION \#2: OPT-OUT (XSS_TERMINATE DROP-IN REPLACEMENT)
+
+See Loofah::XssFoliate for more documentation. The methods mixed into ActiveRecord are:
+
+* Loofah::XssFoliate::ClassMethods.xss_foliate
+* Loofah::XssFoliate::ClassMethods.xss_foliated?
+
+If the constant LOOFAH_XSS_FOLIATE_ALL_MODELS is set, then all models
+inheriting from ActiveRecord::Base will sanitize their string and text
+attributes in a before_validate. Otherwise, the xss_foliate method is
+available for opting in to sanitization.
+
+Example:
+
+  # config/environment
+  LOOFAH_XSS_FOLIATE_ALL_MODELS = true
+  Rails::Initializer.run do |config|
+    config.gem "loofah"
+  end
+
+  # db/schema.rb
+  create_table "posts" do |t|
+    t.string  "title"
+    t.text    "body"
+    t.string  "author"
+  end
+
+  # app/model/post.rb
+  class Post < ActiveRecord::Base
+    # by default, 'title', 'body' and 'author' will all be sanitized in a before_validation,
+    # without additional declarations.
+  end
+
+OR
+
+  # app/model/post.rb
+  class Post < ActiveRecord::Base
+    # opt-out and/or modify the sanitization method used
+    xss_foliate :except => [:title, :author], :prune => :body
+  end
+
 == REQUIREMENTS
 
 * Nokogiri >= 1.3.3
 * ruby 1.8.6, 1.8.7 or 1.9
-* Rails 1.2, 2.0, 2.1, 2.2, or 2.3 (ActiveRecord extension)
+* Rails 2.3, 2.2, 2.1, 2.0 or 1.2 (for ActiveRecord extensions)
 
 == INSTALLATION
 
@@ -85,7 +135,7 @@ The bug tracker is available here:
 
 * http://github.com/flavorjones/loofah/issues
 
-You can also try the Nokogiri mailing list:
+For now, we're piggybacking on the Nokogiri mailing list:
 
 * http://groups.google.com/group/nokogiri-talk
 
@@ -93,9 +143,10 @@ And the IRC channel is #nokogiri on freenode.
 
 == RELATED LINKS
 
-* Nokogiri: http://nokogiri.org/
-* libxml2: http://xmlsoft.org/
-* html5lib: http://code.google.com/p/html5lib/
+* Nokogiri: http://nokogiri.org
+* libxml2: http://xmlsoft.org
+* html5lib: http://code.google.com/p/html5lib
+* XssTerminate: http://github.com/look/xss_terminate/tree/master
 
 == AUTHORS
 
@@ -111,6 +162,11 @@ Featuring code contributed by:
 * Josh Nichols
 
 And a big shout-out to Corey Innis for the name, and feedback on the API.
+
+== HISTORICAL NOTE
+
+This library was formerly known as Dryopteris, which was a very bad
+name that nobody could spell properly.
 
 == LICENSE
 
