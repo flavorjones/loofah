@@ -20,8 +20,6 @@ end
 
 if File.exist?("rails_test/Rakefile")
   load "rails_test/Rakefile"
-  desc "Run test suite and the full Rails regression test suite"
-  task "test:all" => [:test, :rails_test]
 else
   task :test do
     puts "----------"

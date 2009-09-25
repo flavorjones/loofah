@@ -43,3 +43,6 @@ task :rails_test => [:fake_install] do
     puts "* #{key}: #{results[key]}"
   end
 end
+
+desc "Run test suite and the full Rails regression test suite"
+task "test:all" => [:test, :rails_test]
