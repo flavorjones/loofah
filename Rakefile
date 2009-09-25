@@ -39,8 +39,8 @@ task :fix_css do
   padding: .5em 0 .5em 2em ;
 }
 
-.method-description {
-  padding-top: .5em ;
+.method-description p {
+  margin-top: .5em ;
 }
 EOT
   puts "* fixing css"
