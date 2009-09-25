@@ -11,9 +11,6 @@ require 'loofah/scrubber'
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
 
-require 'loofah/deprecated'
-
-
 #
 # Loofah is an HTML sanitizer wrapped around Nokogiri[http://nokogiri.org], an excellent
 # HTML/XML parser. If you don't know how Nokogiri[http://nokogiri.org]

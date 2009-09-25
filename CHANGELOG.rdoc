@@ -7,6 +7,12 @@ Enhancements:
 * New ActiveRecord extension `xss_foliate`, a drop-in replacement for xss_terminate[http://github.com/look/xss_terminate/tree/master].
 * Official support (and test coverage) for Rails versions 2.3, 2.2, 2.1, 2.0 and 1.2.
 
+Deprecations:
+
+* The methods strip_tags, whitewash, whitewash_document, sanitize, and
+  sanitize_document have been deprecated. See DEPRECATED.rdoc for
+  details on the equivalent calls with the post-0.2 API.
+
 == 0.2.2 (2009-09-30)
 
 Enhancements:

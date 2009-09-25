@@ -1,4 +1,5 @@
 CHANGELOG.rdoc
+DEPRECATED.rdoc
 MIT-LICENSE.txt
 Manifest.txt
 README.rdoc
@@ -11,7 +12,6 @@ benchmark/www.slashdot.com.html
 init.rb
 lib/loofah.rb
 lib/loofah/active_record.rb
-lib/loofah/deprecated.rb
 lib/loofah/html/document.rb
 lib/loofah/html/document_fragment.rb
 lib/loofah/html5/scrub.rb
@@ -19,13 +19,10 @@ lib/loofah/html5/whitelist.rb
 lib/loofah/scrubber.rb
 lib/loofah/xss_foliate.rb
 test/helper.rb
-test/html5/test_deprecated_sanitizer.rb
 test/html5/test_sanitizer.rb
 test/html5/testdata/tests1.dat
 test/test_active_record.rb
+test/test_ad_hoc.rb
 test/test_api.rb
-test/test_deprecated_basic.rb
-test/test_microsofty.rb
 test/test_scrubber.rb
-test/test_strip_tags.rb
 test/test_xss_foliate.rb
