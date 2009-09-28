@@ -33,7 +33,7 @@ class TestXssFoliate < Test::Unit::TestCase
         end
 
         should "return true" do
-          assert  Post.xss_foliated?
+          assert Post.xss_foliated?
         end
       end
 
@@ -43,7 +43,7 @@ class TestXssFoliate < Test::Unit::TestCase
         end
 
         should "return true" do
-          assert  Post.xss_foliated?
+          assert Post.xss_foliated?
         end
       end
     end
@@ -55,8 +55,8 @@ class TestXssFoliate < Test::Unit::TestCase
         end
       end
 
-      context "when passed a non-array" do
-        should "handle it silently" do
+      context "when passed a symbol" do
+        should "do the right thing" do
           assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => :plain_text }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
@@ -64,10 +64,30 @@ class TestXssFoliate < Test::Unit::TestCase
         end
       end
 
-      context "when passed an array" do
+      context "when passed an array of symbols" do
         should "do the right thing" do
           assert_nothing_raised(ArgumentError) {
             Post.xss_foliate :prune => [:plain_text, :html_string]
+          }
+          Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
+          assert new_post.valid?
+        end
+      end
+
+      context "when passed a string" do
+        should "do the right thing" do
+          assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => 'plain_text' }
+          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
+          assert new_post.valid?
+        end
+      end
+
+      context "when passed an array of strings" do
+        should "do the right thing" do
+          assert_nothing_raised(ArgumentError) {
+            Post.xss_foliate :prune => ['plain_text', 'html_string']
           }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
