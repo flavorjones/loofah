@@ -78,7 +78,7 @@ Example:
 
 === ACTIVERECORD EXTENSION \#2: OPT-OUT (XSS_TERMINATE DROP-IN REPLACEMENT)
 
-See Loofah::XssFoliate for more documentation. The methods mixed into ActiveRecord are:
+See Loofah::XssFoliate::ClassMethods for more documentation. The methods mixed into ActiveRecord are:
 
 * Loofah::XssFoliate::ClassMethods.xss_foliate
 * Loofah::XssFoliate::ClassMethods.xss_foliated?
