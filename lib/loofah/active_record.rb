@@ -21,7 +21,7 @@ module Loofah
   module ActiveRecordExtension
     #
     #  :call-seq:
-    #    model.html_fragment(attribute, :scrub => sanitization_method)
+    #    html_fragment(attribute, :scrub => sanitization_method)
     #
     #  Scrub an ActiveRecord attribute +attribute+ as an HTML *fragment*
     #  using the method specified by +sanitization_method+.

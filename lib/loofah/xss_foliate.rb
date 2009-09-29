@@ -97,24 +97,28 @@ module Loofah
       #  full documents, see the Loofah[http://loofah.rubyforge.org/]
       #  documentation for a full explanation of the difference).
       #
+      #  Example call:
+      #
+      #   xss_foliate :except => :author, :strip => :body, :prune => [:title, :description]
+      #
+      #  *Note* that the values in the options hash can be either an
+      #  array of attributes or a single attribute.
+      #
       #  Options:
       #
-      #   * :except => [fields] # don't scrub these fields
-      #   * :strip  => [fields] # strip unsafe tags from these fields
-      #   * :escape => [fields] # escape unsafe tags from these fields
-      #   * :prune  => [fields] # prune unsafe tags and subtrees from these fields
-      #   * :text   => [fields] # remove everything except the inner text from these fields
+      #   :except => [fields] # don't scrub these fields
+      #   :strip  => [fields] # strip unsafe tags from these fields
+      #   :escape => [fields] # escape unsafe tags from these fields
+      #   :prune  => [fields] # prune unsafe tags and subtrees from these fields
+      #   :text   => [fields] # remove everything except the inner text from these fields
       #
       #  XssTerminate compatibility options (note that the default
       #  behavior in XssTerminate corresponds to :text)
       #
-      #   * :html5lib_sanitize => [fields] # same as :escape
-      #   * :sanitize          => [fields] # same as :strip
+      #   :html5lib_sanitize => [fields] # same as :escape
+      #   :sanitize          => [fields] # same as :strip
       #
       #  The default is :text for all fields unless otherwise specified.
-      #
-      #  *Note* that the values in the options hash can be either an
-      #  array of attributes or a single attribute.
       #
       def xss_foliate(options = {})
         callback_already_declared = \
