@@ -10,9 +10,9 @@ def bench(content, ntimes, fragment_p)
     x.report('Loofah') do
       ntimes.times do
         if fragment_p
-          Loofah.scrub_fragment(content, :escape)
+          Loofah.scrub_fragment(content, :escape).to_s
         else
-          Loofah.scrub_document(content, :escape)
+          Loofah.scrub_document(content, :escape).to_s
         end
       end
     end
