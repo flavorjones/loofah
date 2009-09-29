@@ -23,6 +23,7 @@ secure. \*
 * _Escape_ unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
 * _Whitewash_ the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
+* Replacements for Rails's +strip_tags+ and +sanitize+ helper methods.
 * TWO, count them, TWO! ActiveRecord extensions:
   * Loofah::XssFoliate (an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement) is an *opt-out* sanitizer; by default all models and attributes are sanitized.
   * Loofah::ActiveRecordExtension is an *opt-in* sanitizer; you must explicitly declare attributes to be sanitized.

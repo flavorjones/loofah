@@ -16,6 +16,7 @@ lib/loofah/html/document.rb
 lib/loofah/html/document_fragment.rb
 lib/loofah/html5/scrub.rb
 lib/loofah/html5/whitelist.rb
+lib/loofah/rails_replacements.rb
 lib/loofah/scrubber.rb
 lib/loofah/xss_foliate.rb
 test/helper.rb
@@ -24,5 +25,6 @@ test/html5/testdata/tests1.dat
 test/test_active_record.rb
 test/test_ad_hoc.rb
 test/test_api.rb
+test/test_rails_replacements.rb
 test/test_scrubber.rb
 test/test_xss_foliate.rb

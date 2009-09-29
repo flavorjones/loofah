@@ -1,10 +1,11 @@
 = Changelog
 
-== 0.3.0 (2009-09-22)
+== 0.3.0 (2009-09-29)
 
 Enhancements:
 
 * New ActiveRecord extension `xss_foliate`, a drop-in replacement for xss_terminate[http://github.com/look/xss_terminate/tree/master].
+* Replacement methods for Rails's helpers, Loofah::Rails.sanitize and Loofah::Rails.strip_tags.
 * Official support (and test coverage) for Rails versions 2.3, 2.2, 2.1, 2.0 and 1.2.
 
 Deprecations:
