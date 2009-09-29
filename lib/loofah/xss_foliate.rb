@@ -138,24 +138,18 @@ module Loofah
         end
 
         options.keys.each do |option|
-          unless VALID_OPTIONS.include?(option)
-            raise ArgumentError, "unknown xss_foliate option #{option}"
-          end
+          raise ArgumentError, "unknown xss_foliate option #{option}" unless VALID_OPTIONS.include?(option)
         end
 
-        REAL_OPTIONS.each { |option| options[option] = Array(options[option]) }
+        REAL_OPTIONS.each do |option|
+          options[option] = Array(options[option]).collect { |val| val.to_sym }
+        end
 
         ALIASED_OPTIONS.each do |option, real|
-          options[real] += Array(options.delete(option)) if options[option]
+          options[real] += Array(options.delete(option)).collect { |val| val.to_sym } if options[option]
         end
 
-        write_inheritable_attribute(:xss_foliate_options, {
-            :except => options[:except],
-            :strip  => options[:strip],
-            :escape => options[:escape],
-            :prune  => options[:prune],
-            :text   => options[:text]
-          })
+        write_inheritable_attribute(:xss_foliate_options, options)
       end
 
       #
