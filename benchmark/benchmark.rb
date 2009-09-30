@@ -1,49 +1,47 @@
 #!/usr/bin/env ruby
 require "#{File.dirname(__FILE__)}/helper.rb"
 
-BIG_FILE = File.read(File.join(File.dirname(__FILE__), "www.slashdot.com.html"))
-FRAGMENT = File.read(File.join(File.dirname(__FILE__), "fragment.html"))
-SNIPPET = "This is typical form field input in <b>length and content."
+class MeasureBenchmark < Measure
+  def bench(content, ntimes, fragment_p)
+    sanitizer = RailsSanitize.new
+    html5_sanitizer = HTML5libSanitize.new
 
-def bench(content, ntimes, fragment_p)
-  Benchmark.bm(15) do |x|
-    x.report('Loofah') do
-      ntimes.times do
-        if fragment_p
-          Loofah.scrub_fragment(content, :escape).to_s
-        else
-          Loofah.scrub_document(content, :escape).to_s
-        end
-      end
+    measure("Loofah", ntimes) do
+      Loofah::Rails.sanitize(content)
     end
-    
-    x.report('ActionView') do
-      sanitizer = RailsSanitize.new
-      
-      ntimes.times do
-        sanitizer.sanitize(content)
-      end
+
+    measure("ActionView", ntimes) do
+      sanitizer.sanitize(content)
     end
-    
-    x.report('Sanitize') do
-      ntimes.times do
-        Sanitize.clean(content, Sanitize::Config::RELAXED)
-      end
+
+    measure("Sanitize", ntimes) do
+      Sanitize.clean(content, Sanitize::Config::RELAXED)
     end
-    
-    x.report('HTML5lib') do
-      sanitizer = HTML5libSanitize.new
-      
-      ntimes.times do
-        sanitizer.sanitize(content)
-      end
+
+    measure("HTML5lib", ntimes) do
+      html5_sanitizer.sanitize(content)
     end
+
+    puts
+  end
+
+  def test_set
+    puts "Large document, #{BIG_FILE.length} bytes (x100)"
+    bench BIG_FILE, 100, false
+    puts "Small fragment, #{FRAGMENT.length} bytes (x1000)"
+    bench FRAGMENT, 1000, true
+    puts "Text snippet, #{SNIPPET.length} bytes (x10000)"
+    bench SNIPPET, 10000, true
   end
 end
 
-puts "Large document, #{BIG_FILE.length} bytes (x100)"
-bench BIG_FILE, 100, false
-puts "Small fragment, #{FRAGMENT.length} bytes (x1000)"
-bench FRAGMENT, 1000, true
-puts "Text snippet, #{SNIPPET.length} bytes (x10000)"
-bench SNIPPET, 10000, true
+puts "Nokogiri version:"
+p Nokogiri::VERSION_INFO
+puts "Loofah version:"
+p Loofah::VERSION
+
+bench = MeasureBenchmark.new
+puts "---------- rehearsal ----------"
+bench.test_set
+puts "---------- realsies ----------"
+bench.test_set
