@@ -7,7 +7,7 @@ module Loofah
       #   Loofah::Rails.strip_tags("<div>Hello <b>there</b></div>") # => "Hello there"
       #
       def strip_tags(string_or_io)
-        Loofah.scrub_fragment(string_or_io, :prune).text
+        Loofah.fragment(string_or_io).text
       end
 
       #
@@ -16,7 +16,7 @@ module Loofah
       #   Loofah::Rails.sanitize("<script src=http://ha.ckers.org/xss.js></script>") # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
       #
       def sanitize(string_or_io)
-        Loofah.scrub_fragment(string_or_io, :escape).to_s
+        Loofah.scrub_fragment(string_or_io, :strip).to_s
       end
     end
   end
