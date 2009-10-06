@@ -6,10 +6,10 @@ def compare_scrub_methods
   puts "starting with: #{snip}"
   puts
   puts RailsSanitize.new.sanitize(snip) # => Rails.sanitize / scrub!(:prune).to_s
-  puts Loofah::Rails.sanitize(snip)
+  puts Loofah::Helpers.sanitize(snip)
   puts "--"
   puts RailsSanitize.new.strip_tags(snip) # => Rails.strip_tags / parse().text
-  puts Loofah::Rails.strip_tags(snip)
+  puts Loofah::Helpers.strip_tags(snip)
   puts "--"
   puts Sanitize.clean(snip, Sanitize::Config::RELAXED) # => scrub!(:strip).to_s
   puts Loofah.scrub_fragment(snip, :strip).to_s
@@ -50,7 +50,7 @@ class HeadToHeadRailsSanitize < Measure
     clear_measure
 
     measure "Loofah::Helpers.sanitize", ntimes do
-      Loofah::Rails.sanitize content
+      Loofah::Helpers.sanitize content
     end
 
     sanitizer = RailsSanitize.new
@@ -66,7 +66,7 @@ class HeadToHeadRailsStripTags < Measure
     clear_measure
 
     measure "Loofah::Helpers.strip_tags", ntimes do
-      Loofah::Rails.strip_tags content
+      Loofah::Helpers.strip_tags content
     end
 
     sanitizer = RailsSanitize.new

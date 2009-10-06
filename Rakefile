@@ -42,6 +42,11 @@ task :fix_css do
 .method-description p {
   margin-top: .5em ;
 }
+
+div#main ul {
+  list-style-type: disc ;
+  list-style-position: inside ;
+}
 EOT
   puts "* fixing css"
   File.open("doc/rdoc.css", "a") { |f| f.write better_css }

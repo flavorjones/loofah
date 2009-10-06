@@ -11,7 +11,7 @@ require 'loofah/scrubber'
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
 
-require 'loofah/rails_replacements'
+require 'loofah/helpers'
 
 #
 # Loofah is an HTML sanitizer wrapped around Nokogiri[http://nokogiri.org], an excellent

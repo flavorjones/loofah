@@ -24,12 +24,18 @@ secure. \*
 * _Whitewash_ the markup, removing all attributes and namespaced nodes.
 * Format the markup as plain text.
 * Replacements for Rails's +strip_tags+ and +sanitize+ helper methods.
-* TWO, count them, TWO! ActiveRecord extensions:
+* TWO! Count them, TWO! ActiveRecord extensions:
   * Loofah::XssFoliate (an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement) is an *opt-out* sanitizer; by default all models and attributes are sanitized.
   * Loofah::ActiveRecordExtension is an *opt-in* sanitizer; you must explicitly declare attributes to be sanitized.
-* 99 44/100 % pure!
+* 99 44/100 % pure
 
-Here is a speed test comparing Loofah to other commonly-used sanitization libraries:
+== COMPARE AND CONTRAST
+
+Loofah is the only ruby XSS/sanitization library that guarantees
+well-formed and valid markup.
+
+Also, it's pretty fast. Here is a benchmark comparing Loofah to other
+commonly-used libraries:
 
 * http://gist.github.com/170193
 
