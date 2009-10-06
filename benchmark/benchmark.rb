@@ -1,47 +1,129 @@
 #!/usr/bin/env ruby
 require "#{File.dirname(__FILE__)}/helper.rb"
 
-class MeasureBenchmark < Measure
-  def bench(content, ntimes, fragment_p)
-    sanitizer = RailsSanitize.new
-    html5_sanitizer = HTML5libSanitize.new
+def compare_scrub_methods
+  snip = "<div>foo</div><foo>fuxx <b>quux</b></foo><script>i have a chair</script>"
+  puts "starting with: #{snip}"
+  puts
+  puts RailsSanitize.new.sanitize(snip) # => Rails.sanitize / scrub!(:prune).to_s
+  puts Loofah::Rails.sanitize(snip)
+  puts "--"
+  puts RailsSanitize.new.strip_tags(snip) # => Rails.strip_tags / parse().text
+  puts Loofah::Rails.strip_tags(snip)
+  puts "--"
+  puts Sanitize.clean(snip, Sanitize::Config::RELAXED) # => scrub!(:strip).to_s
+  puts Loofah.scrub_fragment(snip, :strip).to_s
+  puts "--"
+  puts HTML5libSanitize.new.sanitize(snip) # => scrub!(:escape).to_s
+  puts Loofah.scrub_fragment(snip, :escape).to_s
+  puts "--"
+end
 
-    measure("Loofah", ntimes) do
-      Loofah::Rails.sanitize(content)
-    end
+module TestSet
+  def test_set options={}
+    scale = options[:rehearse] ? 10 : 1
+    puts self.class.name
 
-    measure("ActionView", ntimes) do
-      sanitizer.sanitize(content)
-    end
-
-    measure("Sanitize", ntimes) do
-      Sanitize.clean(content, Sanitize::Config::RELAXED)
-    end
-
-    measure("HTML5lib", ntimes) do
-      html5_sanitizer.sanitize(content)
-    end
-
+    n = 100 / scale
+    puts "  Large document, #{BIG_FILE.length} bytes (x#{n})"
+    bench BIG_FILE, n, false
     puts
-  end
 
-  def test_set
-    puts "Large document, #{BIG_FILE.length} bytes (x100)"
-    bench BIG_FILE, 100, false
-    puts "Small fragment, #{FRAGMENT.length} bytes (x1000)"
-    bench FRAGMENT, 1000, true
-    puts "Text snippet, #{SNIPPET.length} bytes (x10000)"
-    bench SNIPPET, 10000, true
+    n = 1000 / scale
+    puts "  Small fragment, #{FRAGMENT.length} bytes (x#{n})"
+    bench FRAGMENT, n, true
+    puts
+
+    n = 10_000 / scale
+    puts "  Text snippet, #{SNIPPET.length} bytes (x#{n})"
+    bench SNIPPET, n, true
+    puts
   end
 end
 
-puts "Nokogiri version:"
-p Nokogiri::VERSION_INFO
-puts "Loofah version:"
-p Loofah::VERSION
+class HeadToHead < Measure
+end
 
-bench = MeasureBenchmark.new
+class HeadToHeadRailsSanitize < Measure
+  include TestSet
+  def bench(content, ntimes, fragment_p)
+    clear_measure
+
+    measure "Loofah::Helpers.sanitize", ntimes do
+      Loofah::Rails.sanitize content
+    end
+
+    sanitizer = RailsSanitize.new
+    measure "ActionView sanitize", ntimes do
+      sanitizer.sanitize(content)
+    end
+  end
+end
+
+class HeadToHeadRailsStripTags < Measure
+  include TestSet
+  def bench(content, ntimes, fragment_p)
+    clear_measure
+
+    measure "Loofah::Helpers.strip_tags", ntimes do
+      Loofah::Rails.strip_tags content
+    end
+
+    sanitizer = RailsSanitize.new
+    measure "ActionView strip_tags", ntimes do
+      sanitizer.strip_tags(content)
+    end
+  end
+end
+
+class HeadToHeadSanitizerSanitize < Measure
+  include TestSet
+  def bench(content, ntimes, fragment_p)
+    clear_measure
+
+    measure "Loofah :strip", ntimes do
+      if fragment_p
+        Loofah.scrub_fragment(content, :strip).to_s
+      else
+        Loofah.scrub_document(content, :strip).to_s
+      end
+    end
+
+    measure "Sanitize.clean", ntimes do
+      Sanitize.clean(content, Sanitize::Config::RELAXED)
+    end
+  end
+end
+
+class HeadToHeadHtml5LibSanitize < Measure
+  include TestSet
+  def bench(content, ntimes, fragment_p)
+    clear_measure
+
+    measure "Loofah :escape", ntimes do
+      if fragment_p
+        Loofah.scrub_fragment(content, :escape).to_s
+      else
+        Loofah.scrub_document(content, :escape).to_s
+      end
+    end
+
+    html5_sanitizer = HTML5libSanitize.new
+    measure "HTML5lib.sanitize", ntimes do
+      html5_sanitizer.sanitize(content)
+    end
+  end
+end
+
+puts "Nokogiri version: #{Nokogiri::VERSION_INFO.inspect}"
+puts "Loofah version: #{Loofah::VERSION.inspect}"
+
+benches = []
+benches << HeadToHeadRailsSanitize.new
+benches << HeadToHeadRailsStripTags.new
+benches << HeadToHeadSanitizerSanitize.new
+benches << HeadToHeadHtml5LibSanitize.new
 puts "---------- rehearsal ----------"
-bench.test_set
+benches.each { |bench| bench.test_set :rehearse => true }
 puts "---------- realsies ----------"
-bench.test_set
+benches.each { |bench| bench.test_set }

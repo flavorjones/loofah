@@ -38,12 +38,17 @@ SNIPPET = "This is typical form field input in <b>length and content."
 
 class Measure
   def initialize
+    clear_measure
+  end
+
+  def clear_measure
     @first_time = true
+    @baseline = nil
   end
 
   def measure(name, ntimes)
     if @first_time
-      printf "%-30s %7s  %8s\n", "", "total", "single"
+      printf "  %-30s %7s  %8s  %5s\n", "", "total", "single", "rel"
       @first_time = false
     end
     timer = Hitimes::TimedMetric.new(name)
@@ -52,6 +57,12 @@ class Measure
       yield
     end
     timer.stop
-    printf "%-30s %7.3f (%.6f)\n", timer.name, timer.sum, timer.sum / ntimes
+    if @baseline
+      printf "  %30s %7.3f (%8.6f) %5.2fx\n", timer.name, timer.sum, timer.sum / ntimes, timer.sum / @baseline
+    else
+      @baseline = timer.sum
+      printf "  %30s %7.3f (%8.6f) %5s\n", timer.name, timer.sum, timer.sum / ntimes, "-"
+    end
+    timer.sum
   end
 end
