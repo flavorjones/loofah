@@ -1,7 +1,7 @@
-task :fake_install => [:gem] do
+task :fake_install => [:clobber, :gem] do
   FileUtils.mkdir_p "tmp"
   system "mkdir -p tmp"
-  system "gem install pkg/loofah-0.2.2.gem -i tmp --no-ri --no-rdoc"
+  system "gem install pkg/loofah-*.gem -i tmp --no-ri --no-rdoc"
   system "chmod -R go-w tmp"
 end
 
