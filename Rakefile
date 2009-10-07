@@ -29,6 +29,7 @@ else
 end
 
 task :redocs => :fix_css
+task :docs => :fix_css
 task :fix_css do
   better_css = <<-EOT
 .method-description pre {
