@@ -65,7 +65,7 @@ class TestAdHoc < Test::Unit::TestCase
 
   def test_whitewash_on_fragment
     html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
-    whitewashed = Loofah.scrub_document(html, :whitewash).to_s
+    whitewashed = Loofah.scrub_document(html, :whitewash).xpath("/html/body/*").to_s
     assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n","")
   end
 
@@ -135,24 +135,15 @@ mso-bidi-language:#0400;}
 <p class="MsoNormal">Foo <b style="">BOLD<o:p></o:p></b></p>
   EOHTML
 
-  def test_deprecated_whitewash_fragment_on_microsofty_markup
-    whitewashed = Loofah.scrub_fragment(MSWORD_HTML.chomp, :whitewash).to_s
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
-  end
-
-  def test_deprecated_whitewash_on_microsofty_markup
-    whitewashed = Loofah.scrub_document(MSWORD_HTML, :whitewash).to_s
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed
-  end
-
   def test_fragment_whitewash_on_microsofty_markup
-    whitewashed = Loofah.fragment(MSWORD_HTML.chomp).scrub!(:whitewash)
+    whitewashed = Loofah.fragment(MSWORD_HTML).scrub!(:whitewash)
     assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
   end
 
   def test_document_whitewash_on_microsofty_markup
-    whitewashed = Loofah.document(MSWORD_HTML.chomp).scrub!(:whitewash)
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s
+    whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
+    assert_contains whitewashed.to_s, %r(<p>Foo <b>BOLD</b></p>)
+    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
   end
 
   def test_return_empty_string_when_nothing_left

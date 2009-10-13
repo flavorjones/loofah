@@ -97,4 +97,29 @@ class TestScrubber < Test::Unit::TestCase
     Loofah.scrub_document(:string_or_io, :method)
   end
 
+  def test_document_to_s
+    doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
+    assert_not_nil doc.xpath("/html").first
+    assert_not_nil doc.xpath("/html/head").first
+    assert_not_nil doc.xpath("/html/body").first
+
+    assert_contains doc.to_s, /<!DOCTYPE/
+    assert_contains doc.to_s, /<html>/
+    assert_contains doc.to_s, /<head>/
+    assert_contains doc.to_s, /<body>/
+  end
+
+  def test_document_serialize
+    doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
+
+    assert_not_nil doc.xpath("/html").first
+    assert_not_nil doc.xpath("/html/head").first
+    assert_not_nil doc.xpath("/html/body").first
+
+    assert_contains doc.serialize, /<!DOCTYPE/
+    assert_contains doc.serialize, /<html>/
+    assert_contains doc.serialize, /<head>/
+    assert_contains doc.serialize, /<body>/
+  end
+
 end

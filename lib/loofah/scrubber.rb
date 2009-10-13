@@ -24,14 +24,6 @@ module Loofah
     end
 
     #
-    #  Returns the HTML markup contained by the fragment or document
-    #
-    def to_s
-      __sanitize_roots.children.to_s
-    end
-    alias :serialize :to_s
-
-    #
     #  Returns a plain-text version of the markup contained by the fragment or document
     #
     def text

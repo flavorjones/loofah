@@ -19,6 +19,14 @@ module Loofah
         end
       end
 
+      #
+      #  Returns the HTML markup contained by the fragment or document
+      #
+      def to_s
+        __sanitize_roots.children.to_s
+      end
+      alias :serialize :to_s
+
       private
 
       def __sanitize_roots # :nodoc:
