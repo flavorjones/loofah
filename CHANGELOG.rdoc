@@ -1,5 +1,11 @@
 = Changelog
 
+== 0.3.1 (2009-10-12)
+
+Bug fixes:
+
+* Scrubbed Documents properly render html, head and body tags when serialized.
+
 == 0.3.0 (2009-10-06)
 
 Enhancements:
