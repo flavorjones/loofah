@@ -67,12 +67,53 @@ class TestDeveloperExtension < Test::Unit::TestCase
     end
 
     context "given a string name" do
-      should "work as if given a symbol"
+      setup do
+        @called = false
+        Loofah::Scrubber.define_filter("quux") { @called = true }
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:quux)
+      end
+
+      should "work as if given a symbol" do
+        Loofah.scrub_fragment("<div>hello</div>", :quux)
+        assert @called
+      end
     end
 
     context "given a block taking zero arguments" do
-      should "work anyway, shrug"
+      setup do
+        @called = false
+        Loofah::Scrubber.define_filter(:quux) { @called = true }
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:quux)
+      end
+
+      should "work anyway, shrug" do
+        Loofah.scrub_fragment("<div>hello</div>", :quux)
+        assert @called
+      end
     end
+
+    context "when passed to scrub as a string" do
+      setup do
+        @called = false
+        Loofah::Scrubber.define_filter(:quux) { @called = true }
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:quux)
+      end
+
+      should "work as if passed a symbol" do
+        Loofah.scrub_fragment("<div>hello</div>", "quux")
+        assert @called
+      end
+    end
+
   end
 
   context "undefine_filter" do
@@ -84,10 +125,20 @@ class TestDeveloperExtension < Test::Unit::TestCase
       Loofah::Scrubber.undefine_filter(:quux)
     end
 
-    should "remove the named filter" do
-      assert_nothing_raised { Loofah.scrub_fragment("<div>hello</div>", :quux) }
-      Loofah::Scrubber.undefine_filter(:quux)
-      assert_raises(Loofah::Scrubber::NoSuchFilter) { Loofah.scrub_fragment("<div>hello</div>", :quux) }
+    context "given a symbol" do
+      should "remove the named filter" do
+        assert_nothing_raised { Loofah.scrub_fragment("<div>hello</div>", :quux) }
+        Loofah::Scrubber.undefine_filter(:quux)
+        assert_raises(Loofah::Scrubber::NoSuchFilter) { Loofah.scrub_fragment("<div>hello</div>", :quux) }
+      end
+    end
+
+    context "given a string" do
+      should "remove the named filter" do
+        assert_nothing_raised { Loofah.scrub_fragment("<div>hello</div>", :quux) }
+        Loofah::Scrubber.undefine_filter("quux")
+        assert_raises(Loofah::Scrubber::NoSuchFilter) { Loofah.scrub_fragment("<div>hello</div>", :quux) }
+      end
     end
   end
 end

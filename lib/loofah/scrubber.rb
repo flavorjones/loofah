@@ -8,14 +8,15 @@ module Loofah
     #  Clean up the HTML. See Loofah for full usage.
     #
     def scrub!(method)
+      method = method.to_sym
       case method
       when :escape, :prune, :whitewash
         __sanitize_roots.children.each do |node|
-          Scrubber.traverse_conditionally_top_down(node, method.to_sym)
+          Scrubber.traverse_conditionally_top_down(node, method)
         end
       when :strip
         __sanitize_roots.children.each do |node|
-          Scrubber.traverse_conditionally_bottom_up(node, method.to_sym)
+          Scrubber.traverse_conditionally_bottom_up(node, method)
         end
       else
         if  Scrubber.filters[method]
@@ -49,8 +50,9 @@ module Loofah
     class << self
 
       def define_filter(name, options={}, &block)
-        raise(Scrubber::FilterAlreadyDefined, "filter '#{name}' is already defined") if filters.has_key?(name.to_sym)
-        filters[name.to_sym] = block
+        name = name.to_sym
+        raise(Scrubber::FilterAlreadyDefined, "filter '#{name}' is already defined") if filters.has_key?(name)
+        filters[name] = block
       end
 
       def undefine_filter(name)
