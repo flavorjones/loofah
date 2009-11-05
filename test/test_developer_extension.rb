@@ -11,6 +11,10 @@ class TestDeveloperExtension < Test::Unit::TestCase
         end
       end
 
+      teardown do
+        Loofah::Scrubber.undefine_filter(:count)
+      end
+
       should "operate properly on a fragment" do
         Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", :count)
         assert_equal 4, @count # span, text, span, text
@@ -31,6 +35,10 @@ class TestDeveloperExtension < Test::Unit::TestCase
         end
       end
 
+      teardown do
+        Loofah::Scrubber.undefine_filter(:count)
+      end
+
       should "operate properly on a fragment" do
         Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", :count)
         assert_equal 2, @count # span, text, span, text
@@ -41,11 +49,39 @@ class TestDeveloperExtension < Test::Unit::TestCase
         assert_equal 3, @count # link, span, span
       end
     end
+
+    context "called on an existing filter name" do
+      setup do
+        Loofah::Scrubber.define_filter(:quux) { }
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:quux)
+      end
+
+      should "raise an exception" do
+        assert_raises(Loofah::Scrubber::FilterAlreadyDefined) {
+          Loofah::Scrubber.define_filter(:quux) { }
+        }
+      end
+    end
+
+    context "given a string name" do
+      should "work as if given a symbol"
+    end
+
+    context "given a block taking zero arguments" do
+      should "work anyway, shrug"
+    end
   end
 
   context "undefine_filter" do
     setup do
       Loofah::Scrubber.define_filter(:quux) { |node| Loofah::Scrubber::CONTINUE }
+    end
+
+    teardown do
+      Loofah::Scrubber.undefine_filter(:quux)
     end
 
     should "remove the named filter" do

@@ -44,10 +44,12 @@ module Loofah
     STOP     = true
 
     class NoSuchFilter < RuntimeError ; end
+    class FilterAlreadyDefined < RuntimeError ; end
 
     class << self
 
       def define_filter(name, options={}, &block)
+        raise(Scrubber::FilterAlreadyDefined, "filter '#{name}' is already defined") if filters.has_key?(name.to_sym)
         filters[name.to_sym] = block
       end
 
