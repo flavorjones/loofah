@@ -157,7 +157,7 @@ And the IRC channel is #nokogiri on freenode.
 
 == AUTHORS
 
-* {Mike Dalessio}[mailto:mike.dalessio@gmail.com]
+* {Mike Dalessio}[mailto:mike.dalessio@gmail.com] (@flavorjones)
 * {Bryan Helmkamp}[mailto:bryan@brynary.com]
 
 Featuring code contributed by:
