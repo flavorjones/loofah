@@ -5,7 +5,7 @@ class TestScrubber < Test::Unit::TestCase
   [ Loofah::HTML::Document, Loofah::HTML::DocumentFragment ].each do |klass|
     define_method "test_#{klass}_bad_sanitize_method" do
       doc = klass.parse "<p>foo</p>"
-      assert_raises(ArgumentError) { doc.scrub! :frippery }
+      assert_raises(Loofah::Scrubber::NoSuchFilter) { doc.scrub! :frippery }
     end
   end
 
