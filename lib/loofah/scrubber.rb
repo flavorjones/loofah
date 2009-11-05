@@ -18,7 +18,13 @@ module Loofah
           Scrubber.traverse_conditionally_bottom_up(node, method.to_sym)
         end
       else
-        raise ArgumentError, "unknown sanitize filter '#{method}'"
+        if  Scrubber.filters[method]
+          __sanitize_roots.children.each do |node|
+            Scrubber.traverse_conditionally_top_down(node, Scrubber.filters[method])
+          end
+        else
+          raise Scrubber::NoSuchFilter, "unknown sanitize filter '#{method}'"
+        end
       end
       self
     end
@@ -34,7 +40,24 @@ module Loofah
   end
 
   module Scrubber
+    CONTINUE = false
+    STOP     = true
+
+    class NoSuchFilter < RuntimeError ; end
+
     class << self
+
+      def define_filter(name, options={}, &block)
+        filters[name.to_sym] = block
+      end
+
+      def undefine_filter(name)
+        filters.delete(name.to_sym)
+      end
+
+      def filters
+        @@filters ||= {}
+      end
 
       def sanitize(node)
         case node.type
@@ -84,14 +107,18 @@ module Loofah
         return true
       end
 
-      def traverse_conditionally_top_down(node, method_name)
-        return if send(method_name, node)
-        node.children.each {|j| traverse_conditionally_top_down(j, method_name)}
+      def traverse_conditionally_top_down(node, method)
+        if method.is_a?(Proc)
+          return if method.call(node)
+        else
+          return if send(method, node)
+        end
+        node.children.each {|j| traverse_conditionally_top_down(j, method)}
       end
 
-      def traverse_conditionally_bottom_up(node, method_name)
-        node.children.each {|j| traverse_conditionally_bottom_up(j, method_name)}
-        return if send(method_name, node)
+      def traverse_conditionally_bottom_up(node, method)
+        node.children.each {|j| traverse_conditionally_bottom_up(j, method)}
+        return if send(method, node)
       end
 
     end
