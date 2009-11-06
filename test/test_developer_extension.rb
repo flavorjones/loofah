@@ -208,8 +208,20 @@ class TestFilter < Test::Unit::TestCase
         assert_equal DOCUMENT_NODE_COUNT, @filter.count
       end
     end
+  end
 
-    # context "when filter method has arity zero"
-    # context "when no filter method is defined"
+  context "creating a new Filter class with no filter method" do
+    setup do
+      @klass = Class.new(Loofah::Filter) do
+        def initialize ; end
+      end
+      @filter = @klass.new
+    end
+
+    should "raise an exception" do
+      assert_raises(Loofah::FilterNotFound) {
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+      }
+    end
   end
 end

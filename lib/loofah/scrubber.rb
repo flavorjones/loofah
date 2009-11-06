@@ -64,6 +64,10 @@ module Loofah
       @direction, @block = direction, block
     end
 
+    def filter(node)
+      raise FilterNotFound, "No filter method has been defined on #{self.class.to_s}"
+    end
+
     def traverse_conditionally_top_down(node)
       if block
         return if block.call(node) == STOP
