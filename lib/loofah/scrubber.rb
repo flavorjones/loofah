@@ -159,28 +159,6 @@ module Loofah
         Filter::STOP
       end
 
-      def traverse_conditionally_top_down(node, filter)
-        if filter.is_a?(Proc)
-          return if filter.call(node) == Filter::STOP
-        elsif filter
-          return if send(filter, node) == Filter::STOP
-        else
-          return if filter(node) == Filter::STOP
-        end
-        node.children.each {|j| traverse_conditionally_top_down(j, filter)}
-      end
-
-      def traverse_conditionally_bottom_up(node, filter)
-        node.children.each {|j| traverse_conditionally_bottom_up(j, filter)}
-        if filter.is_a?(Proc)
-          filter.call(node)
-        elsif filter
-          send(filter, node)
-        else
-          filter(node)
-        end
-      end
-
     end
 
   end
