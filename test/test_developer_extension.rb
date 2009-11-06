@@ -65,6 +65,25 @@ class TestFilter < Test::Unit::TestCase
       end
     end
 
+    context "not specifying direction" do
+      setup do
+        @filter = Loofah::Filter.new() do |node|
+          @count += 1
+          Loofah::Filter::STOP
+        end
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
+      end
+    end
+
     context "specifying top-down direction" do
       setup do
         @filter = Loofah::Filter.new(:direction => :top_down) do |node|
@@ -124,34 +143,48 @@ class TestFilter < Test::Unit::TestCase
     end
   end
 
-  context "referencing a method" do
+  context "defining a new Filter class" do
+    setup do
+      @klass = Class.new(Loofah::Filter) do
+        attr_accessor :count
+        def initialize(direction=nil)
+          @direction = direction
+          @count = 0
+        end
+        def filter(node)
+          @count += 1
+          Loofah::Filter::STOP
+        end
+      end
+    end
+
     context "when not specifying direction" do
       setup do
-        klass = Class.new(Loofah::Filter) do
-          attr_accessor :count
-          def initialize
-            @count = 0
-          end
-          def filter(node)
-            @count += 1
-          end
-        end
-        @filter = klass.new
+        @filter = @klass.new
+        assert_nil @filter.direction
       end
 
       should "operate as top-down on a fragment" do
         Loofah.scrub_fragment(FRAGMENT, @filter)
-        assert_equal FRAGMENT_NODE_COUNT, @filter.count
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @filter.count
       end
 
       should "operate as top-down on a document" do
         Loofah.scrub_document(DOCUMENT, @filter)
-        assert_equal DOCUMENT_NODE_COUNT, @filter.count
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @filter.count
       end
     end
 
-    # context "when direction is specified as top_down"
-    # context "when direction is specified as bottom_up"
+    context "when direction is specified as top_down" do
+      setup do
+        @filter = @klass.new(:top_down)
+        assert_equal :top_down, @filter.direction
+      end
+    end
+
+    context "when direction is specified as bottom_up" do
+    end
+
     # context "when filter method has arity zero"
     # context "when no filter method is defined"
   end

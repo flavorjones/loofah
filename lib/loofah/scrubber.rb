@@ -16,10 +16,10 @@ module Loofah
     def scrub!(filter)
       if filter.is_a?(Loofah::Filter)
         __sanitize_roots.children.each do |node|
-          if filter.direction == :top_down
-            filter.traverse_conditionally_top_down(node)
-          else
+          if filter.direction == :bottom_up
             filter.traverse_conditionally_bottom_up(node)
+          else
+            filter.traverse_conditionally_top_down(node)
           end
         end
       else
@@ -54,7 +54,7 @@ module Loofah
     CONTINUE = Object.new.freeze
     STOP     = Object.new.freeze
 
-    attr_accessor :direction, :block
+    attr_reader :direction, :block
 
     def initialize(options = {}, &block)
       direction = options[:direction] || :top_down
