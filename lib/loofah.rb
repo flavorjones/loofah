@@ -7,8 +7,8 @@ require 'loofah/html5/scrub'
 
 require 'loofah/filter'
 require 'loofah/filters'
-require 'loofah/scrubber'
 
+require 'loofah/instance_methods'
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
 
