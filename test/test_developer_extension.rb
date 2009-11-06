@@ -39,14 +39,70 @@ class TestDeveloperExtension < Test::Unit::TestCase
         Loofah::Scrubber.undefine_filter(:count)
       end
 
-      should "operate properly on a fragment" do
+      should "operate as top-down on a fragment" do
         Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", :count)
         assert_equal 2, @count # span, text, span, text
       end
 
-      should "operate properly on a document" do
+      should "operate as top-down on a document" do
         Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", :count)
         assert_equal 3, @count # link, span, span
+      end
+    end
+
+    context "top-down direction" do
+      setup do
+        @count = 0
+        Loofah::Scrubber.define_filter(:count, :direction => :top_down) do |node|
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:count)
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", :count)
+        assert_equal 2, @count # span, text, span, text
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", :count)
+        assert_equal 3, @count # link, span, span
+      end
+    end
+
+    context "bottom-up direction" do
+      setup do
+        @count = 0
+        Loofah::Scrubber.define_filter(:count, :direction => :bottom_up) do |node|
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+
+      teardown do
+        Loofah::Scrubber.undefine_filter(:count)
+      end
+
+      should "operate as bottom-up on a fragment" do
+        Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", :count)
+        assert_equal 4, @count # span, text, span, text
+      end
+
+      should "operate as bottom-up on a document" do
+        Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", :count)
+        assert_equal 5, @count # link, span, span
+      end
+    end
+
+    context "invalid direction" do
+      should "raise an exception" do
+        assert_raises(ArgumentError) {
+          Loofah::Scrubber.define_filter(:count, :direction => :quux) { }
+        }
       end
     end
 

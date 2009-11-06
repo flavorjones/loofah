@@ -20,8 +20,13 @@ module Loofah
         end
       else
         if Scrubber.filters[method]
+          direction = Scrubber.filters[method].options[:direction] || :top_down
           __sanitize_roots.children.each do |node|
-            Scrubber.traverse_conditionally_top_down(node, Scrubber.filters[method])
+            if direction == :top_down
+              Scrubber.traverse_conditionally_top_down(node, Scrubber.filters[method].block)
+            else
+              Scrubber.traverse_conditionally_bottom_up(node, Scrubber.filters[method].block)
+            end
           end
         else
           raise Scrubber::NoSuchFilter, "unknown sanitize filter '#{method}'"
@@ -47,12 +52,23 @@ module Loofah
     class NoSuchFilter < RuntimeError ; end
     class FilterAlreadyDefined < RuntimeError ; end
 
+    # TODO: this is the class we should expose. not a method call. TDD FTW!
+    class Filter
+      attr_accessor :options, :block
+      def initialize(options, &block)
+        if options[:direction] && ! [:top_down, :bottom_up].include?(options[:direction])
+          raise ArgumentError, "direction #{options[:direction]} must be one of :top_down or :bottom_up" 
+        end
+        @options, @block = options, block
+      end
+    end
+
     class << self
 
       def define_filter(name, options={}, &block)
         name = name.to_sym
         raise(Scrubber::FilterAlreadyDefined, "filter '#{name}' is already defined") if filters.has_key?(name)
-        filters[name] = block
+        filters[name] = Filter.new(options, &block)
       end
 
       def undefine_filter(name)
@@ -121,7 +137,11 @@ module Loofah
 
       def traverse_conditionally_bottom_up(node, method)
         node.children.each {|j| traverse_conditionally_bottom_up(j, method)}
-        send(method, node)
+        if method.is_a?(Proc)
+          method.call(node)
+        else
+          send(method, node)
+        end
       end
 
     end
