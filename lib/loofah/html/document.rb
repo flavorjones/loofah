@@ -6,7 +6,7 @@ module Loofah
     #  See Loofah::ScrubberInstanceMethods for additional methods.
     #
     class Document < Nokogiri::HTML::Document
-      include Loofah::ScrubberInstanceMethods
+      include Loofah::InstanceMethods
 
       private
 

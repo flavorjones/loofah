@@ -5,6 +5,8 @@ require 'nokogiri'
 require 'loofah/html5/whitelist'
 require 'loofah/html5/scrub'
 
+require 'loofah/filter'
+require 'loofah/filters'
 require 'loofah/scrubber'
 
 require 'loofah/html/document'

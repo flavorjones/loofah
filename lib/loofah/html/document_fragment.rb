@@ -6,7 +6,7 @@ module Loofah
     #  See Loofah::ScrubberInstanceMethods for additional methods.
     #
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
-      include Loofah::ScrubberInstanceMethods
+      include Loofah::InstanceMethods
 
       class << self
         #
