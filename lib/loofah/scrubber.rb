@@ -14,27 +14,19 @@ module Loofah
     #  Clean up the HTML. See Loofah for full usage.
     #
     def scrub!(filter)
-      if filter.is_a?(Loofah::Filter)
-        __sanitize_roots.children.each do |node|
-          if filter.direction == :bottom_up
-            filter.traverse_conditionally_bottom_up(node)
-          else
-            filter.traverse_conditionally_top_down(node)
-          end
-        end
-      else
-        filter = filter.to_sym
-        case filter
-        when :escape, :prune, :whitewash
-          __sanitize_roots.children.each do |node|
-            Scrubber.traverse_conditionally_top_down(node, filter)
-          end
-        when :strip
-          __sanitize_roots.children.each do |node|
-            Scrubber.traverse_conditionally_bottom_up(node, filter)
-          end
+      if Filters::MAP[filter]
+        filter = Filters::MAP[filter].new
+      end
+
+      unless filter.is_a?(Loofah::Filter)
+        raise Loofah::FilterNotFound, "not a Filter or a filter name: #{filter.inspect}"
+      end
+
+      __sanitize_roots.children.each do |node|
+        if filter.direction == :bottom_up
+          filter.traverse_conditionally_bottom_up(node)
         else
-          raise Loofah::FilterNotFound, "unknown sanitize filter '#{filter}'"
+          filter.traverse_conditionally_top_down(node)
         end
       end
       self
@@ -87,6 +79,75 @@ module Loofah
     end
   end
 
+  module Filters
+
+    class Escape < Filter
+      def initialize
+        @direction = :top_down
+      end
+
+      def filter(node)
+        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
+        node.add_next_sibling replacement_killer
+        node.remove
+        return Filter::STOP
+      end
+    end
+
+    class Prune < Filter
+      def initialize
+        @direction = :top_down
+      end
+
+      def filter(node)
+        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        node.remove
+        return Filter::STOP
+      end
+    end
+
+    class Whitewash < Filter
+      def initialize
+        @direction = :top_down
+      end
+
+      def filter(node)
+        case node.type
+        when Nokogiri::XML::Node::ELEMENT_NODE
+          if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+            node.attributes.each { |attr| node.remove_attribute(attr.first) }
+            return Filter::CONTINUE if node.namespaces.empty?
+          end
+        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
+          return Filter::CONTINUE
+        end
+        node.remove
+        return Filter::STOP
+      end
+    end
+
+    class Strip < Filter
+      def initialize
+        @direction = :bottom_up
+      end
+
+      def filter(node)
+        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        replacement_killer = node.before node.inner_html
+        node.remove
+      end
+    end
+
+    MAP = {
+      :escape => Escape,
+      :prune => Prune,
+      :whitewash => Whitewash,
+      :strip => Strip
+    }
+
+  end
+
   module Scrubber
 
     class << self
@@ -102,40 +163,6 @@ module Loofah
           return Filter::CONTINUE
         end
         Filter::STOP
-      end
-
-      def escape(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
-        replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
-        node.add_next_sibling replacement_killer
-        node.remove
-        return Filter::STOP
-      end
-
-      def prune(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
-        node.remove
-        return Filter::STOP
-      end
-
-      def strip(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
-        replacement_killer = node.before node.inner_html
-        node.remove
-      end
-
-      def whitewash(node)
-        case node.type
-        when Nokogiri::XML::Node::ELEMENT_NODE
-          if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            node.attributes.each { |attr| node.remove_attribute(attr.first) }
-            return Filter::CONTINUE if node.namespaces.empty?
-          end
-        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return Filter::CONTINUE
-        end
-        node.remove
-        return Filter::STOP
       end
 
       def traverse_conditionally_top_down(node, filter)
