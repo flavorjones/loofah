@@ -19,7 +19,7 @@ module Loofah
           Scrubber.traverse_conditionally_bottom_up(node, method)
         end
       else
-        if  Scrubber.filters[method]
+        if Scrubber.filters[method]
           __sanitize_roots.children.each do |node|
             Scrubber.traverse_conditionally_top_down(node, Scrubber.filters[method])
           end
@@ -41,8 +41,8 @@ module Loofah
   end
 
   module Scrubber
-    CONTINUE = false
-    STOP     = true
+    CONTINUE = :continue
+    STOP     = :stop
 
     class NoSuchFilter < RuntimeError ; end
     class FilterAlreadyDefined < RuntimeError ; end
@@ -112,9 +112,9 @@ module Loofah
 
       def traverse_conditionally_top_down(node, method)
         if method.is_a?(Proc)
-          return if method.call(node)
+          return if method.call(node) == STOP
         else
-          return if send(method, node)
+          return if send(method, node) == STOP
         end
         node.children.each {|j| traverse_conditionally_top_down(j, method)}
       end
