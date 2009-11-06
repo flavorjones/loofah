@@ -68,33 +68,32 @@ module Loofah
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             HTML5::Scrub.scrub_attributes node
-            return false
+            return CONTINUE
           end
         when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return false
+          return CONTINUE
         end
-        true
+        STOP
       end
 
       def escape(node)
-        return false unless sanitize(node)
+        return CONTINUE if sanitize(node) == CONTINUE
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
-        return true
+        return STOP
       end
 
       def prune(node)
-        return false unless sanitize(node)
+        return CONTINUE if sanitize(node) == CONTINUE
         node.remove
-        return true
+        return STOP
       end
 
       def strip(node)
-        return false unless sanitize(node)
+        return CONTINUE if sanitize(node) == CONTINUE
         replacement_killer = node.before node.inner_html
         node.remove
-        return true
       end
 
       def whitewash(node)
@@ -102,13 +101,13 @@ module Loofah
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             node.attributes.each { |attr| node.remove_attribute(attr.first) }
-            return false if node.namespaces.empty?
+            return CONTINUE if node.namespaces.empty?
           end
         when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return false
+          return CONTINUE
         end
         node.remove
-        return true
+        return STOP
       end
 
       def traverse_conditionally_top_down(node, method)
@@ -122,7 +121,7 @@ module Loofah
 
       def traverse_conditionally_bottom_up(node, method)
         node.children.each {|j| traverse_conditionally_bottom_up(j, method)}
-        return if send(method, node)
+        send(method, node)
       end
 
     end
