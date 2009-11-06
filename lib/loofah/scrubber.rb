@@ -8,25 +8,24 @@ module Loofah
     #  Clean up the HTML. See Loofah for full usage.
     #
     def scrub!(method)
-      method = method.to_sym
-      case method
-      when :escape, :prune, :whitewash
+      if method.is_a?(Loofah::Filter)
         __sanitize_roots.children.each do |node|
-          Scrubber.traverse_conditionally_top_down(node, method)
-        end
-      when :strip
-        __sanitize_roots.children.each do |node|
-          Scrubber.traverse_conditionally_bottom_up(node, method)
+          if method.direction == :top_down
+            Scrubber.traverse_conditionally_top_down(node, method.block)
+          else
+            Scrubber.traverse_conditionally_bottom_up(node, method.block)
+          end
         end
       else
-        if Scrubber.filters[method]
-          direction = Scrubber.filters[method].options[:direction] || :top_down
+        method = method.to_sym
+        case method
+        when :escape, :prune, :whitewash
           __sanitize_roots.children.each do |node|
-            if direction == :top_down
-              Scrubber.traverse_conditionally_top_down(node, Scrubber.filters[method].block)
-            else
-              Scrubber.traverse_conditionally_bottom_up(node, Scrubber.filters[method].block)
-            end
+            Scrubber.traverse_conditionally_top_down(node, method)
+          end
+        when :strip
+          __sanitize_roots.children.each do |node|
+            Scrubber.traverse_conditionally_bottom_up(node, method)
           end
         else
           raise Scrubber::NoSuchFilter, "unknown sanitize filter '#{method}'"
@@ -45,6 +44,18 @@ module Loofah
     alias :to_str     :text
   end
 
+  class Filter
+    attr_accessor :direction, :block
+
+    def initialize(options = {}, &block)
+      direction = options[:direction] || :top_down
+      unless [:top_down, :bottom_up].include?(direction)
+        raise ArgumentError, "direction #{direction} must be one of :top_down or :bottom_up" 
+      end
+      @direction, @block = direction, block
+    end
+  end
+
   module Scrubber
     CONTINUE = :continue
     STOP     = :stop
@@ -52,32 +63,7 @@ module Loofah
     class NoSuchFilter < RuntimeError ; end
     class FilterAlreadyDefined < RuntimeError ; end
 
-    # TODO: this is the class we should expose. not a method call. TDD FTW!
-    class Filter
-      attr_accessor :options, :block
-      def initialize(options, &block)
-        if options[:direction] && ! [:top_down, :bottom_up].include?(options[:direction])
-          raise ArgumentError, "direction #{options[:direction]} must be one of :top_down or :bottom_up" 
-        end
-        @options, @block = options, block
-      end
-    end
-
     class << self
-
-      def define_filter(name, options={}, &block)
-        name = name.to_sym
-        raise(Scrubber::FilterAlreadyDefined, "filter '#{name}' is already defined") if filters.has_key?(name)
-        filters[name] = Filter.new(options, &block)
-      end
-
-      def undefine_filter(name)
-        filters.delete(name.to_sym)
-      end
-
-      def filters
-        @@filters ||= {}
-      end
 
       def sanitize(node)
         case node.type
