@@ -7,10 +7,10 @@ module Loofah
     #
     #  Clean up the HTML. See Loofah for full usage.
     #
-    def scrub!(filter)
-      filter = Filters::MAP[filter].new if Filters::MAP[filter]
-      raise Loofah::FilterNotFound, "not a Filter or a filter name: #{filter.inspect}" unless filter.is_a?(Loofah::Filter)
-      sanitize_roots.children.each { |node| filter.traverse(node) }
+    def scrub!(scrubber)
+      scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
+      raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}" unless scrubber.is_a?(Loofah::Scrubber)
+      sanitize_roots.children.each { |node| scrubber.traverse(node) }
       self
     end
 

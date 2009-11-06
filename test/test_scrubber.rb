@@ -2,124 +2,226 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestScrubber < Test::Unit::TestCase
 
-  [ Loofah::HTML::Document, Loofah::HTML::DocumentFragment ].each do |klass|
-    define_method "test_#{klass}_bad_sanitize_method" do
-      doc = klass.parse "<p>foo</p>"
-      assert_raises(Loofah::FilterNotFound) { doc.scrub! :frippery }
+  FRAGMENT = "<span>hello</span><span>goodbye</span>"
+  FRAGMENT_NODE_COUNT         = 4 # span, text, span, text
+  FRAGMENT_NODE_STOP_TOP_DOWN = 2 # span, span
+  DOCUMENT = "<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>"
+  DOCUMENT_NODE_COUNT         = 5 # span, text, span, text
+  DOCUMENT_NODE_STOP_TOP_DOWN = 3 # link, span, span
+
+  context "receiving a block" do
+    setup do
+      @count = 0
+    end
+
+    context "returning CONTINUE" do
+      setup do
+        @scrubber = Loofah::Scrubber.new do |node|
+          @count += 1
+          Loofah::Scrubber::CONTINUE
+        end
+      end
+
+      should "operate properly on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
+
+      should "operate properly on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_COUNT, @count
+      end
+    end
+
+    context "returning STOP" do
+      setup do
+        @scrubber = Loofah::Scrubber.new do |node|
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
+      end
+    end
+
+    context "returning neither CONTINUE nor STOP" do
+      setup do
+        @scrubber = Loofah::Scrubber.new do |node|
+          @count += 1
+        end
+      end
+
+      should "act as if CONTINUE was returned" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
+    end
+
+    context "not specifying direction" do
+      setup do
+        @scrubber = Loofah::Scrubber.new() do |node|
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
+      end
+    end
+
+    context "specifying top-down direction" do
+      setup do
+        @scrubber = Loofah::Scrubber.new(:direction => :top_down) do |node|
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
+      end
+    end
+
+    context "specifying bottom-up direction" do
+      setup do
+        @scrubber = Loofah::Scrubber.new(:direction => :bottom_up) do |node|
+          @count += 1
+        end
+      end
+
+      should "operate as bottom-up on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
+
+      should "operate as bottom-up on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_COUNT, @count
+      end
+    end
+
+    context "invalid direction" do
+      should "raise an exception" do
+        assert_raises(ArgumentError) {
+          Loofah::Scrubber.new(:direction => :quux) { }
+        }
+      end
+    end
+
+    context "given a block taking zero arguments" do
+      setup do
+        @scrubber = Loofah::Scrubber.new do
+          @count += 1
+        end
+      end
+
+      should "work anyway, shrug" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
     end
   end
 
-  INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
-  INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
-  INVALID_PRUNED   = "<div>quux</div>"
-  INVALID_STRIPPED = "foo<p>bar</p>bazz<div>quux</div>"
+  context "defining a new Scrubber class" do
+    setup do
+      @klass = Class.new(Loofah::Scrubber) do
+        attr_accessor :count
+        def initialize(direction=nil)
+          @direction = direction
+          @count = 0
+        end
+        def scrub(node)
+          @count += 1
+          Loofah::Scrubber::STOP
+        end
+      end
+    end
 
-  WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid>"
-  WHITEWASH_RESULT   = "<div>foo</div>"
+    context "when not specifying direction" do
+      setup do
+        @scrubber = @klass.new
+        assert_nil @scrubber.direction
+      end
 
-  def test_document_escape_bad_tags
-    doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-    result = doc.scrub! :escape
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
+      end
 
-    assert_equal INVALID_ESCAPED, doc.xpath('/html/body').inner_html
-    assert_equal doc, result
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
+      end
+    end
+
+    context "when direction is specified as top_down" do
+      setup do
+        @scrubber = @klass.new(:top_down)
+        assert_equal :top_down, @scrubber.direction
+      end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
+      end
+    end
+
+    context "when direction is specified as bottom_up" do
+      setup do
+        @scrubber = @klass.new(:bottom_up)
+        assert_equal :bottom_up, @scrubber.direction
+      end
+
+      should "operate as bottom-up on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        assert_equal FRAGMENT_NODE_COUNT, @scrubber.count
+      end
+
+      should "operate as bottom-up on a document" do
+        Loofah.scrub_document(DOCUMENT, @scrubber)
+        assert_equal DOCUMENT_NODE_COUNT, @scrubber.count
+      end
+    end
   end
 
-  def test_fragment_escape_bad_tags
-    doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
-    result = doc.scrub! :escape
+  context "creating a new Scrubber class with no scrub method" do
+    setup do
+      @klass = Class.new(Loofah::Scrubber) do
+        def initialize ; end
+      end
+      @scrubber = @klass.new
+    end
 
-    assert_equal INVALID_ESCAPED, doc.xpath("./div").inner_html
-    assert_equal doc, result
+    should "raise an exception" do
+      assert_raises(Loofah::ScrubberNotFound) {
+        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+      }
+    end
   end
-
-  def test_document_prune_bad_tags
-    doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-    result = doc.scrub! :prune
-
-    assert_equal INVALID_PRUNED, doc.xpath('/html/body').inner_html
-    assert_equal doc, result
-  end
-
-  def test_fragment_prune_bad_tags
-    doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
-    result = doc.scrub! :prune
-
-    assert_equal INVALID_PRUNED, doc.xpath("./div").inner_html
-    assert_equal doc, result
-  end
-
-  def test_document_strip_bad_tags
-    doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-    result = doc.scrub! :strip
-
-    assert_equal INVALID_STRIPPED, doc.xpath('/html/body').inner_html
-    assert_equal doc, result
-  end
-
-  def test_fragment_strip_bad_tags
-    doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
-    result = doc.scrub! :strip
-
-    assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
-    assert_equal doc, result
-  end
-
-  def test_document_whitewash
-    doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
-    result = doc.scrub! :whitewash
-
-    assert_equal WHITEWASH_RESULT, doc.xpath('/html/body').inner_html
-    assert_equal doc, result
-  end
-
-  def test_fragment_whitewash
-    doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
-    result = doc.scrub! :whitewash
-
-    assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
-    assert_equal doc, result
-  end
-
-  def test_fragment_shortcut
-    mock_doc = mock
-    Loofah.expects(:fragment).with(:string_or_io).returns(mock_doc)
-    mock_doc.expects(:scrub!).with(:method)
-
-    Loofah.scrub_fragment(:string_or_io, :method)
-  end
-
-  def test_document_shortcut
-    mock_doc = mock
-    Loofah.expects(:document).with(:string_or_io).returns(mock_doc)
-    mock_doc.expects(:scrub!).with(:method)
-
-    Loofah.scrub_document(:string_or_io, :method)
-  end
-
-  def test_document_to_s
-    doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
-    assert_not_nil doc.xpath("/html").first
-    assert_not_nil doc.xpath("/html/head").first
-    assert_not_nil doc.xpath("/html/body").first
-
-    assert_contains doc.to_s, /<!DOCTYPE/
-    assert_contains doc.to_s, /<html>/
-    assert_contains doc.to_s, /<head>/
-    assert_contains doc.to_s, /<body>/
-  end
-
-  def test_document_serialize
-    doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
-
-    assert_not_nil doc.xpath("/html").first
-    assert_not_nil doc.xpath("/html/head").first
-    assert_not_nil doc.xpath("/html/body").first
-
-    assert_contains doc.serialize, /<!DOCTYPE/
-    assert_contains doc.serialize, /<html>/
-    assert_contains doc.serialize, /<head>/
-    assert_contains doc.serialize, /<body>/
-  end
-
 end

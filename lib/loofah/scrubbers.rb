@@ -2,73 +2,73 @@ module Loofah
   #
   #  TODO
   #
-  module Filters
+  module Scrubbers
 
     #
     #  TODO
     #
-    class Escape < Filter
+    class Escape < Scrubber
       def initialize
         @direction = :top_down
       end
 
-      def filter(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
+      def scrub(node)
+        return Scrubber::CONTINUE if sanitize(node) == Scrubber::CONTINUE
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
-        return Filter::STOP
+        return Scrubber::STOP
       end
     end
 
     #
     #  TODO
     #
-    class Prune < Filter
+    class Prune < Scrubber
       def initialize
         @direction = :top_down
       end
 
-      def filter(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
+      def scrub(node)
+        return Scrubber::CONTINUE if sanitize(node) == Scrubber::CONTINUE
         node.remove
-        return Filter::STOP
+        return Scrubber::STOP
       end
     end
 
     #
     #  TODO
     #
-    class Whitewash < Filter
+    class Whitewash < Scrubber
       def initialize
         @direction = :top_down
       end
 
-      def filter(node)
+      def scrub(node)
         case node.type
         when Nokogiri::XML::Node::ELEMENT_NODE
           if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
             node.attributes.each { |attr| node.remove_attribute(attr.first) }
-            return Filter::CONTINUE if node.namespaces.empty?
+            return Scrubber::CONTINUE if node.namespaces.empty?
           end
         when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return Filter::CONTINUE
+          return Scrubber::CONTINUE
         end
         node.remove
-        Filter::STOP
+        Scrubber::STOP
       end
     end
 
     #
     #  TODO
     #
-    class Strip < Filter
+    class Strip < Scrubber
       def initialize
         @direction = :bottom_up
       end
 
-      def filter(node)
-        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
+      def scrub(node)
+        return Scrubber::CONTINUE if sanitize(node) == Scrubber::CONTINUE
         replacement_killer = node.before node.inner_html
         node.remove
       end

@@ -1,13 +1,13 @@
 module Loofah
   #
-  #  A RuntimeError raised when Loofah could not find an appropriate filter.
+  #  A RuntimeError raised when Loofah could not find an appropriate scrubber.
   #
-  class FilterNotFound < RuntimeError ; end
+  class ScrubberNotFound < RuntimeError ; end
 
   #
   #  TODO
   #
-  class Filter
+  class Scrubber
     CONTINUE = Object.new.freeze
     STOP     = Object.new.freeze
 
@@ -25,8 +25,8 @@ module Loofah
       direction == :bottom_up ? traverse_conditionally_bottom_up(node) : traverse_conditionally_top_down(node)
     end
 
-    def filter(node)
-      raise FilterNotFound, "No filter method has been defined on #{self.class.to_s}"
+    def scrub(node)
+      raise ScrubberNotFound, "No scrub method has been defined on #{self.class.to_s}"
     end
 
     private
@@ -36,19 +36,19 @@ module Loofah
       when Nokogiri::XML::Node::ELEMENT_NODE
         if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
           HTML5::Scrub.scrub_attributes node
-          return Filter::CONTINUE
+          return Scrubber::CONTINUE
         end
       when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-        return Filter::CONTINUE
+        return Scrubber::CONTINUE
       end
-      Filter::STOP
+      Scrubber::STOP
     end
 
     def traverse_conditionally_top_down(node)
       if block
         return if block.call(node) == STOP
       else
-        return if filter(node) == STOP
+        return if scrub(node) == STOP
       end
       node.children.each {|j| traverse_conditionally_top_down(j)}
     end
@@ -58,7 +58,7 @@ module Loofah
       if block
         block.call(node)
       else
-        filter(node)
+        scrub(node)
       end
     end
   end
