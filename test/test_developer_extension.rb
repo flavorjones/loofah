@@ -180,9 +180,33 @@ class TestFilter < Test::Unit::TestCase
         @filter = @klass.new(:top_down)
         assert_equal :top_down, @filter.direction
       end
+
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @filter.count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @filter.count
+      end
     end
 
     context "when direction is specified as bottom_up" do
+      setup do
+        @filter = @klass.new(:bottom_up)
+        assert_equal :bottom_up, @filter.direction
+      end
+
+      should "operate as bottom-up on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @filter.count
+      end
+
+      should "operate as bottom-up on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_COUNT, @filter.count
+      end
     end
 
     # context "when filter method has arity zero"
