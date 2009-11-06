@@ -10,7 +10,7 @@ module Loofah
 
       private
 
-      def __sanitize_roots # :nodoc:
+      def sanitize_roots # :nodoc:
         xpath("/html/head","/html/body")
       end
 

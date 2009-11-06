@@ -16,7 +16,7 @@ module Loofah
     def scrub!(filter)
       filter = Filters::MAP[filter].new if Filters::MAP[filter]
       raise Loofah::FilterNotFound, "not a Filter or a filter name: #{filter.inspect}" unless filter.is_a?(Loofah::Filter)
-      __sanitize_roots.children.each { |node| filter.traverse(node) }
+      sanitize_roots.children.each { |node| filter.traverse(node) }
       self
     end
 
@@ -24,7 +24,7 @@ module Loofah
     #  Returns a plain-text version of the markup contained by the fragment or document
     #
     def text
-      __sanitize_roots.children.inner_text
+      sanitize_roots.children.inner_text
     end
     alias :inner_text :text
     alias :to_str     :text
