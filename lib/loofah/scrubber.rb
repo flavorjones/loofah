@@ -14,21 +14,9 @@ module Loofah
     #  Clean up the HTML. See Loofah for full usage.
     #
     def scrub!(filter)
-      if Filters::MAP[filter]
-        filter = Filters::MAP[filter].new
-      end
-
-      unless filter.is_a?(Loofah::Filter)
-        raise Loofah::FilterNotFound, "not a Filter or a filter name: #{filter.inspect}"
-      end
-
-      __sanitize_roots.children.each do |node|
-        if filter.direction == :bottom_up
-          filter.traverse_conditionally_bottom_up(node)
-        else
-          filter.traverse_conditionally_top_down(node)
-        end
-      end
+      filter = Filters::MAP[filter].new if Filters::MAP[filter]
+      raise Loofah::FilterNotFound, "not a Filter or a filter name: #{filter.inspect}" unless filter.is_a?(Loofah::Filter)
+      __sanitize_roots.children.each { |node| filter.traverse(node) }
       self
     end
 
@@ -56,9 +44,15 @@ module Loofah
       @direction, @block = direction, block
     end
 
+    def traverse(node)
+      direction == :bottom_up ? traverse_conditionally_bottom_up(node) : traverse_conditionally_top_down(node)
+    end
+
     def filter(node)
       raise FilterNotFound, "No filter method has been defined on #{self.class.to_s}"
     end
+
+    private
 
     def traverse_conditionally_top_down(node)
       if block
