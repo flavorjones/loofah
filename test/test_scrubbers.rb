@@ -17,6 +17,9 @@ class TestScrubber < Test::Unit::TestCase
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid>"
   WHITEWASH_RESULT   = "<div>foo</div>"
 
+  NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
+  NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
+
   def test_document_escape_bad_tags
     doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
     result = doc.scrub! :escape
@@ -78,6 +81,22 @@ class TestScrubber < Test::Unit::TestCase
     result = doc.scrub! :whitewash
 
     assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
+    assert_equal doc, result
+  end
+
+  def test_document_nofollow
+    doc = Loofah::HTML::Document.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
+    result = doc.scrub! :nofollow
+
+    assert_equal NOFOLLOW_RESULT, doc.xpath('/html/body').inner_html
+    assert_equal doc, result
+  end
+
+  def test_fragment_nofollow
+    doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
+    result = doc.scrub! :nofollow
+
+    assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
     assert_equal doc, result
   end
 
