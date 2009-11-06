@@ -57,8 +57,8 @@ module Loofah
   end
 
   module Scrubber
-    CONTINUE = :continue
-    STOP     = :stop
+    CONTINUE = Object.new.freeze
+    STOP     = Object.new.freeze
 
     class NoSuchFilter < RuntimeError ; end
     class FilterAlreadyDefined < RuntimeError ; end
