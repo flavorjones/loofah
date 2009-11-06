@@ -35,6 +35,7 @@ require 'loofah/helpers'
 #   doc.scrub!(:whitewash)   # removes  unknown/unsafe/namespaced tags and their children,
 #                            #          and strips all node attributes
 #   doc.scrub!(:escape)      # escapes  unknown/unsafe tags, like this: &lt;script&gt;
+#   doc.scrub!(:nofollow)    # adds rel="nofollow" attribute to links
 #
 # Loofah overrides +to_s+ to return html:
 #
@@ -158,6 +159,18 @@ require 'loofah/helpers'
 # cut-and-pasted from Microsoft Word into a WYSIWYG editor or a rich
 # text editor. Microsoft's software is famous for injecting all kinds
 # of cruft into its HTML output. Who needs that? Certainly not me.
+#
+# === scrub!(:nofollow)
+#
+# +:nofollow+ adds a rel="nofollow" attribute to all links
+#
+#     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+#
+#     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
+#     # or
+#     Loofah.scrub_fragment(link_farmers_markup, :nofollow)
+#
+#     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
 #
 module Loofah
   # The version of Loofah you are using
