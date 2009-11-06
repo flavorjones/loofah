@@ -41,6 +41,20 @@ class TestFilter < Test::Unit::TestCase
     end
   end
 
+  context "returning neither CONTINUE nor STOP" do
+    setup do
+      @count = 0
+      @filter = Loofah::Filter.new do |node|
+        @count += 1
+      end
+    end
+
+    should "act as if CONTINUE was returned" do
+      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
+      assert_equal 4, @count # span, text, span, text
+    end
+  end
+
   context "top-down direction" do
     setup do
       @count = 0
