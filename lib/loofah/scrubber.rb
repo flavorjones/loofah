@@ -54,6 +54,19 @@ module Loofah
 
     private
 
+    def sanitize(node)
+      case node.type
+      when Nokogiri::XML::Node::ELEMENT_NODE
+        if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+          HTML5::Scrub.scrub_attributes node
+          return Filter::CONTINUE
+        end
+      when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
+        return Filter::CONTINUE
+      end
+      Filter::STOP
+    end
+
     def traverse_conditionally_top_down(node)
       if block
         return if block.call(node) == STOP
@@ -81,7 +94,7 @@ module Loofah
       end
 
       def filter(node)
-        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
@@ -95,7 +108,7 @@ module Loofah
       end
 
       def filter(node)
-        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
         node.remove
         return Filter::STOP
       end
@@ -117,7 +130,7 @@ module Loofah
           return Filter::CONTINUE
         end
         node.remove
-        return Filter::STOP
+        Filter::STOP
       end
     end
 
@@ -127,7 +140,7 @@ module Loofah
       end
 
       def filter(node)
-        return Filter::CONTINUE if Scrubber.sanitize(node) == Filter::CONTINUE
+        return Filter::CONTINUE if sanitize(node) == Filter::CONTINUE
         replacement_killer = node.before node.inner_html
         node.remove
       end
@@ -139,27 +152,6 @@ module Loofah
       :whitewash => Whitewash,
       :strip => Strip
     }
-
-  end
-
-  module Scrubber
-
-    class << self
-
-      def sanitize(node)
-        case node.type
-        when Nokogiri::XML::Node::ELEMENT_NODE
-          if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
-            HTML5::Scrub.scrub_attributes node
-            return Filter::CONTINUE
-          end
-        when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return Filter::CONTINUE
-        end
-        Filter::STOP
-      end
-
-    end
 
   end
 end
