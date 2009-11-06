@@ -1,117 +1,158 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestFilter < Test::Unit::TestCase
-  context "returning CONTINUE" do
+
+  FRAGMENT = "<span>hello</span><span>goodbye</span>"
+  FRAGMENT_NODE_COUNT         = 4 # span, text, span, text
+  FRAGMENT_NODE_STOP_TOP_DOWN = 2 # span, span
+  DOCUMENT = "<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>"
+  DOCUMENT_NODE_COUNT         = 5 # span, text, span, text
+  DOCUMENT_NODE_STOP_TOP_DOWN = 3 # link, span, span
+
+  context "receiving a block" do
     setup do
       @count = 0
-      @filter = Loofah::Filter.new do |node|
-        @count += 1
-        Loofah::Scrubber::CONTINUE
+    end
+
+    context "returning CONTINUE" do
+      setup do
+        @filter = Loofah::Filter.new do |node|
+          @count += 1
+          Loofah::Filter::CONTINUE
+        end
+      end
+
+      should "operate properly on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
+
+      should "operate properly on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_COUNT, @count
       end
     end
 
-    should "operate properly on a fragment" do
-      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
-      assert_equal 4, @count # span, text, span, text
-    end
+    context "returning STOP" do
+      setup do
+        @filter = Loofah::Filter.new do |node|
+          @count += 1
+          Loofah::Filter::STOP
+        end
+      end
 
-    should "operate properly on a document" do
-      Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", @filter)
-      assert_equal 5, @count # link, span, text, span, text
-    end
-  end
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
 
-  context "returning STOP" do
-    setup do
-      @count = 0
-      @filter = Loofah::Filter.new do |node|
-        @count += 1
-        Loofah::Scrubber::STOP
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
       end
     end
 
-    should "operate as top-down on a fragment" do
-      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
-      assert_equal 2, @count # span, text, span, text
-    end
+    context "returning neither CONTINUE nor STOP" do
+      setup do
+        @filter = Loofah::Filter.new do |node|
+          @count += 1
+        end
+      end
 
-    should "operate as top-down on a document" do
-      Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", @filter)
-      assert_equal 3, @count # link, span, span
-    end
-  end
-
-  context "returning neither CONTINUE nor STOP" do
-    setup do
-      @count = 0
-      @filter = Loofah::Filter.new do |node|
-        @count += 1
+      should "act as if CONTINUE was returned" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @count
       end
     end
 
-    should "act as if CONTINUE was returned" do
-      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
-      assert_equal 4, @count # span, text, span, text
-    end
-  end
+    context "specifying top-down direction" do
+      setup do
+        @filter = Loofah::Filter.new(:direction => :top_down) do |node|
+          @count += 1
+          Loofah::Filter::STOP
+        end
+      end
 
-  context "top-down direction" do
-    setup do
-      @count = 0
-      @filter = Loofah::Filter.new(:direction => :top_down) do |node|
-        @count += 1
-        Loofah::Scrubber::STOP
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
       end
     end
 
-    should "operate as top-down on a fragment" do
-      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
-      assert_equal 2, @count # span, text, span, text
-    end
+    context "specifying bottom-up direction" do
+      setup do
+        @filter = Loofah::Filter.new(:direction => :bottom_up) do |node|
+          @count += 1
+        end
+      end
 
-    should "operate as top-down on a document" do
-      Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", @filter)
-      assert_equal 3, @count # link, span, span
-    end
-  end
+      should "operate as bottom-up on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
 
-  context "bottom-up direction" do
-    setup do
-      @count = 0
-      @filter = Loofah::Filter.new(:direction => :bottom_up) do |node|
-        @count += 1
-        Loofah::Scrubber::STOP
+      should "operate as bottom-up on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_COUNT, @count
       end
     end
 
-    should "operate as bottom-up on a fragment" do
-      Loofah.scrub_fragment("<span>hello</span><span>goodbye</span>", @filter)
-      assert_equal 4, @count # span, text, span, text
+    context "invalid direction" do
+      should "raise an exception" do
+        assert_raises(ArgumentError) {
+          Loofah::Filter.new(:direction => :quux) { }
+        }
+      end
     end
 
-    should "operate as bottom-up on a document" do
-      Loofah.scrub_document("<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>", @filter)
-      assert_equal 5, @count # link, span, span
+    context "given a block taking zero arguments" do
+      setup do
+        @filter = Loofah::Filter.new do
+          @count += 1
+        end
+      end
+
+      should "work anyway, shrug" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @count
+      end
     end
   end
 
-  context "invalid direction" do
-    should "raise an exception" do
-      assert_raises(ArgumentError) {
-        Loofah::Filter.new(:direction => :quux) { }
-      }
-    end
-  end
+  context "referencing a method" do
+    context "when not specifying direction" do
+      setup do
+        klass = Class.new(Loofah::Filter) do
+          attr_accessor :count
+          def initialize
+            @count = 0
+          end
+          def filter(node)
+            @count += 1
+          end
+        end
+        @filter = klass.new
+      end
 
-  context "given a block taking zero arguments" do
-    setup do
-      @called = false
-      @filter = Loofah::Filter.new { @called = true }
+      should "operate as top-down on a fragment" do
+        Loofah.scrub_fragment(FRAGMENT, @filter)
+        assert_equal FRAGMENT_NODE_COUNT, @filter.count
+      end
+
+      should "operate as top-down on a document" do
+        Loofah.scrub_document(DOCUMENT, @filter)
+        assert_equal DOCUMENT_NODE_COUNT, @filter.count
+      end
     end
 
-    should "work anyway, shrug" do
-      Loofah.scrub_fragment("<div>hello</div>", @filter)
-      assert @called
-    end
+    # context "when direction is specified as top_down"
+    # context "when direction is specified as bottom_up"
+    # context "when filter method has arity zero"
+    # context "when no filter method is defined"
   end
 end
