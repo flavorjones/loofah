@@ -13,7 +13,7 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE if sanitize(node) == CONTINUE
+        return CONTINUE if html5lib_sanitize(node) == CONTINUE
         replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
         node.add_next_sibling replacement_killer
         node.remove
@@ -30,7 +30,7 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE if sanitize(node) == CONTINUE
+        return CONTINUE if html5lib_sanitize(node) == CONTINUE
         node.remove
         return STOP
       end
@@ -68,7 +68,7 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE if sanitize(node) == CONTINUE
+        return CONTINUE if html5lib_sanitize(node) == CONTINUE
         replacement_killer = node.before node.inner_html
         node.remove
       end

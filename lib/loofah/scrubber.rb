@@ -31,7 +31,7 @@ module Loofah
 
     private
 
-    def sanitize(node)
+    def html5lib_sanitize(node)
       case node.type
       when Nokogiri::XML::Node::ELEMENT_NODE
         if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
