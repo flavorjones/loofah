@@ -11,38 +11,41 @@ def run(cmd)
   raise "ERROR running command" unless $? == 0
 end
 
-desc "run tests across various versions of Rails"
-task :rails_test => [:fake_install] do
-  results = {}
-  Dir.chdir("rails_test") do
-    Dir["rails-*"].sort.reverse.each do |rails|
-      rails =~ /rails-(\d+\.\d+\.\d)+-(.*)/
-      version = $1
-      flavor = $2
-      run "./generate_test_directory #{version} #{flavor}"
-      Dir.chdir rails do
-        ENV['GEM_HOME'] = File.expand_path("../../tmp")
-        ENV['RAILS_ENV'] = "test"
-        FileUtils.mkdir_p "log"
-        unless File.exist?("db/test.sqlite3")
-          run "touch db/test.sqlite3" # db:create doesn't exist before rails 2.0
-          run "rake db:migrate"
-        end
-        begin
-          run "rake test"
-        rescue
-          results[rails] = "FAIL"
-        else
-          results[rails] = "SUCCESS"
+namespace :test do
+  desc "run tests across various versions of Rails"
+  task :rails => [:fake_install] do
+    results = {}
+    Dir.chdir("rails_test") do
+      Dir["rails-*"].sort.reverse.each do |rails|
+        rails =~ /rails-(\d+\.\d+\.\d)+-(.*)/
+        version = $1
+        flavor = $2
+        run "./generate_test_directory #{version} #{flavor}"
+        Dir.chdir rails do
+          ENV['GEM_HOME'] = File.expand_path("../../tmp")
+          ENV['RAILS_ENV'] = "test"
+          FileUtils.mkdir_p "log"
+          unless File.exist?("db/test.sqlite3")
+            run "touch db/test.sqlite3" # db:create doesn't exist before rails 2.0
+            run "rake db:migrate"
+          end
+          begin
+            run "rake test"
+          rescue
+            results[rails] = "FAIL"
+          else
+            results[rails] = "SUCCESS"
+          end
         end
       end
     end
+    puts "----- RESULTS -----"
+    results.keys.sort.each do |key|
+      puts "* #{key}: #{results[key]}"
+    end
   end
-  puts "----- RESULTS -----"
-  results.keys.sort.each do |key|
-    puts "* #{key}: #{results[key]}"
-  end
+
+  desc "Run test suite and the full Rails regression test suite"
+  task :all => [:test, :"test:rails"]
 end
 
-desc "Run test suite and the full Rails regression test suite"
-task "test:all" => [:test, :rails_test]
