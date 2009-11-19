@@ -69,7 +69,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
-        replacement_killer = node.before node.inner_html
+        node.before node.inner_html
         node.remove
       end
     end
