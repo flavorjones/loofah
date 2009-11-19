@@ -44,9 +44,9 @@ task :fix_css do
   margin-top: .5em ;
 }
 
-div#main ul {
-  list-style-type: disc ;
-  list-style-position: inside ;
+#main ul, div#documentation ul {
+  list-style-type: disc ! IMPORTANT ;
+  list-style-position: inside ! IMPORTANT ;
 }
 EOT
   puts "* fixing css"
