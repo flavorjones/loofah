@@ -1,13 +1,13 @@
 = Changelog
 
-== 0.3.2 (unreleased)
+== 0.4 (unreleased)
 
 Enhancements:
 
   * Refactored scrubber code to live in nice Scrubber classes, which
     both cleans the code up and allows developers (that's you!) to
-    implement your own filters.
-  * Implemented a :nofollow scrubber (thanks Luke Melia!)
+    implement their own filters.
+  * :nofollow scrubber (thanks Luke Melia!)
 
 == 0.3.1 (2009-10-12)
 
