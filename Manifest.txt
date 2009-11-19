@@ -17,14 +17,16 @@ lib/loofah/html/document.rb
 lib/loofah/html/document_fragment.rb
 lib/loofah/html5/scrub.rb
 lib/loofah/html5/whitelist.rb
+lib/loofah/instance_methods.rb
 lib/loofah/scrubber.rb
+lib/loofah/scrubbers.rb
 lib/loofah/xss_foliate.rb
 test/helper.rb
 test/html5/test_sanitizer.rb
-test/html5/testdata/tests1.dat
 test/test_active_record.rb
 test/test_ad_hoc.rb
 test/test_api.rb
 test/test_helpers.rb
 test/test_scrubber.rb
+test/test_scrubbers.rb
 test/test_xss_foliate.rb
