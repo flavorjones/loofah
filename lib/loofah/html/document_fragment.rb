@@ -3,7 +3,7 @@ module Loofah
     #
     #  Subclass of Nokogiri::HTML::DocumentFragment. Also includes Loofah::ScrubberInstanceMethods.
     #
-    #  See Loofah::ScrubberInstanceMethods for additional methods.
+    #  See Loofah::InstanceMethods for additional methods.
     #
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
       include Loofah::InstanceMethods

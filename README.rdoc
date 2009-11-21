@@ -57,8 +57,8 @@ A Loofah::HTML::Document is a subclass of Nokogiri::HTML::Document, so
 a parsed document gives you all the markup fixer-uppery and API
 goodness of Nokogiri.
 
-The Loofah class methods +document+ and +fragment+ will parse an HTML
-document and an HTML fragment, respectively.
+The class methods Loofah.document and Loofah.fragment will parse an
+HTML document and an HTML fragment, respectively.
 
   Loofah.document(unsafe_html).is_a?(Nokogiri::HTML::Document)         # => true
   Loofah.fragment(unsafe_html).is_a?(Nokogiri::HTML::DocumentFragment) # => true
@@ -118,9 +118,9 @@ whitelist algorithm:
 
   doc.scrub!(:strip)       # replaces unknown/unsafe tags with their inner text
   doc.scrub!(:prune)       #  removes unknown/unsafe tags and their children
+  doc.scrub!(:escape)      #  escapes unknown/unsafe tags, like this: &lt;script&gt;
   doc.scrub!(:whitewash)   #  removes unknown/unsafe/namespaced tags and their children,
                            #          and strips all node attributes
-  doc.scrub!(:escape)      #  escapes unknown/unsafe tags, like this: &lt;script&gt;
 
 Loofah also comes with some common transformation tasks: 
 
@@ -139,7 +139,7 @@ You can chain scrubbers:
 
 === Shorthand
 
-The Loofah class methods +scrub_fragment+ and +scrub_document+ are
+The class methods Loofah.scrub_fragment and Loofah.scrub_document are
 shorthand.
 
   Loofah.scrub_fragment(unsafe_html, :prune)

@@ -3,7 +3,7 @@ module Loofah
     #
     #  Subclass of Nokogiri::HTML::Document.
     #
-    #  See Loofah::ScrubberInstanceMethods for additional methods.
+    #  See Loofah::InstanceMethods for additional methods.
     #
     class Document < Nokogiri::HTML::Document
       include Loofah::InstanceMethods
