@@ -6,26 +6,29 @@
 
 == Description
 
-Loofah can help you sanitize, scrub, fix-up and generally transform HTML.
+Loofah is a general library for manipulating HTML/XML documents and
+fragments.
 
-It's built on top of Nokogiri and libxml2, so it's fast and has a nice
-API.
+One specific task that Loofah excels at is HTML sanitization (XSS
+prevention). Loofah includes some nice HTML sanitizers, which are
+based on HTML5lib's whitelist, so it most likely won't make your codes
+less secure. (These statements have not been evaluated by Netexperts.)
 
-Loofah's built-in sanitizers use HTML5lib's whitelist, so Loofah most
-likely won't make your codes less secure. (These statements have not
-been evaluated by Netexperts.)
+Loofah is built on top of Nokogiri and libxml2, so it's fast and has a
+nice API.
 
 == Features
 
-* Easily write custom scrubbers leveraging the sweetness of Nokogiri and HTML5lib's whitelists.
-* Common sanitizing tasks are built-in:
+* Easily write custom scrubbers for HTML/XML leveraging the
+  sweetness of Nokogiri (and HTML5lib's whitelists).
+* Common HTML sanitizing tasks are built-in:
   * _Strip_ unsafe tags, leaving behind only the inner text.
   * _Prune_ unsafe tags and their subtrees, removing all traces that they ever existed.
   * _Escape_ unsafe tags and their subtrees, leaving behind lots of <tt>&lt;</tt> and <tt>&gt;</tt> entities.
   * _Whitewash_ the markup, removing all attributes and namespaced nodes.
-* Common scrubbing tasks are built-in:
+* Common HTML transformation tasks are built-in:
   * Add the _nofollow_ attribute to all hyperlinks.
-* Format HTML as plain text.
+* Format markup as plain text.
 * Replace Rails's +strip_tags+ and +sanitize+ helper methods.
 * Two ActiveRecord extensions:
   * Loofah::XssFoliate, an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement, is an *opt-out* sanitizer. By default all models and attributes are sanitized.
@@ -33,8 +36,10 @@ been evaluated by Netexperts.)
 
 == Compare and Contrast
 
-Loofah is the only Ruby XSS/sanitization library that guarantees
+Loofah is the only Ruby XSS/sanitization solution that guarantees
 well-formed and valid markup.
+
+Loofah works fine on XML, XHTML and HTML documents.
 
 Also, it's pretty fast. Here is a benchmark comparing Loofah to other
 commonly-used libraries (ActionView, Sanitize and HTML5lib):
@@ -42,22 +47,55 @@ commonly-used libraries (ActionView, Sanitize and HTML5lib):
 * http://gist.github.com/170193
 
 Lastly, Loofah is extensible. It's super-easy to write your own custom
-scrubbers for whatever DOM manipulation you need.
+scrubbers for whatever document manipulation you need. You don't like
+the built-in scrubbers? Build your own.
 
 == The Basics
 
-Loofah is an HTML scrubber and sanitizer wrapped around
-Nokogiri[http://nokogiri.org], an excellent HTML/XML parser. If you
-don't know how Nokogiri[http://nokogiri.org] works, you might want to
-pause for a moment and go check it out. I'll wait.
+Loofah wraps Nokogiri[http://nokogiri.org] in a loving
+embrace. Nokogiri[http://nokogiri.org] is an excellent HTML/XML
+parser. If you don't know how Nokogiri[http://nokogiri.org] works, you
+might want to pause for a moment and go check it out. I'll wait.
 
-=== Loofah::HTML::Document
+Loofah presents the following classes:
 
-A Loofah::HTML::Document is a subclass of Nokogiri::HTML::Document, so
-a parsed document gives you all the markup fixer-uppery and API
-goodness of Nokogiri.
+* Loofah::HTML::Document and Loofah::HTML::DocumentFragment
+* Loofah::XML::Document and Loofah::XML::DocumentFragment
+* Loofah::Scrubber
 
-The class methods Loofah.document and Loofah.fragment will parse an
+The documents and fragments are subclasses of the similar Nokogiri classes.
+
+The Scrubber represents the document manipulation, either by wrapping
+a block or by implementing a method.
+
+=== Side Note: Fragments vs Documents
+
+Generally speaking, unless you expect to have a DOCTYPE and a single
+root node, you don't have a *document*, you have a *fragment*. For
+HTML, another rule of thumb is that *documents* have \&lt;html\&gt;
+and \&lt;body\&gt; tags, and *fragments* usually do not.
+
+HTML fragments should be parsed with Loofah.fragment. Loofah won't
+wrap the result in +html+ and +body+ tags, won't add a DOCTYPE
+declaration, and will ignore +head+ elements.
+
+XML fragments should be parsed with Loofah.xml_fragment. Loofah won't
+add a DOCTYPE declaration and will allow multiple root nodes.
+
+HTML documents should be parsed with Loofah.document, which will add
+the DOCTYPE declaration, and properly handle +head+ and +body+
+elements.
+
+XML documents should be parsed with Loofah.xml_document. Loofah will
+make sure there's a DOCTYPE declaration and a single root node.
+
+=== Loofah::HTML::Document and Loofah::HTML::DocumentFragment
+
+These classes are subclasses of Nokogiri::HTML::Document and
+Nokogiri::HTML::DocumentFragment, so you get all the markup
+fixer-uppery and API goodness of Nokogiri.
+
+The module methods Loofah.document and Loofah.fragment will parse an
 HTML document and an HTML fragment, respectively.
 
   Loofah.document(unsafe_html).is_a?(Nokogiri::HTML::Document)         # => true
@@ -78,23 +116,21 @@ and +text+ to return plain text:
 
   doc.text    # => "ohai! div is safe "
 
-==== Side Note: Fragments vs Documents
+=== Loofah::XML::Document and Loofah::XML::DocumentFragment
 
-Generally speaking, unless you expect to have a DOCTYPE,
-\&lt;html\&gt; and \&lt;body\&gt; tags in your HTML, you don't have a
-*document*, you have a *fragment*.
+These classes are subclasses of Nokogiri::XML::Document and
+Nokogiri::XML::DocumentFragment, so you get all the markup
+fixer-uppery and API goodness of Nokogiri.
 
-For parsing fragments, you should use Loofah.fragment. Nokogiri won't
-wrap the result in +html+ and +body+ tags, and will ignore +head+
-elements.
+The module methods Loofah.xml_document and Loofah.xml_fragment will
+parse an XML document and an XML fragment, respectively.
 
-Full HTML documents should be parsed with Loofah.document, which will
-add the DOCTYPE declaration, and properly handle +head+ and +body+
-elements.
+  Loofah.xml_document(bad_xml).is_a?(Nokogiri::XML::Document)         # => true
+  Loofah.xml_fragment(bad_xml).is_a?(Nokogiri::XML::DocumentFragment) # => true
 
 === Loofah::Scrubber
 
-A Scrubber wraps up a block (or method) that is run on an HTML node (element):
+A Scrubber wraps up a block (or method) that is run on a document node:
 
   # change all <span> tags to <div> tags
   span2div = Loofah::Scrubber.new do |node|
@@ -111,7 +147,18 @@ default) or bottom-up. Top-down scrubbers can optionally return
 Scrubber::STOP to terminate the traversal of a subtree. Read below and
 in the Loofah::Scrubber class for more detailed usage.
 
-=== Built-In Scrubbers
+Here's an XML example:
+
+  # remove all <employee> tags that have a "deceased" attribute set to true
+  bring_out_your_dead = Loofah::Scrubber.new do |node|
+    if node.name == "employee" and node["deceased"] == "true"
+      node.remove
+      Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+    end
+  end
+  Loofah.xml_document(File.read('plague.xml')).scrub!(bring_out_your_dead)
+
+=== Built-In HTML Scrubbers
 
 Loofah comes with a set of sanitizing scrubbers that use HTML5lib's
 whitelist algorithm:
@@ -144,11 +191,15 @@ shorthand.
 
   Loofah.scrub_fragment(unsafe_html, :prune)
   Loofah.scrub_document(unsafe_html, :prune)
+  Loofah.scrub_xml_fragment(bad_xml, custom_scrubber)
+  Loofah.scrub_xml_document(bad_xml, custom_scrubber)
 
 are the same thing as (and arguably semantically clearer than):
 
   Loofah.fragment(unsafe_html).scrub!(:prune)
   Loofah.document(unsafe_html).scrub!(:prune)
+  Loofah.xml_fragment(bad_xml).scrub!(custom_scrubber)
+  Loofah.xml_document(bad_xml).scrub!(custom_scrubber)
 
 === ActiveRecord Extension \#1: Opt-In
 
