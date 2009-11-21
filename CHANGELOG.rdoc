@@ -4,10 +4,9 @@
 
 Enhancements:
 
-  * Refactored scrubber code to live in nice Scrubber classes, which
-    both cleans the code up and allows developers (that's you!) to
-    implement their own filters.
-  * :nofollow scrubber (thanks Luke Melia!)
+  * Refactored scrubber code to live in Scrubber classes, allows developers (that's you!) to write their own scrubbers.
+  * Added support for XML documents and fragments.
+  * :nofollow HTML scrubber (thanks Luke Melia!)
 
 == 0.3.1 (2009-10-12)
 
