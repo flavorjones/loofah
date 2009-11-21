@@ -9,6 +9,8 @@ require 'loofah/scrubber'
 require 'loofah/scrubbers'
 
 require 'loofah/instance_methods'
+require 'loofah/xml/document'
+require 'loofah/xml/document_fragment'
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
 
@@ -50,6 +52,28 @@ module Loofah
     # Shortcut for Loofah.document(string_or_io).scrub!(method)
     def scrub_document(string_or_io, method)
       Loofah.document(string_or_io).scrub!(method)
+    end
+
+    # Shortcut for Loofah::XML::Document.parse
+    # This method accepts the same parameters as Nokogiri::XML::Document.parse
+    def xml_document(*args, &block)
+      Loofah::XML::Document.parse(*args, &block)
+    end
+
+    # Shortcut for Loofah::XML::DocumentFragment.parse
+    # This method accepts the same parameters as Nokogiri::XML::DocumentFragment.parse
+    def xml_fragment(*args, &block)
+      Loofah::XML::DocumentFragment.parse(*args, &block)
+    end
+
+    # Shortcut for Loofah.xml_fragment(string_or_io).scrub!(method)
+    def scrub_xml_fragment(string_or_io, method)
+      Loofah.xml_fragment(string_or_io).scrub!(method)
+    end
+
+    # Shortcut for Loofah.xml_document(string_or_io).scrub!(method)
+    def scrub_xml_document(string_or_io, method)
+      Loofah.xml_document(string_or_io).scrub!(method)
     end
 
   end
