@@ -119,6 +119,28 @@ class TestActiveRecord < Test::Unit::TestCase
       end
     end
 
+    context "passing a Scrubber" do
+      setup do
+        @called = false
+        @scrubber = Loofah::Scrubber.new do |node|
+          @called = true
+        end
+      end
+
+      should "not raise ArgumentError" do
+        assert_nothing_raised {
+          Post.html_fragment :html_string, :scrub => @scrubber
+        }
+      end
+
+      should "scrub properly" do
+        Post.html_fragment :html_string, :scrub => @scrubber
+        post = Post.new :html_string => HTML_STRING, :plain_text => PLAIN_TEXT
+        post.valid?
+        assert @called
+      end
+    end
+
   end
 
 end
