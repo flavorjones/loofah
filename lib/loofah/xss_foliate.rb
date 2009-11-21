@@ -5,7 +5,76 @@ module Loofah
   #  XssFoliate will strip all tags from your ActiveRecord models'
   #  string and text attributes.
   #
-  #  See Loofah::XssFoliate::ClassMethods for more information.
+  #  Please read the Loofah documentation for an explanation of the
+  #  different scrubbing methods, and
+  #  Loofah::XssFoliate::ClassMethods for more information on the
+  #  methods.
+  #
+  #  If you'd like to scrub all fields in all your models (and perhaps *opt-out* in specific models):
+  #
+  #    # config/environment
+  #    LOOFAH_XSS_FOLIATE_ALL_MODELS = true
+  #    Rails::Initializer.run do |config|
+  #      config.gem "loofah"
+  #    end
+  #
+  #    # db/schema.rb
+  #    create_table "posts" do |t|
+  #      t.string  "title"
+  #      t.text    "body"
+  #      t.string  "author"
+  #    end
+  #
+  #    # app/model/post.rb
+  #    class Post < ActiveRecord::Base
+  #      #  by default, title, body and author will all be scrubbed down to their inner text
+  #    end
+  #
+  #  OR
+  #
+  #    # app/model/post.rb
+  #    class Post < ActiveRecord::Base
+  #      xss_foliate :except => :author  # opt-out of sanitizing author
+  #    end
+  #
+  #  OR
+  #
+  #      xss_foliate :strip => [:title, body]  # strip unsafe tags from both title and body
+  #
+  #  OR
+  #
+  #      xss_foliate :except => :title         # scrub body and author but not title
+  #
+  #  OR
+  #
+  #      # remove all tags from title, remove unsafe tags from body
+  #      xss_foliate :sanitize => :title, :scrub => :body
+  #
+  #  OR
+  #
+  #      # old xss_terminate code will work if you s/_terminate/_foliate/
+  #      # was: xss_terminate :except => [:title], :sanitize => [:body]
+  #      xss_foliate :except => [:title], :sanitize => [:body]
+  #
+  #  Alternatively, if you would like to *opt-in* to the models and attributes that are sanitized:
+  #
+  #    # config/environment.rb
+  #    LOOFAH_XSS_FOLIATE_ALL_MODELS = false # default, this line could be omitted
+  #    Rails::Initializer.run do |config|
+  #      config.gem "loofah"
+  #    end
+  #
+  #    # db/schema.rb
+  #    create_table "posts" do |t|
+  #      t.string  "title"
+  #      t.text    "body"
+  #      t.string  "author"
+  #    end
+  #
+  #    # app/model/post.rb
+  #    class Post < ActiveRecord::Base
+  #      xss_foliate  # scrub title, body and author down to their inner text
+  #    end
   #
   module XssFoliate
     #
@@ -14,74 +83,7 @@ module Loofah
     #  XssFoliate will strip all tags from your ActiveRecord models'
     #  string and text attributes.
     #
-    #  Please read the Loofah documentation for an explanation of the
-    #  different scrubbing methods.
-    #
-    #  If you'd like to scrub all fields in all your models (and perhaps *opt-out* in specific models):
-    #
-    #    # config/environment
-    #    LOOFAH_XSS_FOLIATE_ALL_MODELS = true
-    #    Rails::Initializer.run do |config|
-    #      config.gem "loofah"
-    #    end
-    #
-    #    # db/schema.rb
-    #    create_table "posts" do |t|
-    #      t.string  "title"
-    #      t.text    "body"
-    #      t.string  "author"
-    #    end
-    #
-    #    # app/model/post.rb
-    #    class Post < ActiveRecord::Base
-    #      #  by default, title, body and author will all be scrubbed down to their inner text
-    #    end
-    #
-    #  OR
-    #
-    #    # app/model/post.rb
-    #    class Post < ActiveRecord::Base
-    #      xss_foliate :except => :author  # opt-out of sanitizing author
-    #    end
-    #
-    #  OR
-    #
-    #      xss_foliate :strip => [:title, body]  # strip unsafe tags from both title and body
-    #
-    #  OR
-    #
-    #      xss_foliate :except => :title         # scrub body and author but not title
-    #
-    #  OR
-    #
-    #      # remove all tags from title, remove unsafe tags from body
-    #      xss_foliate :sanitize => :title, :scrub => :body
-    #
-    #  OR
-    #
-    #      # old xss_terminate code will work if you s/_terminate/_foliate/
-    #      # was: xss_terminate :except => [:title], :sanitize => [:body]
-    #      xss_foliate :except => [:title], :sanitize => [:body]
-    #
-    #  Alternatively, if you would like to *opt-in* to the models and attributes that are sanitized:
-    #
-    #    # config/environment.rb
-    #    LOOFAH_XSS_FOLIATE_ALL_MODELS = false # default, this line could be omitted
-    #    Rails::Initializer.run do |config|
-    #      config.gem "loofah"
-    #    end
-    #
-    #    # db/schema.rb
-    #    create_table "posts" do |t|
-    #      t.string  "title"
-    #      t.text    "body"
-    #      t.string  "author"
-    #    end
-    #
-    #    # app/model/post.rb
-    #    class Post < ActiveRecord::Base
-    #      xss_foliate  # scrub title, body and author down to their inner text
-    #    end
+    #  See Loofah::XssFoliate for more example usage.
     #
     module ClassMethods
       # :stopdoc:
