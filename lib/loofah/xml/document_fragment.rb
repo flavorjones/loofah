@@ -19,18 +19,10 @@ module Loofah
         end
       end
 
-      #
-      #  Returns the XML markup contained by the fragment or document
-      #
-      def to_s
-        sanitize_roots.children.to_s
-      end
-      alias :serialize :to_s
-
       private
 
       def sanitize_roots # :nodoc:
-        xpath("./body").first || self
+        self
       end
 
     end
