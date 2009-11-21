@@ -21,19 +21,15 @@ module Loofah
   module ActiveRecordExtension
     #
     #  :call-seq:
-    #    html_fragment(attribute, :scrub => sanitization_method)
+    #    html_fragment(attribute, :scrub => scrubber_specification)
     #
     #  Scrub an ActiveRecord attribute +attribute+ as an HTML *fragment*
-    #  using the method specified by +sanitization_method+.
+    #  using the method specified by +scrubber_specification+.
     #
-    #  +sanitization_method+ must be one of:
+    #  +scrubber_specification+ must be an argument acceptable to Loofah::InstanceMethods.scrub!, namely:
     #
-    #  * :string
-    #  * :prune
-    #  * :escape
-    #  * :whitewash
-    #
-    #  See Loofah for an explanation of each sanitization method.
+    #  * a symbol for one of the built-in scrubbers (see Loofah::Scrubbers for a full list)
+    #  * or a Scrubber instance. (see Loofah::Scrubber for help on implementing a custom scrubber)
     #
     def html_fragment(attr, options={})
       raise ArgumentError, "html_fragment requires :scrub option" unless method = options[:scrub]
@@ -44,19 +40,15 @@ module Loofah
 
     #
     #  :call-seq:
-    #    model.html_document(attribute, :scrub => sanitization_method)
+    #    model.html_document(attribute, :scrub => scrubber_specification)
     #
     #  Scrub an ActiveRecord attribute +attribute+ as an HTML *document*
-    #  using the method specified by +sanitization_method+.
+    #  using the method specified by +scrubber_specification+.
     #
-    #  +sanitization_method+ must be one of:
+    #  +scrubber_specification+ must be an argument acceptable to Loofah::InstanceMethods.scrub!, namely:
     #
-    #  * :string
-    #  * :prune
-    #  * :escape
-    #  * :whitewash
-    #
-    #  See Loofah for an explanation of each sanitization method.
+    #  * a symbol for one of the built-in scrubbers (see Loofah::Scrubbers for a full list)
+    #  * or a Scrubber instance.
     #
     def html_document(attr, options={})
       raise ArgumentError, "html_document requires :scrub option" unless method = options[:scrub]
