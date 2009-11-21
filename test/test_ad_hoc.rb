@@ -10,6 +10,31 @@ class TestAdHoc < Test::Unit::TestCase
     assert_equal Loofah.scrub_document("", :prune).text, ""
   end
 
+  def test_xml_document_scrub
+    xml = Loofah.xml_document <<-EOXML
+    <root>
+      <employee deceased='true'>Abraham Lincoln</employee>
+      <employee deceased='false'>Abe Vigoda</employee>
+    </root>
+    EOXML
+    bring_out_your_dead = Loofah::Scrubber.new do |node|
+      if node.name == "employee" and node["deceased"] == "true"
+        node.remove
+        Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+      end
+    end
+    assert_equal 2, xml.css("employee").length
+    
+    xml.scrub!(bring_out_your_dead)
+
+    employees = xml.css "employee"
+    assert_equal 1, employees.length
+    assert_equal "Abe Vigoda", employees.first.inner_text
+  end
+
+  def test_xml_fragment_scrub
+  end
+
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag
