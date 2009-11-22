@@ -1,5 +1,5 @@
 module Loofah
-  module HTML5
+  module HTML5 # :nodoc:
     #
     #  HTML whitelist lifted from HTML5lib sanitizer code:
     #

@@ -66,7 +66,13 @@ Loofah presents the following classes:
 The documents and fragments are subclasses of the similar Nokogiri classes.
 
 The Scrubber represents the document manipulation, either by wrapping
-a block or by implementing a method.
+a block,
+
+  span2div = Loofah::Scrubber.new do |node|
+    node.name = "div" if node.name == "span"
+  end
+
+or by implementing a method.
 
 === Side Note: Fragments vs Documents
 

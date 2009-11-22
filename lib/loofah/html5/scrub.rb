@@ -1,7 +1,7 @@
 require 'cgi'
 
 module Loofah
-  module HTML5
+  module HTML5 # :nodoc:
     module Scrub
 
       class << self

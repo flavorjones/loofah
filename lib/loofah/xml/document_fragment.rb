@@ -1,5 +1,5 @@
 module Loofah
-  module XML
+  module XML # :nodoc:
     #
     #  Subclass of Nokogiri::XML::DocumentFragment. Also includes Loofah::ScrubberInstanceMethods.
     #

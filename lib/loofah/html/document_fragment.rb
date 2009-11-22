@@ -1,5 +1,5 @@
 module Loofah
-  module HTML
+  module HTML # :nodoc:
     #
     #  Subclass of Nokogiri::HTML::DocumentFragment. Also includes Loofah::ScrubberInstanceMethods.
     #
