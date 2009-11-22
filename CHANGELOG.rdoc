@@ -1,12 +1,13 @@
 = Changelog
 
-== 0.4 (unreleased)
+== 0.4.0
 
 Enhancements:
 
-  * Refactored scrubber code to live in Scrubber classes, allows developers (that's you!) to write their own scrubbers.
+  * Scrubber class introduced, allowing development of custom scrubbers.
   * Added support for XML documents and fragments.
-  * :nofollow HTML scrubber (thanks Luke Melia!)
+  * Added :nofollow HTML scrubber (thanks Luke Melia!)
+  * Built-in scrubbing methods refactored to use Scrubber.
 
 == 0.3.1 (2009-10-12)
 

@@ -7,20 +7,17 @@
 == Description
 
 Loofah is a general library for manipulating HTML/XML documents and
-fragments.
+fragments. It's built on top of Nokogiri and libxml2, so it's fast and
+has a nice API.
 
-One specific task that Loofah excels at is HTML sanitization (XSS
-prevention). Loofah includes some nice HTML sanitizers, which are
-based on HTML5lib's whitelist, so it most likely won't make your codes
-less secure. (These statements have not been evaluated by Netexperts.)
-
-Loofah is built on top of Nokogiri and libxml2, so it's fast and has a
-nice API.
+Loofah excels at HTML sanitization (XSS prevention). It includes some
+nice HTML sanitizers, which are based on HTML5lib's whitelist, so it
+most likely won't make your codes less secure. (These statements have
+not been evaluated by Netexperts.)
 
 == Features
 
-* Easily write custom scrubbers for HTML/XML leveraging the
-  sweetness of Nokogiri (and HTML5lib's whitelists).
+* Easily write custom scrubbers for HTML/XML leveraging the sweetness of Nokogiri (and HTML5lib's whitelists).
 * Common HTML sanitizing tasks are built-in:
   * _Strip_ unsafe tags, leaving behind only the inner text.
   * _Prune_ unsafe tags and their subtrees, removing all traces that they ever existed.
@@ -48,7 +45,7 @@ commonly-used libraries (ActionView, Sanitize and HTML5lib):
 
 Lastly, Loofah is extensible. It's super-easy to write your own custom
 scrubbers for whatever document manipulation you need. You don't like
-the built-in scrubbers? Build your own.
+the built-in scrubbers? Build your own, like a boss.
 
 == The Basics
 
