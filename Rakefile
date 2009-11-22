@@ -13,6 +13,9 @@ Hoe.spec "loofah" do
   self.readme_file      = "README.rdoc"
 
   extra_deps << ["nokogiri", ">= 1.3.3"]
+  extra_dev_deps << ["mocha", ">=0.9"]
+  extra_dev_deps << ["thoughtbot-shoulda", ">=2.10"]
+  extra_dev_deps << ["acts_as_fu", ">=0.0.5"]
 
   # note: .hoerc should have the following line to omit rails tests and tmp
   #   exclude: !ruby/regexp /\/tmp\/|\/rails_tests\/|CVS|TAGS|\.(svn|git|DS_Store)/
