@@ -20,6 +20,8 @@ lib/loofah/html5/whitelist.rb
 lib/loofah/instance_methods.rb
 lib/loofah/scrubber.rb
 lib/loofah/scrubbers.rb
+lib/loofah/xml/document.rb
+lib/loofah/xml/document_fragment.rb
 lib/loofah/xss_foliate.rb
 test/helper.rb
 test/html5/test_sanitizer.rb

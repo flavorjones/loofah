@@ -1,5 +1,11 @@
 = Changelog
 
+== 0.4.1
+
+Bugfix:
+
+  * Manifest fixed. Whoops.
+
 == 0.4.0
 
 Enhancements:
