@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/helper.rb"
 
 def compare_scrub_methods
   snip = "<div>foo</div><foo>fuxx <b>quux</b></foo><script>i have a chair</script>"
-  puts "starting with: #{snip}"
+  puts "starting with:\n#{snip}"
   puts
   puts RailsSanitize.new.sanitize(snip) # => Rails.sanitize / scrub!(:prune).to_s
   puts Loofah::Helpers.sanitize(snip)
@@ -17,6 +17,9 @@ def compare_scrub_methods
   puts HTML5libSanitize.new.sanitize(snip) # => scrub!(:escape).to_s
   puts Loofah.scrub_fragment(snip, :escape).to_s
   puts "--"
+  puts HTMLFilter.new.filter(snip)
+  puts Loofah::Helpers.sanitize(snip)
+  puts
 end
 
 module TestSet
@@ -115,6 +118,22 @@ class HeadToHeadHtml5LibSanitize < Measure
   end
 end
 
+class HeadToHeadHTMLFilter < Measure
+  include TestSet
+  def bench(content, ntimes, fragment_p)
+    clear_measure
+
+    measure "Loofah::Helpers.sanitize", ntimes do
+      Loofah::Helpers.sanitize content
+    end
+
+    sanitizer = HTMLFilter.new
+    measure "HTMLFilter.filter", ntimes do
+      sanitizer.filter(content)
+    end
+  end
+end
+
 puts "Nokogiri version: #{Nokogiri::VERSION_INFO.inspect}"
 puts "Loofah version: #{Loofah::VERSION.inspect}"
 
@@ -123,6 +142,7 @@ benches << HeadToHeadRailsSanitize.new
 benches << HeadToHeadRailsStripTags.new
 benches << HeadToHeadSanitizerSanitize.new
 benches << HeadToHeadHtml5LibSanitize.new
+benches << HeadToHeadHTMLFilter.new
 puts "---------- rehearsal ----------"
 benches.each { |bench| bench.test_set :rehearse => true }
 puts "---------- realsies ----------"
