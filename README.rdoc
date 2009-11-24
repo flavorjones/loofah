@@ -256,11 +256,11 @@ The bug tracker is available here:
 
 * http://github.com/flavorjones/loofah/issues
 
-For now, we're piggybacking on the Nokogiri mailing list:
+And the mailing list is on librelist:
 
-* http://groups.google.com/group/nokogiri-talk
+* loofah@librelist.com / http://librelist.com
 
-And the IRC channel is #nokogiri on freenode.
+And the IRC channel is \#loofah on freenode.
 
 == Related Links
 
