@@ -9,6 +9,10 @@ require "sanitize"
 require 'hitimes'
 require 'htmlfilter'
 
+unless defined?(HTMLFilter)
+  HTMLFilter = HtmlFilter
+end
+
 class RailsSanitize
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods

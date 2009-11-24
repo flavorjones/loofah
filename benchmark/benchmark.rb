@@ -18,7 +18,7 @@ def compare_scrub_methods
   puts Loofah.scrub_fragment(snip, :escape).to_s
   puts "--"
   puts HTMLFilter.new.filter(snip)
-  puts Loofah::Helpers.sanitize(snip)
+  puts Loofah.scrub_fragment(snip, :strip).to_s
   puts
 end
 
