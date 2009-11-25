@@ -131,8 +131,11 @@ module Loofah
       ACCEPTABLE_PROTOCOLS = %w[ed2k ftp http https irc mailto news gopher nntp
       telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs]
 
+      # additional tags we should consider safe since we have libxml2 fixing up our documents.
+      TAGS_SAFE_WITH_LIBXML2 = %w[html head body]
+
       # subclasses may define their own versions of these constants
-      ALLOWED_ELEMENTS = ACCEPTABLE_ELEMENTS + MATHML_ELEMENTS + SVG_ELEMENTS
+      ALLOWED_ELEMENTS = ACCEPTABLE_ELEMENTS + MATHML_ELEMENTS + SVG_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
       ALLOWED_ATTRIBUTES = ACCEPTABLE_ATTRIBUTES + MATHML_ATTRIBUTES + SVG_ATTRIBUTES
       ALLOWED_CSS_PROPERTIES = ACCEPTABLE_CSS_PROPERTIES
       ALLOWED_CSS_KEYWORDS = ACCEPTABLE_CSS_KEYWORDS
