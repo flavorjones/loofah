@@ -20,19 +20,27 @@ module Loofah
       end
 
       #
-      #  Returns the HTML markup contained by the fragment or document
+      #  Returns the HTML markup contained by the fragment
       #
       def to_s
-        sanitize_roots.children.to_s
+        serialize_roots.children.to_s
       end
       alias :serialize :to_s
 
+      #
+      #  Returns a plain-text version of the markup contained by the fragment
+      #
+      def text
+        serialize_roots.children.inner_text
+      end
+      alias :inner_text :text
+      alias :to_str     :text
+
       private
 
-      def sanitize_roots # :nodoc:
+      def serialize_roots # :nodoc:
         xpath("./body").first || self
       end
-
     end
   end
 end

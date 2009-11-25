@@ -8,12 +8,14 @@ module Loofah
     class Document < Nokogiri::HTML::Document
       include Loofah::InstanceMethods
 
-      private
-
-      def sanitize_roots # :nodoc:
-        xpath("/html/head","/html/body")
+      #
+      #  Returns a plain-text version of the markup contained by the document
+      #
+      def text
+        xpath("/html/body").inner_text
       end
-
+      alias :inner_text :text
+      alias :to_str     :text
     end
   end
 end

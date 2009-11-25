@@ -38,14 +38,5 @@ module Loofah
       end
       self
     end
-
-    #
-    #  Returns a plain-text version of the markup contained by the fragment or document
-    #
-    def text
-      sanitize_roots.children.inner_text
-    end
-    alias :inner_text :text
-    alias :to_str     :text
   end
 end

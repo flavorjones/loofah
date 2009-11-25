@@ -54,8 +54,17 @@ class TestAdHoc < Test::Unit::TestCase
 
   def test_html_fragment_to_s_should_not_include_head_tags
     html = Loofah.fragment "<style>foo</style><div>bar</div>"
-    assert_equal "bar", html.text
     assert_equal "<div>bar</div>", html.to_s
+  end
+
+  def test_html_fragment_text_should_not_include_head_tags
+    html = Loofah.fragment "<style>foo</style><div>bar</div>"
+    assert_equal "bar", html.text
+  end
+
+  def test_html_document_text_should_not_include_head_tags
+    html = Loofah.document "<style>foo</style><div>bar</div>"
+    assert_equal "bar", html.text
   end
 
   def test_removal_of_illegal_tag

@@ -18,13 +18,6 @@ module Loofah
           self.new(Loofah::XML::Document.new, tags)
         end
       end
-
-      private
-
-      def sanitize_roots # :nodoc:
-        self
-      end
-
     end
   end
 end

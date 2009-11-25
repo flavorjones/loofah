@@ -7,13 +7,6 @@ module Loofah
     #
     class Document < Nokogiri::XML::Document
       include Loofah::InstanceMethods
-
-      private
-
-      def sanitize_roots # :nodoc:
-        self
-      end
-
     end
   end
 end
