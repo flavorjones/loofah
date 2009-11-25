@@ -31,7 +31,11 @@ module Loofah
     def scrub!(scrubber)
       scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
       raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}" unless scrubber.is_a?(Loofah::Scrubber)
-      sanitize_roots.children.each { |node| scrubber.traverse(node) }
+      if self.is_a?(Nokogiri::XML::DocumentFragment)
+        children.each { |node| scrubber.traverse(node) }
+      else
+        scrubber.traverse(root) if root
+      end
       self
     end
 
