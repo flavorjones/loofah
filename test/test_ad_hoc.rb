@@ -84,6 +84,28 @@ class TestAdHoc < Test::Unit::TestCase
     assert_does_not_contain xml.to_s, /I should be removed/
   end
 
+  def test_nodeset_scrub_should_only_scrub_subtrees
+    xml = Loofah.document <<-EOHTML
+    <html><body>
+      <div class='scrub'>
+        <script>I should be removed</script>
+      </div>
+      <div class='noscrub'>
+        <script>I should remain</script>
+      </div>
+      <div class='scrub'>
+        <script>I should also be removed</script>
+      </div>
+    </body></html>
+    EOHTML
+    node_set = xml.css "div.scrub"
+    assert_equal 2, node_set.length
+    node_set.scrub!(:prune)
+    assert_contains         xml.to_s, /I should remain/
+    assert_does_not_contain xml.to_s, /I should be removed/
+    assert_does_not_contain xml.to_s, /I should also be removed/
+  end
+
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag

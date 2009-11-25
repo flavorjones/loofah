@@ -92,6 +92,13 @@ class TestApi < Test::Unit::TestCase
     node.scrub!(:strip)
   end
 
+  def test_loofah_nodeset_scrub!
+    doc = Loofah.document(HTML)
+    assert(node_set = doc.css("div"))
+    assert_instance_of Nokogiri::XML::NodeSet, node_set
+    node_set.scrub!(:strip)
+  end
+
   private
 
   def assert_html_documentish(doc)

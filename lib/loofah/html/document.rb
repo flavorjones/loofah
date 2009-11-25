@@ -6,7 +6,7 @@ module Loofah
     #  See Loofah::ScrubBehavior and Loofah::DocumentDecorator for additional methods.
     #
     class Document < Nokogiri::HTML::Document
-      include Loofah::ScrubBehavior
+      include Loofah::ScrubBehavior::Node
       include Loofah::DocumentDecorator
 
       #
