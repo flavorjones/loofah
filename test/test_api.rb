@@ -68,6 +68,12 @@ class TestApi < Test::Unit::TestCase
     assert_xml_fragmentish doc
   end
 
+  def test_loofah_html_document_node_scrub!
+    doc = Loofah.document(HTML)
+    assert(node = doc.at_css("div"))
+    node.scrub!(:strip)
+  end
+
   private
 
   def assert_html_documentish(doc)
