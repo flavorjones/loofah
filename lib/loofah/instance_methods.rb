@@ -1,6 +1,6 @@
 module Loofah
   #
-  #  Mixes +scrub!+ into Documents, DocumentFragments, Nodes and NodeSets.
+  #  Mixes +scrub!+ into Document, DocumentFragment, Node and NodeSet.
   #
   #  Traverse the document or fragment, invoking the +scrubber+ on
   #  each node.
@@ -27,6 +27,7 @@ module Loofah
   #  README.rdoc for more example usage.
   #
   module ScrubBehavior
+    # see Loofah::ScrubBehavior
     module Node
       def scrub!(scrubber)
         #
@@ -49,6 +50,7 @@ module Loofah
       end
     end
 
+    # see Loofah::ScrubBehavior
     module NodeSet
       def scrub!(scrubber)
         each { |node| node.scrub!(scrubber) }
@@ -65,10 +67,7 @@ module Loofah
     end
   end
 
-  #
-  #  Methods that are mixed into Loofah::HTML::Document and Loofah::XML::Document.
-  #
-  module DocumentDecorator
+  module DocumentDecorator # :nodoc:
     def initialize(*args, &block)
       super
       self.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
