@@ -52,6 +52,12 @@ class TestAdHoc < Test::Unit::TestCase
     assert_equal "Abe Vigoda", employees.first.inner_text
   end
 
+  def test_html_fragment_to_s_should_not_include_head_tags
+    html = Loofah.fragment "<style>foo</style><div>bar</div>"
+    assert_equal "bar", html.text
+    assert_equal "<div>bar</div>", html.to_s
+  end
+
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag
