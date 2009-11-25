@@ -1,8 +1,8 @@
 module Loofah
   #
-  #  Methods that are mixed into Loofah::HTML::Document and Loofah::HTML::DocumentFragment.
+  #  Mixed into documents, fragments and nodes.
   #
-  module InstanceMethods
+  module ScrubBehavior
     #
     #  Traverse the document or fragment, invoking the +scrubber+ on
     #  each node.
@@ -31,12 +31,25 @@ module Loofah
     def scrub!(scrubber)
       scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
       raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}" unless scrubber.is_a?(Loofah::Scrubber)
-      if self.is_a?(Nokogiri::XML::DocumentFragment)
+      case self
+      when Nokogiri::XML::Document
+        scrubber.traverse(root) if root
+      when Nokogiri::XML::DocumentFragment
         children.each { |node| scrubber.traverse(node) }
       else
-        scrubber.traverse(root) if root
+        scrubber.traverse(self)
       end
       self
+    end
+  end
+
+  #
+  #  Methods that are mixed into Loofah::HTML::Document and Loofah::HTML::DocumentFragment.
+  #
+  module DocumentDecorator
+    def initialize(*args, &block)
+      super
+      self.decorators(Nokogiri::XML::Node) << ScrubBehavior
     end
   end
 end

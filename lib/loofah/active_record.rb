@@ -26,7 +26,7 @@ module Loofah
     #  Scrub an ActiveRecord attribute +attribute+ as an HTML *fragment*
     #  using the method specified by +scrubber_specification+.
     #
-    #  +scrubber_specification+ must be an argument acceptable to Loofah::InstanceMethods.scrub!, namely:
+    #  +scrubber_specification+ must be an argument acceptable to Loofah::ScrubBehavior.scrub!, namely:
     #
     #  * a symbol for one of the built-in scrubbers (see Loofah::Scrubbers for a full list)
     #  * or a Scrubber instance. (see Loofah::Scrubber for help on implementing a custom scrubber)
@@ -45,7 +45,7 @@ module Loofah
     #  Scrub an ActiveRecord attribute +attribute+ as an HTML *document*
     #  using the method specified by +scrubber_specification+.
     #
-    #  +scrubber_specification+ must be an argument acceptable to Loofah::InstanceMethods.scrub!, namely:
+    #  +scrubber_specification+ must be an argument acceptable to Loofah::ScrubBehavior.scrub!, namely:
     #
     #  * a symbol for one of the built-in scrubbers (see Loofah::Scrubbers for a full list)
     #  * or a Scrubber instance.

@@ -3,10 +3,11 @@ module Loofah
     #
     #  Subclass of Nokogiri::HTML::Document.
     #
-    #  See Loofah::InstanceMethods for additional methods.
+    #  See Loofah::ScrubBehavior and Loofah::DocumentDecorator for additional methods.
     #
     class Document < Nokogiri::HTML::Document
-      include Loofah::InstanceMethods
+      include Loofah::ScrubBehavior
+      include Loofah::DocumentDecorator
 
       #
       #  Returns a plain-text version of the markup contained by the document

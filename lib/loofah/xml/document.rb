@@ -3,10 +3,11 @@ module Loofah
     #
     #  Subclass of Nokogiri::XML::Document.
     #
-    #  See Loofah::InstanceMethods for additional methods.
+    #  See Loofah::ScrubBehavior and Loofah::DocumentDecorator for additional methods.
     #
     class Document < Nokogiri::XML::Document
-      include Loofah::InstanceMethods
+      include Loofah::ScrubBehavior
+      include Loofah::DocumentDecorator
     end
   end
 end

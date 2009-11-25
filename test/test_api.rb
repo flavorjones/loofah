@@ -74,6 +74,24 @@ class TestApi < Test::Unit::TestCase
     node.scrub!(:strip)
   end
 
+  def test_loofah_html_fragment_node_scrub!
+    doc = Loofah.fragment(HTML)
+    assert(node = doc.at_css("div"))
+    node.scrub!(:strip)
+  end
+
+  def test_loofah_xml_document_node_scrub!
+    doc = Loofah.document(XML)
+    assert(node = doc.at_css("div"))
+    node.scrub!(:strip)
+  end
+
+  def test_loofah_xml_fragment_node_scrub!
+    doc = Loofah.fragment(XML)
+    assert(node = doc.at_css("div"))
+    node.scrub!(:strip)
+  end
+
   private
 
   def assert_html_documentish(doc)

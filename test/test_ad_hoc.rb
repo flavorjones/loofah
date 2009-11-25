@@ -67,6 +67,23 @@ class TestAdHoc < Test::Unit::TestCase
     assert_equal "bar", html.text
   end
 
+  def test_node_scrub_should_only_scrub_subtree
+    xml = Loofah.document <<-EOHTML
+    <html><body>
+      <div class='scrub'>
+        <script>I should be removed</script>
+      </div>
+      <div class='noscrub'>
+        <script>I should remain</script>
+      </div>
+    </body></html>
+    EOHTML
+    node = xml.at_css "div.scrub"
+    node.scrub!(:prune)
+    assert_contains         xml.to_s, /I should remain/
+    assert_does_not_contain xml.to_s, /I should be removed/
+  end
+
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag

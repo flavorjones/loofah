@@ -1,12 +1,12 @@
 module Loofah
   module HTML # :nodoc:
     #
-    #  Subclass of Nokogiri::HTML::DocumentFragment. Also includes Loofah::ScrubberInstanceMethods.
+    #  Subclass of Nokogiri::HTML::DocumentFragment.
     #
-    #  See Loofah::InstanceMethods for additional methods.
+    #  See Loofah::ScrubBehavior for additional methods.
     #
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
-      include Loofah::InstanceMethods
+      include Loofah::ScrubBehavior
 
       class << self
         #

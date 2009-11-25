@@ -1,5 +1,13 @@
 = Changelog
 
+== HEAD (unreleased)
+
+Enhancements:
+
+  * <head>, <html> and <body> added to the HTML5lib whitelist, and
+    scrubbing is now symmetrical across xml/html documents/fragments.
+  * Implemented Node#scrub! for scrubbing subtrees.
+
 == 0.4.1
 
 Bugfix:
