@@ -4,10 +4,10 @@
 
 Enhancements:
 
-  * <head>, <html> and <body> added to the HTML5lib whitelist, and
-    scrubbing is now symmetrical across xml/html documents/fragments.
   * Implemented Node#scrub! for scrubbing subtrees.
   * Implemented NodeSet#scrub! for scrubbing subtrees.
+  * Document.text now only serializes <body> contents (ignores <head>)
+  * <head>, <html> and <body> added to the HTML5lib whitelist.
 
 == 0.4.1
 
