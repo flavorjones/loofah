@@ -33,13 +33,14 @@ not been evaluated by Netexperts.)
 
 == Compare and Contrast
 
-Loofah is the only Ruby XSS/sanitization solution that guarantees
-well-formed and valid markup.
+Loofah is one of two known Ruby XSS/sanitization solutions that
+guarantees well-formed and valid markup (the other is Sanitize, which
+also uses Nokogiri).
 
 Loofah works fine on XML, XHTML and HTML documents.
 
 Also, it's pretty fast. Here is a benchmark comparing Loofah to other
-commonly-used libraries (ActionView, Sanitize and HTML5lib):
+commonly-used libraries (ActionView, Sanitize, HTML5lib and HTMLfilter):
 
 * http://gist.github.com/170193
 
