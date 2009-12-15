@@ -91,7 +91,7 @@ module Loofah
     def html5lib_sanitize(node)
       case node.type
       when Nokogiri::XML::Node::ELEMENT_NODE
-        if HTML5::HashedWhiteList::ALLOWED_ELEMENTS[node.name]
+        if HTML5::HashedWhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2[node.name]
           HTML5::Scrub.scrub_attributes node
           return Scrubber::CONTINUE
         end

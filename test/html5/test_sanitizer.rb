@@ -28,7 +28,7 @@ class Html5TestSanitizer < Test::Unit::TestCase
     assert((htmloutput == sane) || (rexmloutput == sane) || (xhtmloutput == sane), input)
   end
 
-  (HTML5::WhiteList::ALLOWED_ELEMENTS - HTML5::WhiteList::TAGS_SAFE_WITH_LIBXML2).each do |tag_name|
+  (HTML5::WhiteList::ALLOWED_ELEMENTS).each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
       input       = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
       htmloutput  = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
