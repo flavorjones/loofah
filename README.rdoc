@@ -132,6 +132,16 @@ parse an XML document and an XML fragment, respectively.
   Loofah.xml_document(bad_xml).is_a?(Nokogiri::XML::Document)         # => true
   Loofah.xml_fragment(bad_xml).is_a?(Nokogiri::XML::DocumentFragment) # => true
 
+=== Nodes and NodeSets
+
+Nokogiri::XML::Node and Nokogiri::XML::NodeSet also get a +scrub!+
+method, which makes it easy to scrub subtrees.
+
+The following code will apply the +employee_scrubber+ only to the
++employee+ nodes in the document:
+
+  Loofah.xml_document(bad_xml).xpath("//employee").scrub!(employee_scrubber)
+
 === Loofah::Scrubber
 
 A Scrubber wraps up a block (or method) that is run on a document node:
