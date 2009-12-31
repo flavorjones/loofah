@@ -9,6 +9,10 @@ Enhancements:
   * Document.text now only serializes <body> contents (ignores <head>)
   * <head>, <html> and <body> added to the HTML5lib whitelist.
 
+Bug fixes:
+
+  * Supporting Rails apps that aren't loading ActiveRecord. GH #10
+
 == 0.4.1
 
 Bugfix:
