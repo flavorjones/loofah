@@ -5,13 +5,18 @@
 Enhancements:
 
   * Implemented Node#scrub! for scrubbing subtrees.
-  * Implemented NodeSet#scrub! for scrubbing subtrees.
+  * Implemented NodeSet#scrub! for scrubbing a set of subtrees.
   * Document.text now only serializes <body> contents (ignores <head>)
   * <head>, <html> and <body> added to the HTML5lib whitelist.
 
 Bug fixes:
 
   * Supporting Rails apps that aren't loading ActiveRecord. GH #10
+
+Miscellaneous:
+
+  * Mailing list is now loofah@librelist.com / http://librelist.com
+  * IRC channel is now \#loofah on freenode.
 
 == 0.4.1
 

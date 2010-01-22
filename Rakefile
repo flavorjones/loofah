@@ -35,29 +35,27 @@ task :redocs => :fix_css
 task :docs => :fix_css
 task :fix_css do
   better_css = <<-EOT
-.method-description pre {
-  margin: 1em 0 ;
-}
+    .method-description pre {
+      margin                    : 1em 0 ;
+    }
 
-.method-description ul {
-  padding: .5em 0 .5em 2em ;
-}
+    .method-description ul {
+      padding                   : .5em 0 .5em 2em ;
+    }
 
-.method-description p {
-  margin-top: .5em ;
-}
+    .method-description p {
+      margin-top                : .5em ;
+    }
 
-#main ul, div#documentation ul {
-  list-style-type: disc ! IMPORTANT ;
-  list-style-position: inside ! IMPORTANT ;
-}
+    #main ul, div#documentation ul {
+      list-style-type           : disc ! IMPORTANT ;
+      list-style-position       : inside ! IMPORTANT ;
+    }
 
-h2 + ul {
-  margin-top: 1em;
-}
-
-EOT
+    h2 + ul {
+      margin-top                : 1em;
+    }
+  EOT
   puts "* fixing css"
   File.open("doc/rdoc.css", "a") { |f| f.write better_css }
 end
-
