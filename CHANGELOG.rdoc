@@ -1,6 +1,6 @@
 = Changelog
 
-== HEAD (unreleased)
+== 0.4.2 (2010-01-22)
 
 Enhancements:
 
@@ -18,13 +18,13 @@ Miscellaneous:
   * Mailing list is now loofah@librelist.com / http://librelist.com
   * IRC channel is now \#loofah on freenode.
 
-== 0.4.1
+== 0.4.1 (2009-11-23)
 
 Bugfix:
 
   * Manifest fixed. Whoops.
 
-== 0.4.0
+== 0.4.0 (2009-11-21)
 
 Enhancements:
 
