@@ -1,8 +1,8 @@
 = Loofah
 
+* http://github.com/flavorjones/loofah
 * http://loofah.rubyforge.org
 * http://rubyforge.org/projects/loofah
-* http://github.com/flavorjones/loofah
 
 == Description
 
@@ -79,19 +79,19 @@ root node, you don't have a *document*, you have a *fragment*. For
 HTML, another rule of thumb is that *documents* have \&lt;html\&gt;
 and \&lt;body\&gt; tags, and *fragments* usually do not.
 
-HTML fragments should be parsed with Loofah.fragment. Loofah won't
-wrap the result in +html+ and +body+ tags, won't add a DOCTYPE
-declaration, and will ignore +head+ elements.
+HTML fragments should be parsed with Loofah.fragment. The result won't
+be wrapped in +html+ or +body+ tags, won't have a DOCTYPE declaration,
++head+ elements will be silently ignored, and multiple root nodes are
+allowed.
 
-XML fragments should be parsed with Loofah.xml_fragment. Loofah won't
-add a DOCTYPE declaration and will allow multiple root nodes.
+XML fragments should be parsed with Loofah.xml_fragment. The result
+won't have a DOCTYPE declaration, and multiple root nodes are allowed.
 
-HTML documents should be parsed with Loofah.document, which will add
-the DOCTYPE declaration, and properly handle +head+ and +body+
-elements.
+HTML documents should be parsed with Loofah.document. The result will
+have a DOCTYPE declaration, along with +html+, +head+ and +body+ tags.
 
-XML documents should be parsed with Loofah.xml_document. Loofah will
-make sure there's a DOCTYPE declaration and a single root node.
+XML documents should be parsed with Loofah.xml_document. The result
+will have a DOCTYPE declaration and a single root node.
 
 === Loofah::HTML::Document and Loofah::HTML::DocumentFragment
 
@@ -286,8 +286,8 @@ And the IRC channel is \#loofah on freenode.
 
 == Authors
 
-* {Mike Dalessio}[mailto:mike.dalessio@gmail.com] (@flavorjones)
-* {Bryan Helmkamp}[mailto:bryan@brynary.com]
+* {Mike Dalessio}[http://mike.daless.io] (@flavorjones[http://twitter.com/flavorjones])
+* Bryan Helmkamp
 
 Featuring code contributed by:
 
@@ -299,6 +299,12 @@ Featuring code contributed by:
 * Luke Melia
 
 And a big shout-out to Corey Innis for the name, and feedback on the API.
+
+== Thank You
+
+The following people have generously donated via the Pledgie[http://pledgie.com] badge on the {Loofah github page}[http://github.com/flavorjones/loofah]:
+
+* Bill Harding
 
 == Historical Note
 
