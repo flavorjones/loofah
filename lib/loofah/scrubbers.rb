@@ -60,7 +60,6 @@ module Loofah
   #
   #
   module Scrubbers
-
     #
     #  === scrub!(:strip)
     #
@@ -195,5 +194,12 @@ module Loofah
       :strip => Strip,
       :nofollow => NoFollow
     }
+
+    #
+    #  Returns an array of symbols representing the built-in scrubbers
+    #
+    def self.scrubber_symbols
+      MAP.keys
+    end
   end
 end

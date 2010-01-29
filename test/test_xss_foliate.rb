@@ -125,7 +125,7 @@ class TestXssFoliate < Test::Unit::TestCase
         end
       end
 
-      [:strip, :escape, :prune].each do |method|
+      Loofah::Scrubbers.scrubber_symbols.each do |method|
         context "declaring one field to be scrubbed with #{method}" do
           setup do
             Post.xss_foliate method => [:plain_text]

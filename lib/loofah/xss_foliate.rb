@@ -83,7 +83,7 @@ module Loofah
     #
     module ClassMethods
       # :stopdoc:
-      VALID_OPTIONS = [:except, :strip, :escape, :prune, :text, :html5lib_sanitize, :sanitize]
+      VALID_OPTIONS = [:except, :html5lib_sanitize, :sanitize] + Loofah::Scrubbers.scrubber_symbols
       ALIASED_OPTIONS = {:html5lib_sanitize => :escape, :sanitize => :strip}
       REAL_OPTIONS = VALID_OPTIONS - ALIASED_OPTIONS.keys
       # :startdoc:
@@ -161,7 +161,6 @@ module Loofah
     end
 
     module InstanceMethods
-
       def xss_foliate_fields # :nodoc:
         # fix a bug with Rails internal AR::Base models that get loaded before
         # the plugin, like CGI::Sessions::ActiveRecordStore::Session
@@ -175,27 +174,27 @@ module Loofah
 
           next if value.nil? || !value.is_a?(String)
 
-          if xss_foliate_options[:except].include?(field)
-            next
+          next if xss_foliate_options[:except].include?(field)
 
-          elsif xss_foliate_options[:strip].include?(field)
-            fragment = Loofah.scrub_fragment(value, :strip)
+          next if xss_foliated_with_standard_scrubber(field)
+
+          # :text if we're here
+          fragment = Loofah.scrub_fragment(value, :strip)
+          self[field] = fragment.nil? ? "" : fragment.text
+        end
+      end
+
+      private
+
+      def xss_foliated_with_standard_scrubber(field)
+        Loofah::Scrubbers.scrubber_symbols.each do |method|
+          if xss_foliate_options[method].include?(field)
+            fragment = Loofah.scrub_fragment(self[field], method)
             self[field] = fragment.nil? ? "" : fragment.to_s
-
-          elsif xss_foliate_options[:prune].include?(field)
-            fragment = Loofah.scrub_fragment(value, :prune)
-            self[field] = fragment.nil? ? "" : fragment.to_s
-
-          elsif xss_foliate_options[:escape].include?(field)
-            fragment = Loofah.scrub_fragment(value, :escape)
-            self[field] = fragment.nil? ? "" : fragment.to_s
-
-          else # :text
-            fragment = Loofah.scrub_fragment(value, :strip)
-            self[field] = fragment.nil? ? "" : fragment.text
+            return true
           end
         end
-
+        false
       end
     end
   end
