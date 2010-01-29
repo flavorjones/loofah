@@ -1,5 +1,17 @@
 = Changelog
 
+== 0.4.3 (2010-01-29)
+
+Enhancements:
+
+  * All built-in scrubbers are accepted by ActiveRecord::Base.xss_foliate
+
+Miscellaneous:
+
+  * Modified documentation for bootstrapping XssFoliate in a Rails
+    app, since the use of Bundler breaks the previously-documented
+    method. To be safe, always use an initializer file.
+
 == 0.4.2 (2010-01-22)
 
 Enhancements:
