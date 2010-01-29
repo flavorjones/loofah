@@ -13,8 +13,8 @@ module Loofah
   #  If you'd like to scrub all fields in all your models (and perhaps *opt-out* in specific models):
   #
   #    # config/initializers/loofah.rb
-  #    LOOFAH_XSS_FOLIATE_ALL_MODELS = true
   #    require 'loofah'
+  #    Loofah::XssFoliate.xss_foliate_all_models
   #
   #    # db/schema.rb
   #    create_table "posts" do |t|
@@ -57,8 +57,8 @@ module Loofah
   #  Alternatively, if you would like to *opt-in* to the models and attributes that are sanitized:
   #
   #    # config/initializers/loofah.rb
-  #    LOOFAH_XSS_FOLIATE_ALL_MODELS = false # default, this line could be omitted
   #    require 'loofah'
+  #    ## note omission of call to Loofah::XssFoliate.xss_foliate_all_models
   #
   #    # db/schema.rb
   #    create_table "posts" do |t|
@@ -197,11 +197,15 @@ module Loofah
         false
       end
     end
+
+    def self.xss_foliate_all_models
+      ActiveRecord::Base.xss_foliate
+    end
   end
 end
 
 ActiveRecord::Base.extend(Loofah::XssFoliate::ClassMethods)
 
 if defined?(LOOFAH_XSS_FOLIATE_ALL_MODELS) && LOOFAH_XSS_FOLIATE_ALL_MODELS
-  ActiveRecord::Base.xss_foliate
+  Loofah::XssFoliate.xss_foliate_all_models
 end
