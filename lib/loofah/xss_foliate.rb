@@ -12,11 +12,9 @@ module Loofah
   #
   #  If you'd like to scrub all fields in all your models (and perhaps *opt-out* in specific models):
   #
-  #    # config/environment
+  #    # config/initializers/loofah.rb
   #    LOOFAH_XSS_FOLIATE_ALL_MODELS = true
-  #    Rails::Initializer.run do |config|
-  #      config.gem "loofah"
-  #    end
+  #    require 'loofah'
   #
   #    # db/schema.rb
   #    create_table "posts" do |t|
@@ -58,11 +56,9 @@ module Loofah
   #
   #  Alternatively, if you would like to *opt-in* to the models and attributes that are sanitized:
   #
-  #    # config/environment.rb
+  #    # config/initializers/loofah.rb
   #    LOOFAH_XSS_FOLIATE_ALL_MODELS = false # default, this line could be omitted
-  #    Rails::Initializer.run do |config|
-  #      config.gem "loofah"
-  #    end
+  #    require 'loofah'
   #
   #    # db/schema.rb
   #    create_table "posts" do |t|
