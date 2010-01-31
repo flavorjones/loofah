@@ -5,6 +5,7 @@
 Enhancements:
 
   * All built-in scrubbers are accepted by ActiveRecord::Base.xss_foliate
+  * Loofah::XssFoliate.xss_foliate_all_models replaces use of the constant LOOFAH_XSS_FOLIATE_ALL_MODELS
 
 Miscellaneous:
 
