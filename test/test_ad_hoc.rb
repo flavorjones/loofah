@@ -251,7 +251,7 @@ mso-bidi-language:#0400;}
       What's up <strong>doc</strong>?
     HTML
     stripped = Loofah.scrub_document(html, :prune).text
-    assert_equal "What's up doc?".strip, stripped.strip
+    assert_equal %Q(What\'s up doc?).strip, stripped.strip
   end
 
   def test_dont_remove_whitespace
@@ -268,5 +268,4 @@ mso-bidi-language:#0400;}
     html = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p>"
     assert_equal 'this is < that "&" the other > boo\'ya', Loofah.scrub_document(html, :prune).text
   end
-
 end

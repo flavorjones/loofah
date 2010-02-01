@@ -1,5 +1,11 @@
 = Changelog
 
+== 0.4.4 (2010-02-01)
+
+Bug fixes:
+
+  * Loofah::XssFoliate was not properly escaping HTML entities when implicitly scrubbing a string attribute. GH #17
+
 == 0.4.3 (2010-01-29)
 
 Enhancements:

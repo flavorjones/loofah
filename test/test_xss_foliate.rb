@@ -56,7 +56,7 @@ class TestXssFoliate < Test::Unit::TestCase
       end
 
       context "when passed a symbol" do
-        should "do the right thing" do
+        should "calls the right scrubber" do
           assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => :plain_text }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
@@ -65,7 +65,7 @@ class TestXssFoliate < Test::Unit::TestCase
       end
 
       context "when passed an array of symbols" do
-        should "do the right thing" do
+        should "calls the right scrubbers" do
           assert_nothing_raised(ArgumentError) {
             Post.xss_foliate :prune => [:plain_text, :html_string]
           }
@@ -76,7 +76,7 @@ class TestXssFoliate < Test::Unit::TestCase
       end
 
       context "when passed a string" do
-        should "do the right thing" do
+        should "calls the right scrubber" do
           assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => 'plain_text' }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
@@ -85,7 +85,7 @@ class TestXssFoliate < Test::Unit::TestCase
       end
 
       context "when passed an array of strings" do
-        should "do the right thing" do
+        should "calls the right scrubbers" do
           assert_nothing_raised(ArgumentError) {
             Post.xss_foliate :prune => ['plain_text', 'html_string']
           }
@@ -107,7 +107,7 @@ class TestXssFoliate < Test::Unit::TestCase
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
-          mock_doc.expects(:text).twice
+          mock_doc.expects(:to_s).twice
           assert new_post.valid?
         end
       end
@@ -118,9 +118,11 @@ class TestXssFoliate < Test::Unit::TestCase
         end
 
         should "not scrub omitted field" do
-          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
+          mock_doc = mock
+          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :strip).never
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
+          mock_doc.expects(:to_s).once
           assert new_post.valid?
         end
       end
@@ -132,9 +134,11 @@ class TestXssFoliate < Test::Unit::TestCase
           end
 
           should "not that field appropriately" do
-            Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
-            Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, method).once
+            mock_doc = mock
+            Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
+            Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, method).once.returns(mock_doc)
             Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
+            mock_doc.expects(:to_s).twice
             assert new_post.valid?
           end
         end
@@ -167,5 +171,18 @@ class TestXssFoliate < Test::Unit::TestCase
       end
     end
 
+    context "given an XSS attempt" do
+      setup do
+        Post.xss_foliate :strip => :html_string
+      end
+
+      should "escape html entities" do
+        hackattack = "&lt;script&gt;alert('evil')&lt;/script&gt;"
+        post = new_post :html_string => hackattack, :plain_text => hackattack
+        post.valid?
+        assert_equal "&lt;script&gt;alert('evil')&lt;/script&gt;", post.html_string
+        assert_equal "&lt;script&gt;alert('evil')&lt;/script&gt;", post.plain_text
+      end
+    end
   end
 end
