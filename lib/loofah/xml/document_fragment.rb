@@ -6,8 +6,6 @@ module Loofah
     #  See Loofah::ScrubBehavior for additional methods.
     #
     class DocumentFragment < Nokogiri::XML::DocumentFragment
-      include Loofah::ScrubBehavior::Node
-
       class << self
         #
         #  Overridden Nokogiri::XML::DocumentFragment
