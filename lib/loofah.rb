@@ -26,7 +26,7 @@ require 'loofah/helpers'
 #
 module Loofah
   # The version of Loofah you are using
-  VERSION = '0.4.5'
+  VERSION = '0.4.6'
 
   # The minimum required version of Nokogiri
   REQUIRED_NOKOGIRI_VERSION = '1.3.3'
