@@ -8,7 +8,7 @@ class TestHelpers < Test::Unit::TestCase
     should "invoke Loofah.fragment.text" do
       mock_doc = mock
       Loofah.expects(:fragment).with(HTML_STRING).returns(mock_doc)
-      mock_doc.expects(:text)
+      mock_doc.expects(:to_s)
 
       Loofah::Helpers.strip_tags HTML_STRING
     end
