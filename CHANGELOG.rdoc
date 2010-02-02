@@ -1,6 +1,10 @@
 = Changelog
 
-== 0.4.4 (2010-02-01)
+== 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
+
+Enhancements:
+
+  * Loofah::HTML::Document#text and Loofah::HTML::DocumentFragment#text now escape HTML entities.
 
 Bug fixes:
 
