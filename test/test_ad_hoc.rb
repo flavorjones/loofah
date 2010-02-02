@@ -2,69 +2,93 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestAdHoc < Test::Unit::TestCase
 
-  def test_empty_string_with_escape
-    assert_equal "", Loofah.scrub_fragment("", :escape).to_xml
-  end
-
-  def test_empty_string_with_prune
-    assert_equal Loofah.scrub_document("", :prune).text, ""
-  end
-
-  def test_xml_document_scrub
-    xml = Loofah.xml_document <<-EOXML
-    <root>
-      <employee deceased='true'>Abraham Lincoln</employee>
-      <employee deceased='false'>Abe Vigoda</employee>
-    </root>
-    EOXML
-    bring_out_your_dead = Loofah::Scrubber.new do |node|
-      if node.name == "employee" and node["deceased"] == "true"
-        node.remove
-        Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+  context "blank input string" do
+    context "fragment" do
+      should "return a blank string" do
+        assert_equal "", Loofah.scrub_fragment("", :prune).to_s
       end
     end
-    assert_equal 2, xml.css("employee").length
-    
-    xml.scrub!(bring_out_your_dead)
 
-    employees = xml.css "employee"
-    assert_equal 1, employees.length
-    assert_equal "Abe Vigoda", employees.first.inner_text
-  end
-
-  def test_xml_fragment_scrub
-    xml = Loofah.xml_fragment <<-EOXML
-      <employee deceased='true'>Abraham Lincoln</employee>
-      <employee deceased='false'>Abe Vigoda</employee>
-    EOXML
-    bring_out_your_dead = Loofah::Scrubber.new do |node|
-      if node.name == "employee" and node["deceased"] == "true"
-        node.remove
-        Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+    context "document" do
+      should "return a blank string" do
+        assert_equal "", Loofah.scrub_document("", :prune).root.to_s
       end
     end
-    assert_equal 2, xml.css("employee").length
-    
-    xml.scrub!(bring_out_your_dead)
-
-    employees = xml.css "employee"
-    assert_equal 1, employees.length
-    assert_equal "Abe Vigoda", employees.first.inner_text
   end
 
-  def test_html_fragment_to_s_should_not_include_head_tags
-    html = Loofah.fragment "<style>foo</style><div>bar</div>"
-    assert_equal "<div>bar</div>", html.to_s
-  end
+  context "integration test" do
+    context "xml document" do
+      context "custom scrubber" do
+        should "act as expected" do
+          xml = Loofah.xml_document <<-EOXML
+            <root>
+              <employee deceased='true'>Abraham Lincoln</employee>
+              <employee deceased='false'>Abe Vigoda</employee>
+            </root>
+          EOXML
+          bring_out_your_dead = Loofah::Scrubber.new do |node|
+            if node.name == "employee" and node["deceased"] == "true"
+              node.remove
+              Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+            end
+          end
+          assert_equal 2, xml.css("employee").length
+          
+          xml.scrub!(bring_out_your_dead)
 
-  def test_html_fragment_text_should_not_include_head_tags
-    html = Loofah.fragment "<style>foo</style><div>bar</div>"
-    assert_equal "bar", html.text
-  end
+          employees = xml.css "employee"
+          assert_equal 1, employees.length
+          assert_equal "Abe Vigoda", employees.first.inner_text
+        end
+      end
+    end
 
-  def test_html_document_text_should_not_include_head_tags
-    html = Loofah.document "<style>foo</style><div>bar</div>"
-    assert_equal "bar", html.text
+    context "xml fragment" do
+      context "custom scrubber" do
+        should "act as expected" do
+          xml = Loofah.xml_fragment <<-EOXML
+            <employee deceased='true'>Abraham Lincoln</employee>
+            <employee deceased='false'>Abe Vigoda</employee>
+          EOXML
+          bring_out_your_dead = Loofah::Scrubber.new do |node|
+            if node.name == "employee" and node["deceased"] == "true"
+              node.remove
+              Loofah::Scrubber::STOP # don't bother with the rest of the subtree
+            end
+          end
+          assert_equal 2, xml.css("employee").length
+          
+          xml.scrub!(bring_out_your_dead)
+
+          employees = xml.css "employee"
+          assert_equal 1, employees.length
+          assert_equal "Abe Vigoda", employees.first.inner_text
+        end
+      end
+    end
+
+    context "html fragment" do
+      context "#to_s" do
+        should "not include head tags (like style)" do
+          html = Loofah.fragment "<style>foo</style><div>bar</div>"
+          assert_equal "<div>bar</div>", html.to_s
+        end
+      end
+
+      context "#text" do
+        should "not include head tags (like style)" do
+          html = Loofah.fragment "<style>foo</style><div>bar</div>"
+          assert_equal "bar", html.text
+        end
+      end
+    end
+
+    context "html document" do
+      should "not include head tags (like style)" do
+        html = Loofah.document "<style>foo</style><div>bar</div>"
+        assert_equal "bar", html.text
+      end
+    end
   end
 
   def test_removal_of_illegal_tag
@@ -223,10 +247,5 @@ mso-bidi-language:#0400;}
   def test_dont_remove_whitespace_between_tags
     html = "<p>Foo</p>\n<p>Bar</p>"
     assert_equal "Foo\nBar", Loofah.scrub_document(html, :prune).text
-  end
-
-  def test_removal_of_entities
-    html = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p>"
-    assert_equal 'this is < that "&" the other > boo\'ya', Loofah.scrub_document(html, :prune).text
   end
 end

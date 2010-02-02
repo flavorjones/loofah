@@ -24,6 +24,9 @@ class TestScrubber < Test::Unit::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
+  ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p>"
+  ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'ya)
+
   context "Document" do
     context "#scrub!" do
       context ":escape" do
@@ -225,6 +228,19 @@ class TestScrubber < Test::Unit::TestCase
         mock_doc.expects(:scrub!).with(:method)
 
         Loofah.scrub_fragment(:string_or_io, :method)
+      end
+    end
+
+    context "#text" do
+      should "remove entities" do
+        assert_equal ENTITY_TEXT, Loofah.scrub_fragment(ENTITY_FRAGMENT, :prune).text
+      end
+    end
+
+    context "#to_s" do
+      should "not remove entities" do
+        string = Loofah.scrub_fragment(ENTITY_FRAGMENT, :prune).to_s
+        assert_contains string, /this is &lt;/
       end
     end
 
