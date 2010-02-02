@@ -26,7 +26,8 @@ module Loofah
       alias :serialize :to_s
 
       #
-      #  Returns a plain-text version of the markup contained by the fragment
+      #  Returns a plain-text version of the markup contained by the fragment,
+      #  with HTML entities encoded.
       #
       def text
         encode_special_chars serialize_roots.children.inner_text
