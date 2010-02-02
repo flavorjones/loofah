@@ -1,14 +1,13 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
 require 'loofah/active_record'
 
 class TestActiveRecord < Test::Unit::TestCase
 
   HTML_STRING = "<div>omgwtfbbq</div>"
-  PLAIN_TEXT = "vanilla text"
+  PLAIN_TEXT  = "vanilla text"
 
   context "with a Post model" do
-
     setup do
       ActsAsFu.build_model(:posts) do
         string :plain_text
@@ -26,7 +25,7 @@ class TestActiveRecord < Test::Unit::TestCase
 
         should "scrub the specified field" do
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).never
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).never
           @post.valid?
         end
 
@@ -37,7 +36,7 @@ class TestActiveRecord < Test::Unit::TestCase
 
         should "generate strings" do
           @post.valid?
-          assert_equal String, @post.html_string.class
+          assert_equal String,      @post.html_string.class
           assert_equal HTML_STRING, @post.html_string
         end
       end
@@ -51,7 +50,7 @@ class TestActiveRecord < Test::Unit::TestCase
 
         should "scrub the specified field" do
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).never
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).never
           @post.valid?
         end
       end
@@ -66,7 +65,7 @@ class TestActiveRecord < Test::Unit::TestCase
 
         should "scrub the specified field, but not other fields" do
           Loofah.expects(:scrub_document).with(HTML_STRING, :strip).once
-          Loofah.expects(:scrub_document).with(PLAIN_TEXT, :strip).never
+          Loofah.expects(:scrub_document).with(PLAIN_TEXT,  :strip).never
           @post.valid?
         end
 
@@ -89,7 +88,7 @@ class TestActiveRecord < Test::Unit::TestCase
 
         should "scrub the specified field, but not other fields" do
           Loofah.expects(:scrub_document).with(HTML_STRING, :strip).once
-          Loofah.expects(:scrub_document).with(PLAIN_TEXT, :strip).never
+          Loofah.expects(:scrub_document).with(PLAIN_TEXT,  :strip).never
           @post.valid?
         end
       end
@@ -140,7 +139,5 @@ class TestActiveRecord < Test::Unit::TestCase
         assert @called
       end
     end
-
   end
-
 end

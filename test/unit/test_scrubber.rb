@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
 class TestScrubber < Test::Unit::TestCase
 
@@ -147,10 +147,12 @@ class TestScrubber < Test::Unit::TestCase
     setup do
       @klass = Class.new(Loofah::Scrubber) do
         attr_accessor :count
+
         def initialize(direction=nil)
           @direction = direction
           @count = 0
         end
+
         def scrub(node)
           @count += 1
           Loofah::Scrubber::STOP

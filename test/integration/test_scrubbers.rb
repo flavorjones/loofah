@@ -1,17 +1,6 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestScrubber < Test::Unit::TestCase
-
-  [ Loofah::HTML::Document, Loofah::HTML::DocumentFragment ].each do |klass|
-    context klass do
-      context "bad scrub method" do
-        should "raise a ScrubberNotFound exception" do
-          doc = klass.parse "<p>foo</p>"
-          assert_raises(Loofah::ScrubberNotFound) { doc.scrub! :frippery }
-        end
-      end
-    end
-  end
+class TestScrubbers < Test::Unit::TestCase
 
   INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
   INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"

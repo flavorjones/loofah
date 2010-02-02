@@ -1,11 +1,11 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
 class TestHelpers < Test::Unit::TestCase
 
   HTML_STRING = "<div>omgwtfbbq</div>"
 
   context "when calling strip_tags" do
-    should "invoke Loofah.fragment.text" do
+    should "invoke Loofah.fragment.to_s" do
       mock_doc = mock
       Loofah.expects(:fragment).with(HTML_STRING).returns(mock_doc)
       mock_doc.expects(:to_s)
@@ -24,5 +24,4 @@ class TestHelpers < Test::Unit::TestCase
       Loofah::Helpers.sanitize HTML_STRING
     end
   end
-
 end

@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
 class TestXssFoliate < Test::Unit::TestCase
 
@@ -59,8 +59,8 @@ class TestXssFoliate < Test::Unit::TestCase
         should "calls the right scrubber" do
           assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => :plain_text }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
-          assert new_post.valid?
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).once
+          new_post.valid?
         end
       end
 
@@ -70,8 +70,8 @@ class TestXssFoliate < Test::Unit::TestCase
             Post.xss_foliate :prune => [:plain_text, :html_string]
           }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
-          assert new_post.valid?
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).once
+          new_post.valid?
         end
       end
 
@@ -79,8 +79,8 @@ class TestXssFoliate < Test::Unit::TestCase
         should "calls the right scrubber" do
           assert_nothing_raised(ArgumentError) { Post.xss_foliate :prune => 'plain_text' }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
-          assert new_post.valid?
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).once
+          new_post.valid?
         end
       end
 
@@ -90,8 +90,8 @@ class TestXssFoliate < Test::Unit::TestCase
             Post.xss_foliate :prune => ['plain_text', 'html_string']
           }
           Loofah.expects(:scrub_fragment).with(HTML_STRING, :prune).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).once
-          assert new_post.valid?
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :prune).once
+          new_post.valid?
         end
       end
     end
@@ -104,8 +104,8 @@ class TestXssFoliate < Test::Unit::TestCase
 
         should "scrub all fields" do
           mock_doc = mock
-          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :strip).once.returns(mock_doc)
+          Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
           mock_doc.expects(:to_s).twice
           assert new_post.valid?
@@ -119,11 +119,11 @@ class TestXssFoliate < Test::Unit::TestCase
 
         should "not scrub omitted field" do
           mock_doc = mock
-          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :strip).never
+          Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    :strip).never
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
           mock_doc.expects(:to_s).once
-          assert new_post.valid?
+          new_post.valid?
         end
       end
 
@@ -135,11 +135,11 @@ class TestXssFoliate < Test::Unit::TestCase
 
           should "not that field appropriately" do
             mock_doc = mock
-            Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once.returns(mock_doc)
-            Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, method).once.returns(mock_doc)
+            Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
+            Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    method).once.returns(mock_doc)
             Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
             mock_doc.expects(:to_s).twice
-            assert new_post.valid?
+            new_post.valid?
           end
         end
       end
@@ -150,10 +150,10 @@ class TestXssFoliate < Test::Unit::TestCase
         end
 
         should "not that field appropriately" do
-          Loofah.expects(:scrub_fragment).with(HTML_STRING, :strip).once
-          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :escape).once
-          Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
-          assert new_post.valid?
+          Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip) .once
+          Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    :escape).once
+          Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip) .never
+          new_post.valid?
         end
       end
     end
@@ -166,7 +166,7 @@ class TestXssFoliate < Test::Unit::TestCase
 
       should "not be valid after sanitizing" do
         Loofah.expects(:scrub_fragment).with(WHITESPACEY, :strip).once
-        Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :strip).once
+        Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,  :strip).once
         assert ! new_post(:html_string => WHITESPACEY).valid?
       end
     end
