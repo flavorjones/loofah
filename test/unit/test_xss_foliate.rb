@@ -107,7 +107,7 @@ class TestXssFoliate < Test::Unit::TestCase
           Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
-          mock_doc.expects(:to_s).twice
+          mock_doc.expects(:text).twice
           assert new_post.valid?
         end
       end
@@ -122,7 +122,7 @@ class TestXssFoliate < Test::Unit::TestCase
           Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
           Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    :strip).never
           Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
-          mock_doc.expects(:to_s).once
+          mock_doc.expects(:text).once
           new_post.valid?
         end
       end
@@ -133,12 +133,12 @@ class TestXssFoliate < Test::Unit::TestCase
             Post.xss_foliate method => [:plain_text]
           end
 
-          should "not that field appropriately" do
+          should "scrub that field appropriately" do
             mock_doc = mock
-            Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once.returns(mock_doc)
+            Loofah.expects(:scrub_fragment).with(HTML_STRING,   :strip).once
             Loofah.expects(:scrub_fragment).with(PLAIN_TEXT,    method).once.returns(mock_doc)
             Loofah.expects(:scrub_fragment).with(INTEGER_VALUE, :strip).never
-            mock_doc.expects(:to_s).twice
+            mock_doc.expects(:to_s)
             new_post.valid?
           end
         end
@@ -177,10 +177,10 @@ class TestXssFoliate < Test::Unit::TestCase
       end
 
       should "escape html entities" do
-        hackattack = "&lt;script&gt;alert('evil')&lt;/script&gt;"
+        hackattack = "<div>&lt;script&gt;alert('evil')&lt;/script&gt;</div>"
         post = new_post :html_string => hackattack, :plain_text => hackattack
         post.valid?
-        assert_equal "&lt;script&gt;alert('evil')&lt;/script&gt;", post.html_string
+        assert_equal "<div>&lt;script&gt;alert('evil')&lt;/script&gt;</div>", post.html_string
         assert_equal "&lt;script&gt;alert('evil')&lt;/script&gt;", post.plain_text
       end
     end

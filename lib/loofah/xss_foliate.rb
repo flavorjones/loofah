@@ -180,7 +180,7 @@ module Loofah
 
           # :text if we're here
           fragment = Loofah.scrub_fragment(value, :strip)
-          self[field] = fragment.nil? ? "" : fragment.to_s
+          self[field] = fragment.nil? ? "" : fragment.text
         end
       end
 
