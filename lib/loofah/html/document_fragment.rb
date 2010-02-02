@@ -29,7 +29,7 @@ module Loofah
       #  Returns a plain-text version of the markup contained by the fragment
       #
       def text
-        serialize_roots.children.inner_text
+        encode_special_chars serialize_roots.children.inner_text
       end
       alias :inner_text :text
       alias :to_str     :text

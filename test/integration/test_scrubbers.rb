@@ -13,8 +13,11 @@ class TestScrubbers < Test::Unit::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
-  ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p>"
-  ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'ya)
+  ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
+  ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'yaw00t)
+
+  ENTITY_HACK_ATTACK            = "<div><div>Hack attack!</div><div>&lt;script&gt;alert('evil')&lt;/script&gt;</div></div>"
+  ENTITY_HACK_ATTACK_TEXT_SCRUB = "Hack attack!&lt;script&gt;alert('evil')&lt;/script&gt;"
 
   context "Document" do
     context "#scrub!" do
@@ -76,6 +79,15 @@ class TestScrubbers < Test::Unit::TestCase
         mock_doc.expects(:scrub!).with(:method)
 
         Loofah.scrub_document(:string_or_io, :method)
+      end
+    end
+
+    context "#text" do
+      should "leave behind only inner text with html entities still escaped" do
+        doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+        result = doc.text
+
+        assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
       end
     end
 
@@ -221,8 +233,11 @@ class TestScrubbers < Test::Unit::TestCase
     end
 
     context "#text" do
-      should "remove entities" do
-        assert_equal ENTITY_TEXT, Loofah.scrub_fragment(ENTITY_FRAGMENT, :prune).text
+      should "leave behind only inner text with html entities still escaped" do
+        doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+        result = doc.text
+
+        assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
       end
     end
 

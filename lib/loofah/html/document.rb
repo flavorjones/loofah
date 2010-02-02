@@ -10,10 +10,11 @@ module Loofah
       include Loofah::DocumentDecorator
 
       #
-      #  Returns a plain-text version of the markup contained by the document
+      #  Returns a plain-text version of the markup contained by the document,
+      #  with HTML entities encoded.
       #
       def text
-        xpath("/html/body").inner_text
+        encode_special_chars xpath("/html/body").inner_text
       end
       alias :inner_text :text
       alias :to_str     :text

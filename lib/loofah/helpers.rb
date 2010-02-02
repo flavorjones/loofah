@@ -7,7 +7,7 @@ module Loofah
       #   Loofah::Helpers.strip_tags("<div>Hello <b>there</b></div>") # => "Hello there"
       #
       def strip_tags(string_or_io)
-        Loofah.fragment(string_or_io).to_s
+        Loofah.fragment(string_or_io).text
       end
 
       #
