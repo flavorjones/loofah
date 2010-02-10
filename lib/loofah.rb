@@ -86,6 +86,7 @@ def Loofah(doc_or_fragment)
     doc_or_fragment.extend Loofah::DocumentDecorator
   when Nokogiri::XML::DocumentFragment
     Loofah(doc_or_fragment.document)
+    doc_or_fragment.decorate!
   else
     raise "Loofah must take a Document or Fragment"
   end

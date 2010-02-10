@@ -42,7 +42,12 @@ module Loofah
         when Nokogiri::XML::Document
           scrubber.traverse(root) if root
         when Nokogiri::XML::DocumentFragment
-          children.each { |node| node.scrub!(scrubber) } # TODO: children.scrub! once Nokogiri 1.4.2 is out
+          children.each do |node| # TODO: children.scrub! once Nokogiri 1.4.2 is out
+            # use respond_to? instead of calling blindly and rescuing NoMethodError.
+            # see http://gist.github.com/300668 for benchmarks.
+            node.decorate! unless node.respond_to?(:scrub!)
+            node.scrub!(scrubber)
+          end
         else
           scrubber.traverse(self)
         end
@@ -53,7 +58,12 @@ module Loofah
     # see Loofah::ScrubBehavior
     module NodeSet
       def scrub!(scrubber)
-        each { |node| node.scrub!(scrubber) }
+        each do |node|
+          # use respond_to? instead of calling blindly and rescuing NoMethodError.
+          # see http://gist.github.com/300668 for benchmarks.
+          node.decorate! unless node.respond_to?(:scrub!)
+          node.scrub!(scrubber)
+        end
         self
       end
     end
