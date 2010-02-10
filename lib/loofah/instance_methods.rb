@@ -68,6 +68,11 @@ module Loofah
   end
 
   module DocumentDecorator # :nodoc:
+    def self.extended(base)
+      base.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
+      base.decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
+    end
+
     def initialize(*args, &block)
       super
       self.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node

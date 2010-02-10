@@ -6,6 +6,22 @@ class TestApi < Test::Unit::TestCase
   XML_FRAGMENT  = "<div>a</div>\n<div>b</div>"
   XML           = "<root>#{XML_FRAGMENT}</root>"
 
+  def test_loofah_on_a_document_and_subnodes
+    doc = Nokogiri::HTML(HTML)
+    divs = doc.css("div").to_a
+    Loofah(doc)
+    assert doc.respond_to?(:scrub!)
+    divs.each { |div| assert div.respond_to?(:scrub!) }
+  end
+
+  def test_loofah_on_a_fragment
+    doc = Nokogiri::HTML::DocumentFragment.parse(HTML)
+    divs = doc.css("div").to_a
+    Loofah(doc)
+    assert doc.respond_to?(:scrub!)
+    divs.each { |div| assert div.respond_to?(:scrub!) }
+  end
+
   def test_loofah_document
     doc = Loofah.document(HTML)
     assert_html_documentish doc

@@ -79,6 +79,18 @@ module Loofah
   end
 end
 
+def Loofah(doc_or_fragment)
+  case doc_or_fragment
+  when Nokogiri::XML::Document
+    doc_or_fragment.extend Loofah::ScrubBehavior::Node
+    doc_or_fragment.extend Loofah::DocumentDecorator
+  when Nokogiri::XML::DocumentFragment
+    Loofah(doc_or_fragment.document)
+  else
+    raise "Loofah must take a Document or Fragment"
+  end
+end
+
 if Nokogiri::VERSION < Loofah::REQUIRED_NOKOGIRI_VERSION
   raise RuntimeError, "Loofah requires Nokogiri #{Loofah::REQUIRED_NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end
