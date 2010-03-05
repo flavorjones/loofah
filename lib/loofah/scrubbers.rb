@@ -58,7 +58,6 @@ module Loofah
   #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
   #
-  #
   module Scrubbers
     #
     #  === scrub!(:strip)
@@ -184,15 +183,29 @@ module Loofah
       end
     end
 
+    # This class isn't useful publicly, but is used for #to_text's current implemention
+    class NewlinifyBlockElements < Scrubber # :nodoc:
+      def initialize
+        @direction = :bottom_up
+      end
+
+      def scrub(node)
+        return CONTINUE unless Loofah::HashedElements::BLOCK_LEVEL[node.name]
+        node.add_previous_sibling Nokogiri::XML::Text.new("\n", node.document)
+        node.add_next_sibling     Nokogiri::XML::Text.new("\n", node.document)
+      end
+    end
+
     #
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
-      :escape => Escape,
-      :prune => Prune,
+      :escape    => Escape,
+      :prune     => Prune,
       :whitewash => Whitewash,
-      :strip => Strip,
-      :nofollow => NoFollow
+      :strip     => Strip,
+      :nofollow  => NoFollow,
+      :newline_block_elements => NewlinifyBlockElements
     }
 
     #

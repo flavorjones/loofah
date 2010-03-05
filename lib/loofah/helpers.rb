@@ -18,6 +18,13 @@ module Loofah
       def sanitize(string_or_io)
         Loofah.scrub_fragment(string_or_io, :strip).to_s
       end
+
+      #
+      #  A helper to remove extraneous whitespace from text-ified HTML
+      #
+      def remove_extraneous_whitespace(string)
+        string.gsub(/\n\s*\n\s*\n/,"\n\n")
+      end
     end
   end
 end

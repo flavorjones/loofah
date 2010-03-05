@@ -3,6 +3,8 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 require 'nokogiri'
 
 require 'loofah/metahelpers'
+require 'loofah/elements'
+
 require 'loofah/html5/whitelist'
 require 'loofah/html5/scrub'
 

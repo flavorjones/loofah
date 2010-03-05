@@ -26,8 +26,14 @@ module Loofah
       alias :serialize :to_s
 
       #
-      #  Returns a plain-text version of the markup contained by the fragment,
-      #  with HTML entities encoded.
+      #  Returns a plain-text version of the markup contained by the
+      #  fragment, with HTML entities encoded.
+      #
+      #  This method is significantly faster than #to_text, but isn't
+      #  clever about whitespace around block elements.
+      #
+      #    Loofah.fragment("<h1>Title</h1><div>Content</div>").text
+      #    # => "TitleContent"
       #
       def text
         encode_special_chars serialize_roots.children.inner_text
@@ -35,10 +41,25 @@ module Loofah
       alias :inner_text :text
       alias :to_str     :text
 
+      #
+      #  Returns a plain-text version of the markup contained by the
+      #  fragment, with HTML entities encoded.
+      #
+      #  This method is slower than #to_text, but is clever about
+      #  whitespace around block elements.
+      #
+      #    Loofah.fragment("<h1>Title</h1><div>Content</div>").to_text
+      #    # => "\nTitle\n\nContent\n"
+      #
+      def to_text
+        doc = self.dup
+        Loofah::Helpers.remove_extraneous_whitespace doc.scrub!(:newline_block_elements).text
+      end
+
       private
 
       def serialize_roots # :nodoc:
-        xpath("./body").first || self
+        at_xpath("./body") || self
       end
     end
   end
