@@ -162,13 +162,7 @@ module Loofah
     #  The HTML5lib whitelist arrays, transformed into hashes for faster lookup.
     #
     module HashedWhiteList
-      WhiteList.constants.each do |constant|
-        next unless WhiteList.module_eval("#{constant}").is_a?(Array)
-        module_eval <<-CODE
-        #{constant} = {}
-        WhiteList::#{constant}.each { |c| #{constant}[c] = true ; #{constant}[c.downcase] = true }
-      CODE
-      end
+      include Loofah::MetaHelpers::HashifiedConstants(WhiteList)
     end
   end
 end
