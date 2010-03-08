@@ -36,8 +36,7 @@ module Loofah
       #    # => "\nTitle\n\nContent\n"
       #
       def to_text
-        doc = self.dup
-        Loofah::Helpers.remove_extraneous_whitespace doc.scrub!(:newline_block_elements).text
+        Loofah::Helpers.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text
       end
     end
   end

@@ -183,16 +183,17 @@ module Loofah
       end
     end
 
-    # This class isn't useful publicly, but is used for #to_text's current implemention
-    class NewlinifyBlockElements < Scrubber # :nodoc:
+    # This class probably isn't useful publicly, but is used for #to_text's current implemention
+    class NewlineBlockElements < Scrubber # :nodoc:
       def initialize
         @direction = :bottom_up
       end
 
       def scrub(node)
         return CONTINUE unless Loofah::HashedElements::BLOCK_LEVEL[node.name]
-        node.add_previous_sibling Nokogiri::XML::Text.new("\n", node.document)
-        node.add_next_sibling     Nokogiri::XML::Text.new("\n", node.document)
+        replacement_killer = Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
+        node.add_next_sibling replacement_killer
+        node.remove
       end
     end
 
@@ -205,7 +206,7 @@ module Loofah
       :whitewash => Whitewash,
       :strip     => Strip,
       :nofollow  => NoFollow,
-      :newline_block_elements => NewlinifyBlockElements
+      :newline_block_elements => NewlineBlockElements
     }
 
     #
