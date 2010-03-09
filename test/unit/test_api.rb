@@ -81,13 +81,13 @@ class TestApi < Test::Unit::TestCase
   end
 
   def test_loofah_xml_document_node_scrub!
-    doc = Loofah.document(XML)
+    doc = Loofah.xml_document(XML)
     assert(node = doc.at_css("div"))
     node.scrub!(:strip)
   end
 
   def test_loofah_xml_fragment_node_scrub!
-    doc = Loofah.fragment(XML)
+    doc = Loofah.xml_fragment(XML)
     assert(node = doc.at_css("div"))
     node.scrub!(:strip)
   end
@@ -97,6 +97,16 @@ class TestApi < Test::Unit::TestCase
     assert(node_set = doc.css("div"))
     assert_instance_of Nokogiri::XML::NodeSet, node_set
     node_set.scrub!(:strip)
+  end
+
+  should "HTML::DocumentFragment exposes serialize_root" do
+    doc = Loofah.fragment(HTML)
+    assert_equal HTML, doc.serialize_root.to_html
+  end
+
+  should "HTML::Document exposes serialize_root" do
+    doc = Loofah.document(HTML)
+    assert_equal HTML, doc.serialize_root.children.to_html
   end
 
   private

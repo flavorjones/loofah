@@ -27,8 +27,7 @@ module Loofah
   #  README.rdoc for more example usage.
   #
   module ScrubBehavior
-    # see Loofah::ScrubBehavior
-    module Node
+    module Node # :nodoc:
       def scrub!(scrubber)
         #
         #  yes. this should be three separate methods. but nokogiri
@@ -50,8 +49,7 @@ module Loofah
       end
     end
 
-    # see Loofah::ScrubBehavior
-    module NodeSet
+    module NodeSet # :nodoc:
       def scrub!(scrubber)
         each { |node| node.scrub!(scrubber) }
         self
@@ -64,6 +62,58 @@ module Loofah
         raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}"
       end
       scrubber
+    end
+  end
+
+  #
+  #  Overrides +text+ in HTML::Document and HTML::DocumentFragment,
+  #  and mixes in +to_text+.
+  #
+  module TextBehavior
+    #
+    #  Returns a plain-text version of the markup contained by the document,
+    #  with HTML entities encoded.
+    #
+    #  This method is significantly faster than #to_text, but isn't
+    #  clever about whitespace around block elements.
+    #
+    #    Loofah.document("<h1>Title</h1><div>Content</div>").text
+    #    # => "TitleContent"
+    #
+    #  By default, the returned text will have HTML entities
+    #  escaped. If you want unescaped entities, and you understand
+    #  that the result is unsafe to render in a browser, then you
+    #  can pass an argument as shown:
+    #
+    #    frag = Loofah.fragment("&lt;script&gt;alert('EVIL');&lt;/script&gt;")
+    #    # ok for browser:
+    #    frag.text                                 # => "&lt;script&gt;alert('EVIL');&lt;/script&gt;"
+    #    # decidedly not ok for browser:
+    #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
+    #
+    def text(options={})
+      result = serialize_root.children.inner_text rescue ""
+      if options[:encode_special_chars] == false
+        result # possibly dangerous if rendered in a browser
+      else
+        encode_special_chars result
+      end
+    end
+    alias :inner_text :text
+    alias :to_str     :text
+
+    #
+    #  Returns a plain-text version of the markup contained by the
+    #  fragment, with HTML entities encoded.
+    #
+    #  This method is slower than #to_text, but is clever about
+    #  whitespace around block elements.
+    #
+    #    Loofah.document("<h1>Title</h1><div>Content</div>").to_text
+    #    # => "\nTitle\n\nContent\n"
+    #
+    def to_text(options={})
+      Loofah::Helpers.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
     end
   end
 
