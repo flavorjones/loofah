@@ -1,69 +1,72 @@
 = Changelog
 
-== 0.4.7 (2010-03-08)
+== 0.4.7 (2010-03-09)
 
 Enhancements:
 
-  * New methods Loofah::HTML::Document#to_text and
-    Loofah::HTML::DocumentFragment#to_text do the right thing with
-    whitespace. Note that these methods are significantly slower than #text. GH #12
-  * Loofah::Elements::BLOCK_LEVEL contains a canonical list of HTML4 block-level4 elements.
+* New methods Loofah::HTML::Document#to_text and
+  Loofah::HTML::DocumentFragment#to_text do the right thing with
+  whitespace. Note that these methods are significantly slower than
+  #text. GH #12
+* Loofah::Elements::BLOCK_LEVEL contains a canonical list of HTML4 block-level4 elements.
+* Loofah::HTML::Document#text and Loofah::HTML::DocumentFragment#text
+  will return unescaped HTML entities by passing :encode_special_chars => false.
 
 == 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
 
 Enhancements:
 
-  * Loofah::HTML::Document#text and Loofah::HTML::DocumentFragment#text now escape HTML entities.
+* Loofah::HTML::Document#text and Loofah::HTML::DocumentFragment#text now escape HTML entities.
 
 Bug fixes:
 
-  * Loofah::XssFoliate was not properly escaping HTML entities when implicitly scrubbing a string attribute. GH #17
+* Loofah::XssFoliate was not properly escaping HTML entities when implicitly scrubbing a string attribute. GH #17
 
 == 0.4.3 (2010-01-29)
 
 Enhancements:
 
-  * All built-in scrubbers are accepted by ActiveRecord::Base.xss_foliate
-  * Loofah::XssFoliate.xss_foliate_all_models replaces use of the constant LOOFAH_XSS_FOLIATE_ALL_MODELS
+* All built-in scrubbers are accepted by ActiveRecord::Base.xss_foliate
+* Loofah::XssFoliate.xss_foliate_all_models replaces use of the constant LOOFAH_XSS_FOLIATE_ALL_MODELS
 
 Miscellaneous:
 
-  * Modified documentation for bootstrapping XssFoliate in a Rails
-    app, since the use of Bundler breaks the previously-documented
-    method. To be safe, always use an initializer file.
+* Modified documentation for bootstrapping XssFoliate in a Rails app,
+  since the use of Bundler breaks the previously-documented method. To
+  be safe, always use an initializer file.
 
 == 0.4.2 (2010-01-22)
 
 Enhancements:
 
-  * Implemented Node#scrub! for scrubbing subtrees.
-  * Implemented NodeSet#scrub! for scrubbing a set of subtrees.
-  * Document.text now only serializes <body> contents (ignores <head>)
-  * <head>, <html> and <body> added to the HTML5lib whitelist.
+* Implemented Node#scrub! for scrubbing subtrees.
+* Implemented NodeSet#scrub! for scrubbing a set of subtrees.
+* Document.text now only serializes <body> contents (ignores <head>)
+* <head>, <html> and <body> added to the HTML5lib whitelist.
 
 Bug fixes:
 
-  * Supporting Rails apps that aren't loading ActiveRecord. GH #10
+* Supporting Rails apps that aren't loading ActiveRecord. GH #10
 
 Miscellaneous:
 
-  * Mailing list is now loofah@librelist.com / http://librelist.com
-  * IRC channel is now \#loofah on freenode.
+* Mailing list is now loofah@librelist.com / http://librelist.com
+* IRC channel is now \#loofah on freenode.
 
 == 0.4.1 (2009-11-23)
 
 Bugfix:
 
-  * Manifest fixed. Whoops.
+* Manifest fixed. Whoops.
 
 == 0.4.0 (2009-11-21)
 
 Enhancements:
 
-  * Scrubber class introduced, allowing development of custom scrubbers.
-  * Added support for XML documents and fragments.
-  * Added :nofollow HTML scrubber (thanks Luke Melia!)
-  * Built-in scrubbing methods refactored to use Scrubber.
+* Scrubber class introduced, allowing development of custom scrubbers.
+* Added support for XML documents and fragments.
+* Added :nofollow HTML scrubber (thanks Luke Melia!)
+* Built-in scrubbing methods refactored to use Scrubber.
 
 == 0.3.1 (2009-10-12)
 
