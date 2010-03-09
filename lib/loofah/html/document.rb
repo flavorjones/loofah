@@ -19,8 +19,24 @@ module Loofah
       #    Loofah.document("<h1>Title</h1><div>Content</div>").text
       #    # => "TitleContent"
       #
-      def text
-        encode_special_chars xpath("/html/body").inner_text
+      #  By default, the returned text will have HTML entities
+      #  escaped. If you want unescaped entities, and you understand
+      #  that the result is unsafe to render in a browser, then you
+      #  can pass an argument as shown:
+      #
+      #    frag = Loofah.fragment("&lt;script&gt;alert('EVIL');&lt;/script&gt;")
+      #    # ok for browser:
+      #    frag.text                                 # => "&lt;script&gt;alert('EVIL');&lt;/script&gt;"
+      #    # decidedly not ok for browser:
+      #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
+      #
+      def text(options={})
+        result = xpath("/html/body").inner_text
+        if options[:encode_special_chars] == false
+          result # possibly dangerous if rendered in a browser
+        else
+          encode_special_chars result
+        end
       end
       alias :inner_text :text
       alias :to_str     :text
@@ -35,8 +51,8 @@ module Loofah
       #    Loofah.document("<h1>Title</h1><div>Content</div>").to_text
       #    # => "\nTitle\n\nContent\n"
       #
-      def to_text
-        Loofah::Helpers.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text
+      def to_text(options={})
+        Loofah::Helpers.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
       end
     end
   end

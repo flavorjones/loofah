@@ -18,6 +18,7 @@ class TestScrubbers < Test::Unit::TestCase
 
   ENTITY_HACK_ATTACK            = "<div><div>Hack attack!</div><div>&lt;script&gt;alert('evil')&lt;/script&gt;</div></div>"
   ENTITY_HACK_ATTACK_TEXT_SCRUB = "Hack attack!&lt;script&gt;alert('evil')&lt;/script&gt;"
+  ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC = "Hack attack!<script>alert('evil')</script>"
 
   context "Document" do
     context "#scrub!" do
@@ -88,6 +89,24 @@ class TestScrubbers < Test::Unit::TestCase
         result = doc.text
 
         assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
+      end
+
+      context "with encode_special_chars => false" do
+        should "leave behind only inner text with html entities unescaped" do
+          doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+          result = doc.text(:encode_special_chars => false)
+
+          assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
+        end
+      end
+
+      context "with encode_special_chars => true" do
+        should "leave behind only inner text with html entities still escaped" do
+          doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+          result = doc.text(:encode_special_chars => true)
+
+          assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
+        end
       end
     end
 
@@ -238,6 +257,24 @@ class TestScrubbers < Test::Unit::TestCase
         result = doc.text
 
         assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
+      end
+
+      context "with encode_special_chars => false" do
+        should "leave behind only inner text with html entities unescaped" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+          result = doc.text(:encode_special_chars => false)
+
+          assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
+        end
+      end
+
+      context "with encode_special_chars => true" do
+        should "leave behind only inner text with html entities still escaped" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+          result = doc.text(:encode_special_chars => true)
+
+          assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
+        end
       end
     end
 
