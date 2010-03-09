@@ -1,5 +1,14 @@
 = Changelog
 
+== 0.4.7 (2010-03-08)
+
+Enhancements:
+
+  * New methods Loofah::HTML::Document#to_text and
+    Loofah::HTML::DocumentFragment#to_text do the right thing with
+    whitespace. Note that these methods are significantly slower than #text. GH #12
+  * Loofah::Elements::BLOCK_LEVEL contains a canonical list of HTML4 block-level4 elements.
+
 == 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
 
 Enhancements:
