@@ -6,9 +6,9 @@
 
 == Description
 
-Loofah is a general library for manipulating HTML/XML documents and
-fragments. It's built on top of Nokogiri and libxml2, so it's fast and
-has a nice API.
+Loofah is a general library for manipulating and transforming HTML/XML
+documents and fragments. It's built on top of Nokogiri and libxml2, so
+it's fast and has a nice API.
 
 Loofah excels at HTML sanitization (XSS prevention). It includes some
 nice HTML sanitizers, which are based on HTML5lib's whitelist, so it
@@ -25,7 +25,7 @@ not been evaluated by Netexperts.)
   * _Whitewash_ the markup, removing all attributes and namespaced nodes.
 * Common HTML transformation tasks are built-in:
   * Add the _nofollow_ attribute to all hyperlinks.
-* Format markup as plain text.
+* Format markup as plain text, with or without sensible whitespace handling around block elements.
 * Replace Rails's +strip_tags+ and +sanitize+ helper methods.
 * Two ActiveRecord extensions:
   * Loofah::XssFoliate, an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement, is an *opt-out* sanitizer. By default all models and attributes are sanitized.
