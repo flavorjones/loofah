@@ -184,5 +184,32 @@ class TestXssFoliate < Test::Unit::TestCase
         assert_equal "&lt;script&gt;alert('evil')&lt;/script&gt;", post.plain_text
       end
     end
+
+    context "these tests should pass for libxml 2.7.5 and later" do
+      should "not scrub double quotes into html entities" do
+        answer = new_post(:plain_text => "\"something\"")
+        answer.valid?
+        assert_equal "\"something\"", answer.plain_text
+      end
+
+      should "not scrub ampersands into html entities" do
+        answer = new_post(:plain_text => "& Something")
+        answer.valid?
+        assert_equal "& Something", answer.plain_text
+      end
+
+      should "not scrub \\r html entities" do
+        answer = new_post(:plain_text => "Another \r Something")
+        answer.valid?
+        assert_equal "Another \r Something", answer.plain_text
+      end
+
+      should "not scrub \\n html entities" do
+        answer = new_post(:plain_text => "Another \n Something")
+        answer.valid?
+        assert_equal "Another \n Something", answer.plain_text
+      end
+    end
   end
 end
+
