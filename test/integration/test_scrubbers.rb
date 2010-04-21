@@ -7,7 +7,7 @@ class TestScrubbers < Test::Unit::TestCase
   INVALID_PRUNED   = "<div>quux</div>"
   INVALID_STRIPPED = "foo<p>bar</p>bazz<div>quux</div>"
 
-  WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid>"
+  WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid><!--[if gts mso9]><div>microsofty stuff</div><![endif]-->"
   WHITEWASH_RESULT   = "<div>foo</div>"
 
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
@@ -225,6 +225,8 @@ class TestScrubbers < Test::Unit::TestCase
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
+          puts "MIKE: #{__FILE__}:#{__LINE__} #{result.to_html}"
+          
           assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
