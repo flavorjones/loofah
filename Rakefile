@@ -15,19 +15,6 @@ Hoe.spec "loofah" do
   extra_deps << ["nokogiri", ">= 1.3.3"]
   extra_dev_deps << ["mocha", ">=0.9"]
   extra_dev_deps << ["thoughtbot-shoulda", ">=2.10"]
-
-  # note: .hoerc should have the following line to omit rails tests and tmp
-  #   exclude: !ruby/regexp /\/tmp\/|\/rails_tests\/|CVS|TAGS|\.(svn|git|DS_Store)/
-end
-
-if File.exist?("rails_test/Rakefile")
-  load "rails_test/Rakefile"
-else
-  task :test do
-    puts "----------"
-    puts "-- NOTE: An additional Rails regression test suite is available in source repository"
-    puts "----------"
-  end
 end
 
 task :gemspec do

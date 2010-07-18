@@ -225,8 +225,6 @@ class TestScrubbers < Test::Unit::TestCase
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
-          puts "MIKE: #{__FILE__}:#{__LINE__} #{result.to_html}"
-          
           assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
