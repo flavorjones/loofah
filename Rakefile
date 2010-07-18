@@ -31,6 +31,10 @@ else
   end
 end
 
+task :gemspec do
+  system %q(rake debug_gem | grep -v "^\(in " > loofah.gemspec)
+end
+
 task :redocs => :fix_css
 task :docs => :fix_css
 task :fix_css do
