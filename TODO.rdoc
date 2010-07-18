@@ -1,4 +1,0 @@
-= TODO
-
-* Allow a <tt>text</tt> option to insert nice newlines after headers and block elements.
-* <tt>to_markdown<tt>

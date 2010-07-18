@@ -15,6 +15,10 @@ nice HTML sanitizers, which are based on HTML5lib's whitelist, so it
 most likely won't make your codes less secure. (These statements have
 not been evaluated by Netexperts.)
 
+ActiveRecord extensions for sanitization are available in the
+`loofah-activerecord` gem (see
+http://github.com/flavorjones/loofah-activerecord).
+
 == Features
 
 * Easily write custom scrubbers for HTML/XML leveraging the sweetness of Nokogiri (and HTML5lib's whitelists).
@@ -26,10 +30,7 @@ not been evaluated by Netexperts.)
 * Common HTML transformation tasks are built-in:
   * Add the _nofollow_ attribute to all hyperlinks.
 * Format markup as plain text, with or without sensible whitespace handling around block elements.
-* Replace Rails's +strip_tags+ and +sanitize+ helper methods.
-* Two ActiveRecord extensions:
-  * Loofah::XssFoliate, an XssTerminate[http://github.com/look/xss_terminate/tree/master] drop-in replacement, is an *opt-out* sanitizer. By default all models and attributes are sanitized.
-  * Loofah::ActiveRecordExtension is an *opt-in* sanitizer. You must explicitly declare attributes to be sanitized.
+* Replace Rails's +strip_tags+ and +sanitize+ view helper methods.
 
 == Compare and Contrast
 
@@ -37,7 +38,7 @@ Loofah is one of two known Ruby XSS/sanitization solutions that
 guarantees well-formed and valid markup (the other is Sanitize, which
 also uses Nokogiri).
 
-Loofah works fine on XML, XHTML and HTML documents.
+Loofah works on XML, XHTML and HTML documents.
 
 Also, it's pretty fast. Here is a benchmark comparing Loofah to other
 commonly-used libraries (ActionView, Sanitize, HTML5lib and HTMLfilter):
@@ -226,45 +227,15 @@ are the same thing as (and arguably semantically clearer than):
   Loofah.xml_fragment(bad_xml).scrub!(custom_scrubber)
   Loofah.xml_document(bad_xml).scrub!(custom_scrubber)
 
-=== ActiveRecord Extension \#1: Opt-In
-
-See Loofah::ActiveRecordExtension for full documentation. The methods
-mixed into ActiveRecord are:
-
-* Loofah::ActiveRecordExtension.html_document
-* Loofah::ActiveRecordExtension.html_fragment
-
-which are used to declare how specific string and text attributes
-should be scrubbed at +before_validation+.
-
-  # app/model/post.rb
-  class Post < ActiveRecord::Base
-    html_fragment :body, :scrub => :prune  # scrubs 'body' at before_validation
-  end
-
-=== ActiveRecord Extension \#2: Opt-Out
-
-See Loofah::XssFoliate::ClassMethods for more documentation. The methods mixed into ActiveRecord are:
-
-* Loofah::XssFoliate::ClassMethods.xss_foliate
-* Loofah::XssFoliate::ClassMethods.xss_foliated?
-
-which are used to declare how specific string and text attributes
-should be scrubbed at +before_validation+.
-
-Attributes are stripped by default, unless another scrubber is
-specified or the attribute is present in an +:except+ clause.
-
 === View Helpers
 
 Loofah has two "view helpers": Loofah::Helpers.sanitize and
 Loofah::Helpers.strip_tags, both of which are drop-in replacements for
-the ActionView helpers of the same name.
+the Rails ActionView helpers of the same name.
 
 == Requirements
 
 * Nokogiri >= 1.3.3
-* Rails 2.3, 2.2, 2.1, 2.0 or 1.2 (if you're using the ActiveRecord extensions)
 
 == Installation
 
@@ -289,7 +260,6 @@ And the IRC channel is \#loofah on freenode.
 * Nokogiri: http://nokogiri.org
 * libxml2: http://xmlsoft.org
 * html5lib: http://code.google.com/p/html5lib
-* XssTerminate: http://github.com/look/xss_terminate/tree/master
 
 == Authors
 
@@ -302,7 +272,6 @@ Featuring code contributed by:
 * John Barnette
 * Josh Owens
 * Paul Dix
-* Josh Nichols
 * Luke Melia
 
 And a big shout-out to Corey Innis for the name, and feedback on the API.
@@ -322,7 +291,7 @@ name that nobody could spell properly.
 
 The MIT License
 
-Copyright (c) 2009 Mike Dalessio, Bryan Helmkamp
+Copyright (c) 2009, 2010 by Mike Dalessio, Bryan Helmkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

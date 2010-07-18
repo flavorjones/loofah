@@ -1,17 +1,13 @@
 CHANGELOG.rdoc
-DEPRECATED.rdoc
 MIT-LICENSE.txt
 Manifest.txt
 README.rdoc
 Rakefile
-TODO.rdoc
 benchmark/benchmark.rb
 benchmark/fragment.html
 benchmark/helper.rb
 benchmark/www.slashdot.com.html
-init.rb
 lib/loofah.rb
-lib/loofah/active_record.rb
 lib/loofah/elements.rb
 lib/loofah/helpers.rb
 lib/loofah/html/document.rb
@@ -24,7 +20,6 @@ lib/loofah/scrubber.rb
 lib/loofah/scrubbers.rb
 lib/loofah/xml/document.rb
 lib/loofah/xml/document_fragment.rb
-lib/loofah/xss_foliate.rb
 test/helper.rb
 test/html5/test_sanitizer.rb
 test/integration/test_ad_hoc.rb
@@ -32,9 +27,7 @@ test/integration/test_helpers.rb
 test/integration/test_html.rb
 test/integration/test_scrubbers.rb
 test/integration/test_xml.rb
-test/unit/test_active_record.rb
 test/unit/test_api.rb
 test/unit/test_helpers.rb
 test/unit/test_scrubber.rb
 test/unit/test_scrubbers.rb
-test/unit/test_xss_foliate.rb
