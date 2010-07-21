@@ -3,6 +3,7 @@ gem 'hoe', '>= 2.3.0'
 require 'hoe'
 
 Hoe.plugin :git
+Hoe.plugin :bundler
 
 Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
@@ -12,9 +13,10 @@ Hoe.spec "loofah" do
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
 
-  extra_deps << ["nokogiri", ">= 1.3.3"]
+  extra_deps     << ["nokogiri", ">=1.3.3"]
   extra_dev_deps << ["mocha", ">=0.9"]
-  extra_dev_deps << ["thoughtbot-shoulda", ">=2.10"]
+  extra_dev_deps << ["shoulda", ">=2.10"]
+  extra_dev_deps << ["rake", ">=0.8"]
 end
 
 task :gemspec do
