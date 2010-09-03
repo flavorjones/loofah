@@ -4,6 +4,7 @@ require 'hoe'
 
 Hoe.plugin :git
 Hoe.plugin :bundler
+Hoe.plugin :gemspec
 
 Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
