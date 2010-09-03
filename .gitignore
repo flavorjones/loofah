@@ -2,6 +2,5 @@
 doc
 pkg
 tmp
-loofah.gemspec
 Gemfile
 .bundle
