@@ -2,5 +2,5 @@
 doc
 pkg
 tmp
-Gemfile
+Gemfile.lock
 .bundle

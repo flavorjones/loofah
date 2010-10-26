@@ -3,7 +3,6 @@ gem 'hoe', '>= 2.3.0'
 require 'hoe'
 
 Hoe.plugin :git
-Hoe.plugin :bundler
 Hoe.plugin :gemspec
 
 Hoe.spec "loofah" do
