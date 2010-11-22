@@ -41,7 +41,7 @@ module Loofah
         when Nokogiri::XML::Document
           scrubber.traverse(root) if root
         when Nokogiri::XML::DocumentFragment
-          children.each { |node| node.scrub!(scrubber) } # TODO: children.scrub! once Nokogiri 1.4.2 is out
+          children.scrub! scrubber
         else
           scrubber.traverse(self)
         end
