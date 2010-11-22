@@ -15,7 +15,11 @@ module Loofah
         #  parse a fragment.
         #
         def parse tags
-          self.new(Loofah::HTML::Document.new, tags)
+          doc = Loofah::HTML::Document.new
+          if tags.respond_to?(:encoding)
+            doc.encoding = tags.encoding.name
+          end
+          self.new(doc, tags)
         end
       end
 
