@@ -13,7 +13,9 @@ module Loofah
         #  parse a fragment.
         #
         def parse tags
-          self.new(Loofah::XML::Document.new, tags)
+          doc = Loofah::XML::Document.new
+          doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
+          self.new(doc, tags)
         end
       end
     end

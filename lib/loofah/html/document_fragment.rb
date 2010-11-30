@@ -16,9 +16,7 @@ module Loofah
         #
         def parse tags
           doc = Loofah::HTML::Document.new
-          if tags.respond_to?(:encoding)
-            doc.encoding = tags.encoding.name
-          end
+          doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
           self.new(doc, tags)
         end
       end
