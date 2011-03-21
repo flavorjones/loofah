@@ -4,6 +4,8 @@ require 'hoe'
 
 Hoe.plugin :git
 Hoe.plugin :gemspec
+Hoe.plugin :bundler
+Hoe.plugin :debugging
 
 Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
@@ -14,9 +16,14 @@ Hoe.spec "loofah" do
   self.readme_file      = "README.rdoc"
 
   extra_deps     << ["nokogiri", ">=1.4.4"]
+
   extra_dev_deps << ["mocha", ">=0.9"]
   extra_dev_deps << ["shoulda", ">=2.10"]
   extra_dev_deps << ["rake", ">=0.8"]
+  extra_dev_deps << ["hoe-gemspec", ">=0"]
+  extra_dev_deps << ["hoe-debugging", ">=0"]
+  extra_dev_deps << ["hoe-bundler", ">=0"]
+  extra_dev_deps << ["hoe-git", ">=0"]
 end
 
 task :gemspec do
