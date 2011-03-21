@@ -75,7 +75,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
-        node.before node.inner_html
+        node.before node.children
         node.remove
       end
     end
@@ -117,8 +117,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
-        replacement_killer = Nokogiri::XML::Text.new(node.to_s, node.document)
-        node.add_next_sibling replacement_killer
+        node.add_next_sibling Nokogiri::XML::Text.new(node.to_s, node.document)
         node.remove
         return STOP
       end
@@ -191,8 +190,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE unless Loofah::HashedElements::BLOCK_LEVEL[node.name]
-        replacement_killer = Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
-        node.add_next_sibling replacement_killer
+        node.add_next_sibling Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
         node.remove
       end
     end
