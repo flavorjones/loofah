@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #  these tests taken from the HTML5 sanitization project and modified for use with Loofah
 #  see the original here: http://code.google.com/p/html5lib/source/browse/ruby/test/test_sanitizer.rb
@@ -9,6 +10,11 @@ require 'json'
 
 class Html5TestSanitizer < Test::Unit::TestCase
   include Loofah
+
+  def test_unicode_quote()
+
+    puts Loofah.scrub_fragment('<A HREF="I’m sorry."></A>', :prune)
+  end
 
   def sanitize_xhtml stream
     Loofah.fragment(stream).scrub!(:escape).to_xhtml

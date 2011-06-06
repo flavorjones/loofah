@@ -17,7 +17,7 @@ module Loofah
             attr_node.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr_name]
             if HashedWhiteList::ATTR_VAL_IS_URI[attr_name]
               # this block lifted nearly verbatim from HTML5 sanitization
-              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\u0000-\u0020\u007F]+|[\uC280-\uC2A0]/,'').downcase
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
                 attr_node.remove
               end
