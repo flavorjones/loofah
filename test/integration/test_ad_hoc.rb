@@ -1,16 +1,16 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestAdHoc < Loofah::TestCase
+class IntegrationTestAdHoc < Loofah::TestCase
 
   context "blank input string" do
     context "fragment" do
-      should "return a blank string" do
+      it "return a blank string" do
         assert_equal "", Loofah.scrub_fragment("", :prune).to_s
       end
     end
 
     context "document" do
-      should "return a blank string" do
+      it "return a blank string" do
         assert_equal "", Loofah.scrub_document("", :prune).root.to_s
       end
     end
@@ -49,8 +49,8 @@ class TestAdHoc < Loofah::TestCase
   def test_css_sanitization
     html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-    assert_match(/#000/, sane.inner_html)
-    assert_no_match(/foo\.com/, sane.inner_html)
+    assert_match %r/#000/,    sane.inner_html
+    refute_match %r/foo\.com/, sane.inner_html
   end
 
   def test_fragment_with_no_tags
@@ -148,8 +148,8 @@ mso-bidi-language:#0400;}
 
   def test_document_whitewash_on_microsofty_markup
     whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
-    assert_contains whitewashed.to_s, %r(<p>Foo <b>BOLD</b></p>)
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
+    assert_match %r(<p>Foo <b>BOLD</b></p>), whitewashed.to_s
+    assert_equal "<p>Foo <b>BOLD</b></p>",   whitewashed.xpath("/html/body/*").to_s
   end
 
   def test_return_empty_string_when_nothing_left

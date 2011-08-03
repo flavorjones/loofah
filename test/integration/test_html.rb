@@ -1,28 +1,28 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestHtml < Loofah::TestCase
+class IntegrationTestHtml < Loofah::TestCase
   context "html fragment" do
     context "#to_s" do
-      should "not include head tags (like style)" do
+      it "not include head tags (like style)" do
         html = Loofah.fragment "<style>foo</style><div>bar</div>"
         assert_equal "<div>bar</div>", html.to_s
       end
     end
 
     context "#text" do
-      should "not include head tags (like style)" do
+      it "not include head tags (like style)" do
         html = Loofah.fragment "<style>foo</style><div>bar</div>"
         assert_equal "bar", html.text
       end
     end
 
     context "#to_text" do
-      should "add newlines before and after block elements" do
+      it "add newlines before and after block elements" do
         html = Loofah.fragment "<div>tweedle<h1>beetle</h1>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
         assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
       end
 
-      should "remove extraneous whitespace" do
+      it "remove extraneous whitespace" do
         html = Loofah.fragment "<div>tweedle\n\n\t\n\s\nbeetle</div>"
         assert_equal "\ntweedle\n\nbeetle\n", html.to_text
       end
@@ -30,18 +30,18 @@ class TestHtml < Loofah::TestCase
   end
 
   context "html document" do
-    should "not include head tags (like style)" do
+    it "not include head tags (like style)" do
       html = Loofah.document "<style>foo</style><div>bar</div>"
       assert_equal "bar", html.text
     end
 
     context "#to_text" do
-      should "add newlines before and after block elements" do
+      it "add newlines before and after block elements" do
         html = Loofah.document "<div>tweedle<h1>beetle</h1>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
         assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
       end
 
-      should "remove extraneous whitespace" do
+      it "remove extraneous whitespace" do
         html = Loofah.document "<div>tweedle\n\n\t\n\s\nbeetle</div>"
         assert_equal "\ntweedle\n\nbeetle\n", html.to_text
       end

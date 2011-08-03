@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestScrubbers < Loofah::TestCase
+class IntegrationTestScrubbers < Loofah::TestCase
 
   INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
   INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
@@ -23,7 +23,7 @@ class TestScrubbers < Loofah::TestCase
   context "Document" do
     context "#scrub!" do
       context ":escape" do
-        should "escape bad tags" do
+        it "escape bad tags" do
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :escape
 
@@ -33,7 +33,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":prune" do
-        should "prune bad tags" do
+        it "prune bad tags" do
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :prune
 
@@ -43,7 +43,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":strip" do
-        should "strip bad tags" do
+        it "strip bad tags" do
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :strip
 
@@ -53,7 +53,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":whitewash" do
-        should "whitewash the markup" do
+        it "whitewash the markup" do
           doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
           result = doc.scrub! :whitewash
 
@@ -63,7 +63,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":nofollow" do
-        should "add a 'nofollow' attribute to hyperlinks" do
+        it "add a 'nofollow' attribute to hyperlinks" do
           doc = Loofah::HTML::Document.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
           result = doc.scrub! :nofollow
 
@@ -74,17 +74,17 @@ class TestScrubbers < Loofah::TestCase
     end
 
     context "#scrub_document" do
-      should "be a shortcut for parse-and-scrub" do
-        mock_doc = mock
-        Loofah.expects(:document).with(:string_or_io).returns(mock_doc)
-        mock_doc.expects(:scrub!).with(:method)
+      it "be a shortcut for parse-and-scrub" do
+        mock_doc = Object.new
+        mock(Loofah).document(:string_or_io) { mock_doc }
+        mock(mock_doc).scrub!(:method)
 
         Loofah.scrub_document(:string_or_io, :method)
       end
     end
 
     context "#text" do
-      should "leave behind only inner text with html entities still escaped" do
+      it "leave behind only inner text with html entities still escaped" do
         doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
         result = doc.text
 
@@ -92,7 +92,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context "with encode_special_chars => false" do
-        should "leave behind only inner text with html entities unescaped" do
+        it "leave behind only inner text with html entities unescaped" do
           doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
           result = doc.text(:encode_special_chars => false)
 
@@ -101,7 +101,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context "with encode_special_chars => true" do
-        should "leave behind only inner text with html entities still escaped" do
+        it "leave behind only inner text with html entities still escaped" do
           doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
           result = doc.text(:encode_special_chars => true)
 
@@ -111,38 +111,38 @@ class TestScrubbers < Loofah::TestCase
     end
 
     context "#to_s" do
-      should "generate HTML" do
+      it "generate HTML" do
         doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
-        assert_not_nil doc.xpath("/html").first
-        assert_not_nil doc.xpath("/html/head").first
-        assert_not_nil doc.xpath("/html/body").first
+        refute_nil doc.xpath("/html").first
+        refute_nil doc.xpath("/html/head").first
+        refute_nil doc.xpath("/html/body").first
 
         string = doc.to_s
-        assert_contains string, /<!DOCTYPE/
-        assert_contains string, /<html>/
-        assert_contains string, /<head>/
-        assert_contains string, /<body>/
+        assert_match %r/<!DOCTYPE/, string
+        assert_match %r/<html>/, string
+        assert_match %r/<head>/, string
+        assert_match %r/<body>/, string
       end
     end
 
     context "#serialize" do
-      should "generate HTML" do
+      it "generate HTML" do
         doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
-        assert_not_nil doc.xpath("/html").first
-        assert_not_nil doc.xpath("/html/head").first
-        assert_not_nil doc.xpath("/html/body").first
+        refute_nil doc.xpath("/html").first
+        refute_nil doc.xpath("/html/head").first
+        refute_nil doc.xpath("/html/body").first
 
         string = doc.serialize
-        assert_contains string, /<!DOCTYPE/
-        assert_contains string, /<html>/
-        assert_contains string, /<head>/
-        assert_contains string, /<body>/
+        assert_match %r/<!DOCTYPE/, string
+        assert_match %r/<html>/, string
+        assert_match %r/<head>/, string
+        assert_match %r/<body>/, string
       end
     end
 
     context "Node" do
       context "#scrub!" do
-        should "only scrub subtree" do
+        it "only scrub subtree" do
           xml = Loofah.document <<-EOHTML
            <html><body>
              <div class='scrub'>
@@ -155,15 +155,15 @@ class TestScrubbers < Loofah::TestCase
           EOHTML
           node = xml.at_css "div.scrub"
           node.scrub!(:prune)
-          assert_contains         xml.to_s, /I should remain/
-          assert_does_not_contain xml.to_s, /I should be removed/
+          assert_match %r/I should remain/,     xml.to_s
+          refute_match %r/I should be removed/, xml.to_s
         end
       end
     end
 
     context "NodeSet" do
       context "#scrub!" do
-        should "only scrub subtrees" do
+        it "only scrub subtrees" do
           xml = Loofah.document <<-EOHTML
             <html><body>
               <div class='scrub'>
@@ -180,9 +180,9 @@ class TestScrubbers < Loofah::TestCase
           node_set = xml.css "div.scrub"
           assert_equal 2, node_set.length
           node_set.scrub!(:prune)
-          assert_contains         xml.to_s, /I should remain/
-          assert_does_not_contain xml.to_s, /I should be removed/
-          assert_does_not_contain xml.to_s, /I should also be removed/
+          assert_match %r/I should remain/,          xml.to_s
+          refute_match %r/I should be removed/,      xml.to_s
+          refute_match %r/I should also be removed/, xml.to_s
         end
       end
     end
@@ -191,7 +191,7 @@ class TestScrubbers < Loofah::TestCase
   context "DocumentFragment" do
     context "#scrub!" do
       context ":escape" do
-        should "escape bad tags" do
+        it "escape bad tags" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :escape
 
@@ -201,7 +201,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":prune" do
-        should "prune bad tags" do
+        it "prune bad tags" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :prune
 
@@ -211,7 +211,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":strip" do
-        should "strip bad tags" do
+        it "strip bad tags" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :strip
 
@@ -221,7 +221,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":whitewash" do
-        should "whitewash the markup" do
+        it "whitewash the markup" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
@@ -231,7 +231,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context ":nofollow" do
-        should "add a 'nofollow' attribute to hyperlinks" do
+        it "add a 'nofollow' attribute to hyperlinks" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
           result = doc.scrub! :nofollow
 
@@ -242,17 +242,17 @@ class TestScrubbers < Loofah::TestCase
     end
 
     context "#scrub_fragment" do
-      should "be a shortcut for parse-and-scrub" do
-        mock_doc = mock
-        Loofah.expects(:fragment).with(:string_or_io).returns(mock_doc)
-        mock_doc.expects(:scrub!).with(:method)
+      it "be a shortcut for parse-and-scrub" do
+        mock_doc = Object.new
+        mock(Loofah).fragment(:string_or_io) { mock_doc }
+        mock(mock_doc).scrub!(:method)
 
         Loofah.scrub_fragment(:string_or_io, :method)
       end
     end
 
     context "#text" do
-      should "leave behind only inner text with html entities still escaped" do
+      it "leave behind only inner text with html entities still escaped" do
         doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
         result = doc.text
 
@@ -260,7 +260,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context "with encode_special_chars => false" do
-        should "leave behind only inner text with html entities unescaped" do
+        it "leave behind only inner text with html entities unescaped" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
           result = doc.text(:encode_special_chars => false)
 
@@ -269,7 +269,7 @@ class TestScrubbers < Loofah::TestCase
       end
 
       context "with encode_special_chars => true" do
-        should "leave behind only inner text with html entities still escaped" do
+        it "leave behind only inner text with html entities still escaped" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
           result = doc.text(:encode_special_chars => true)
 
@@ -279,15 +279,15 @@ class TestScrubbers < Loofah::TestCase
     end
 
     context "#to_s" do
-      should "not remove entities" do
+      it "not remove entities" do
         string = Loofah.scrub_fragment(ENTITY_FRAGMENT, :prune).to_s
-        assert_contains string, /this is &lt;/
+        assert_match %r/this is &lt;/, string
       end
     end
 
     context "Node" do
       context "#scrub!" do
-        should "only scrub subtree" do
+        it "only scrub subtree" do
           xml = Loofah.fragment <<-EOHTML
             <div class='scrub'>
               <script>I should be removed</script>
@@ -298,15 +298,15 @@ class TestScrubbers < Loofah::TestCase
           EOHTML
           node = xml.at_css "div.scrub"
           node.scrub!(:prune)
-          assert_contains         xml.to_s, /I should remain/
-          assert_does_not_contain xml.to_s, /I should be removed/
+          assert_match %r(I should remain),     xml.to_s
+          refute_match %r(I should be removed), xml.to_s
         end
       end
     end
 
     context "NodeSet" do
       context "#scrub!" do
-        should "only scrub subtrees" do
+        it "only scrub subtrees" do
           xml = Loofah.fragment <<-EOHTML
             <div class='scrub'>
               <script>I should be removed</script>
@@ -321,9 +321,9 @@ class TestScrubbers < Loofah::TestCase
           node_set = xml.css "div.scrub"
           assert_equal 2, node_set.length
           node_set.scrub!(:prune)
-          assert_contains         xml.to_s, /I should remain/
-          assert_does_not_contain xml.to_s, /I should be removed/
-          assert_does_not_contain xml.to_s, /I should also be removed/
+          assert_match %r/I should remain/,          xml.to_s
+          refute_match %r/I should be removed/,      xml.to_s
+          refute_match %r/I should also be removed/, xml.to_s
         end
       end
     end

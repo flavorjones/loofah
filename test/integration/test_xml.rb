@@ -1,10 +1,10 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestXml < Loofah::TestCase
+class IntegrationTestXml < Loofah::TestCase
   context "integration test" do
     context "xml document" do
       context "custom scrubber" do
-        should "act as expected" do
+        it "act as expected" do
           xml = Loofah.xml_document <<-EOXML
             <root>
               <employee deceased='true'>Abraham Lincoln</employee>
@@ -30,7 +30,7 @@ class TestXml < Loofah::TestCase
 
     context "xml fragment" do
       context "custom scrubber" do
-        should "act as expected" do
+        it "act as expected" do
           xml = Loofah.xml_fragment <<-EOXML
             <employee deceased='true'>Abraham Lincoln</employee>
             <employee deceased='false'>Abe Vigoda</employee>

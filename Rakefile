@@ -17,9 +17,9 @@ Hoe.spec "loofah" do
 
   extra_deps     << ["nokogiri", ">=1.4.4"]
 
-  extra_dev_deps << ["mocha", ">=0.9"]
-  extra_dev_deps << ["shoulda", ">=2.10"]
   extra_dev_deps << ["rake", ">=0.8"]
+  extra_dev_deps << ["minitest", "~>2.2"]
+  extra_dev_deps << ["rr", "~>1.0"]
   extra_dev_deps << ["hoe-gemspec", ">=0"]
   extra_dev_deps << ["hoe-debugging", ">=0"]
   extra_dev_deps << ["hoe-bundler", ">=0"]

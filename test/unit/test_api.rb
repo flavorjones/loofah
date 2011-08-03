@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestApi < Loofah::TestCase
+class UnitTestApi < Loofah::TestCase
 
   HTML          = "<div>a</div>\n<div>b</div>"
   XML_FRAGMENT  = "<div>a</div>\n<div>b</div>"
@@ -99,12 +99,12 @@ class TestApi < Loofah::TestCase
     node_set.scrub!(:strip)
   end
 
-  should "HTML::DocumentFragment exposes serialize_root" do
+  it "HTML::DocumentFragment exposes serialize_root" do
     doc = Loofah.fragment(HTML)
     assert_equal HTML, doc.serialize_root.to_html
   end
 
-  should "HTML::Document exposes serialize_root" do
+  it "HTML::Document exposes serialize_root" do
     doc = Loofah.document(HTML)
     assert_equal HTML, doc.serialize_root.children.to_html
   end
