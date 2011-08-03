@@ -5,7 +5,6 @@
 #  license text at the bottom of this file
 #
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
-require 'json'
 
 class Html5TestSanitizer < Test::Unit::TestCase
   include Loofah
