@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestScrubbers < Test::Unit::TestCase
+class TestScrubbers < Loofah::TestCase
   [ Loofah::HTML::Document, Loofah::HTML::DocumentFragment ].each do |klass|
     context klass do
       context "bad scrub method" do

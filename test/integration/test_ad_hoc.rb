@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestAdHoc < Test::Unit::TestCase
+class TestAdHoc < Loofah::TestCase
 
   context "blank input string" do
     context "fragment" do

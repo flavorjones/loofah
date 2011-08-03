@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestXml < Test::Unit::TestCase
+class TestXml < Loofah::TestCase
   context "integration test" do
     context "xml document" do
       context "custom scrubber" do

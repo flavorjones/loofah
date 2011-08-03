@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestScrubber < Test::Unit::TestCase
+class TestScrubber < Loofah::TestCase
 
   FRAGMENT = "<span>hello</span><span>goodbye</span>"
   FRAGMENT_NODE_COUNT         = 4 # span, text, span, text

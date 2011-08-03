@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestHtml < Test::Unit::TestCase
+class TestHtml < Loofah::TestCase
   context "html fragment" do
     context "#to_s" do
       should "not include head tags (like style)" do

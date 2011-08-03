@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestApi < Test::Unit::TestCase
+class TestApi < Loofah::TestCase
 
   HTML          = "<div>a</div>\n<div>b</div>"
   XML_FRAGMENT  = "<div>a</div>\n<div>b</div>"

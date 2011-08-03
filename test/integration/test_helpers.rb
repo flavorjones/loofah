@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
 
-class TestHelpers < Test::Unit::TestCase
+class TestHelpers < Loofah::TestCase
   context "#strip_tags" do
     context "on safe markup" do
       should "strip out tags" do
