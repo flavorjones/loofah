@@ -4,7 +4,7 @@
 #
 #  license text at the bottom of this file
 #
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helper'))
+require "helper"
 
 class Html5TestSanitizer < Loofah::TestCase
   include Loofah
