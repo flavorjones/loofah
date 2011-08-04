@@ -7,19 +7,23 @@ module Loofah
       class << self
 
         #  alternative implementation of the html5lib attribute scrubbing algorithm
-        def scrub_attributes(node)
+        def scrub_attributes node
           node.attribute_nodes.each do |attr_node|
             attr_name = if attr_node.namespace
                           "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
                         else
                           attr_node.node_name
                         end
-            attr_node.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES.include?(attr_name)
+            unless HashedWhiteList::ALLOWED_ATTRIBUTES.include?(attr_name)
+              attr_node.remove
+              next
+            end
             if HashedWhiteList::ATTR_VAL_IS_URI.include?(attr_name)
               # this block lifted nearly verbatim from HTML5 sanitization
               val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! HashedWhiteList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(':')[0])
                 attr_node.remove
+                next
               end
             end
             if HashedWhiteList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
@@ -27,15 +31,16 @@ module Loofah
             end
             if HashedWhiteList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
               attr_node.remove
+              next
             end
           end
           if node.attributes['style']
-            node['style'] = scrub_css(node.attributes['style'])
+            node['style'] = scrub_css node.attributes['style']
           end
         end
 
         #  lifted nearly verbatim from html5lib
-        def scrub_css(style)
+        def scrub_css style
           # disallow urls
           style = style.to_s.gsub(/url\s*\(\s*[^\s)]+?\s*\)\s*/, ' ')
 
