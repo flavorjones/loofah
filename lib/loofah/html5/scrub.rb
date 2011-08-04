@@ -4,6 +4,12 @@ module Loofah
   module HTML5 # :nodoc:
     module Scrub
 
+      CONTROL_CHARACTERS = if RUBY_VERSION =~ /^1\.8/
+                             /`|[\000-\040\177\s]+|\302[\200-\240]/
+                           else
+                             /[`\u0000-\u0020\u007F\s\u0080-\u0101]/
+                           end
+
       class << self
 
         def allowed_element? element_name
@@ -24,7 +30,7 @@ module Loofah
             end
             if WhiteList::ATTR_VAL_IS_URI.include?(attr_name)
               # this block lifted nearly verbatim from HTML5 sanitization
-              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
+              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS,'').downcase
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! WhiteList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(':')[0])
                 attr_node.remove
                 next

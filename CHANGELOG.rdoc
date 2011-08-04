@@ -7,6 +7,7 @@ Enhancements:
 * Additional HTML5lib whitelist elements (from html5lib 1524:80b5efe26230).
   Up to date with HTML5lib ruby code as of 1723:7ee6a0331856.
 * Whitelists (which are not part of the public API) are now Sets (were previously Arrays).
+* Don't explode when encountering UTF-8 URIs. (#25, #29)
 
 == 1.0.0 (2010-10-26)
 
