@@ -20,11 +20,15 @@ class Html5TestSanitizer < Loofah::TestCase
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     ##  libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
     sane = sanitize_html(input).gsub('"',"'")
+    htmloutput.gsub!('"',"'")
+    xhtmloutput.gsub!('"',"'")
+    rexmloutput.gsub!('"',"'")
 
     ##  HTML5's parsers are shit. there's so much inconsistency with what has closing tags, etc, that
     ##  it would require a lot of manual hacking to make the tests match libxml's output.
     ##  instead, I'm taking the shotgun approach, and trying to match any of the described outputs.
-    assert((htmloutput == sane) || (rexmloutput == sane) || (xhtmloutput == sane), input)
+    assert((htmloutput == sane) || (rexmloutput == sane) || (xhtmloutput == sane),
+      %Q{given:    "#{input}"\nexpected: "#{htmloutput}"\ngot:      "#{sane}"})
   end
 
   (HTML5::WhiteList::ALLOWED_ELEMENTS).each do |tag_name|
@@ -205,7 +209,6 @@ class Html5TestSanitizer < Loofah::TestCase
       rexml = "<rect fill=' '></rect>"
     end
   end
-
 end
 
 # <html5_license>
