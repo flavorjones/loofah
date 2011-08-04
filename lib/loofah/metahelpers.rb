@@ -3,10 +3,13 @@ module Loofah
     def self.HashifiedConstants(orig_module)
       hashed_module = Module.new
       orig_module.constants.each do |constant|
-        next unless orig_module.module_eval("#{constant}").is_a?(Array)
+        next unless orig_module.module_eval("#{constant}").is_a?(Set)
         hashed_module.module_eval <<-CODE
-          #{constant} = {}
-          #{orig_module.name}::#{constant}.each { |c| #{constant}[c] = true ; #{constant}[c.downcase] = true }
+          #{constant} = Set.new
+          #{orig_module.name}::#{constant}.each do |c|
+            #{constant}.add c 
+            #{constant}.add c.downcase
+          end
         CODE
       end
       hashed_module

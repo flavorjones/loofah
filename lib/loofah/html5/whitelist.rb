@@ -43,53 +43,59 @@ module Loofah
     #
     # </html5_license>
     module WhiteList
-      ACCEPTABLE_ELEMENTS = %w[a abbr acronym address area b big blockquote br
+      ACCEPTABLE_ELEMENTS = Set.new %w[a abbr acronym address area audio b big blockquote br
       button caption center cite code col colgroup dd del dfn dir div dl dt
       em fieldset font form h1 h2 h3 h4 h5 h6 hr i img input ins kbd label
       legend li map menu ol optgroup option p pre q s samp select small span
       strike strong sub sup table tbody td textarea tfoot th thead tr tt u
-      ul var]
+      ul var video]
 
-      MATHML_ELEMENTS = %w[annotation annotation-xml maction math merror mfrac
+      MATHML_ELEMENTS = Set.new %w[annotation annotation-xml maction math merror mfrac
       mfenced mi mmultiscripts mn mo mover mpadded mphantom mprescripts mroot mrow
       mspace msqrt mstyle msub msubsup msup mtable mtd mtext mtr munder
       munderover none semantics]
 
-      SVG_ELEMENTS = %w[a animate animateColor animateMotion animateTransform
-      circle defs desc ellipse font-face font-face-name font-face-src foreignObject
-      g glyph hkern linearGradient line marker metadata missing-glyph
+      SVG_ELEMENTS = Set.new %w[a animate animateColor animateMotion animateTransform
+      circle clipPath defs desc ellipse feGaussianBlur filter font-face
+      font-face-name font-face-src foreignObject
+      g glyph hkern linearGradient line marker mask metadata missing-glyph
       mpath path polygon polyline radialGradient rect set stop svg switch
-      text title tspan use]
+      text textPath title tspan use]
 
-      ACCEPTABLE_ATTRIBUTES = %w[abbr accept accept-charset accesskey action
+      ACCEPTABLE_ATTRIBUTES = Set.new %w[abbr accept accept-charset accesskey action
       align alt axis border cellpadding cellspacing char charoff charset
       checked cite class clear cols colspan color compact coords datetime
       dir disabled enctype for frame headers height href hreflang hspace id
-      ismap label lang longdesc maxlength media method multiple name nohref
-      noshade nowrap prompt readonly rel rev rows rowspan rules scope
+      ismap label lang longdesc loop loopcount loopend loopstart
+      maxlength media method multiple name nohref
+      noshade nowrap poster prompt readonly rel rev rows rowspan rules scope
       selected shape size span src start style summary tabindex target title
       type usemap valign value vspace width xml:lang]
 
-      MATHML_ATTRIBUTES = %w[actiontype align close columnalign columnalign
+      MATHML_ATTRIBUTES = Set.new %w[actiontype align close
       columnalign columnlines columnspacing columnspan depth display
       displaystyle encoding equalcolumns equalrows fence fontstyle fontweight
       frame height linethickness lspace mathbackground mathcolor mathvariant
-      mathvariant maxsize minsize open other rowalign rowalign rowalign rowlines
+      maxsize minsize open other rowalign rowlines
       rowspacing rowspan rspace scriptlevel selection separator separators
-      stretchy width width xlink:href xlink:show xlink:type xmlns xmlns:xlink]
+      stretchy width xlink:href xlink:show xlink:type xmlns xmlns:xlink]
 
-      SVG_ATTRIBUTES = %w[accent-height accumulate additive alphabetic
+      SVG_ATTRIBUTES = Set.new %w[accent-height accumulate additive alphabetic
        arabic-form ascent attributeName attributeType baseProfile bbox begin
-       by calcMode cap-height class color color-rendering content cx cy d dx
-       dy descent display dur end fill fill-opacity fill-rule font-family
+       by calcMode cap-height class clip-path clip-rule color
+       color-interpolation-filters color-rendering content cx cy d dx
+       dy descent display dur end fill fill-opacity fill-rule
+       filterRes filterUnits font-family
        font-size font-stretch font-style font-variant font-weight from fx fy g1
        g2 glyph-name gradientUnits hanging height horiz-adv-x horiz-origin-x id
        ideographic k keyPoints keySplines keyTimes lang marker-end
        marker-mid marker-start markerHeight markerUnits markerWidth
-       mathematical max min name offset opacity orient origin
-       overline-position overline-thickness panose-1 path pathLength points
-       preserveAspectRatio r refX refY repeatCount repeatDur
-       requiredExtensions requiredFeatures restart rotate rx ry slope stemh
+       maskContentUnits maskUnits mathematical max method min name offset opacity orient origin
+       overline-position overline-thickness panose-1 path pathLength
+       patternContentUnits patternTransform patternUnits  points
+       preserveAspectRatio primitiveUnits r refX refY repeatCount repeatDur
+       requiredExtensions requiredFeatures restart rotate rx ry slope spacing
+       startOffset stdDeviation stemh
        stemv stop-color stop-opacity strikethrough-position
        strikethrough-thickness stroke stroke-dasharray stroke-dashoffset
        stroke-linecap stroke-linejoin stroke-miterlimit stroke-opacity
@@ -100,16 +106,16 @@ module Loofah
        xlink:show xlink:title xlink:type xml:base xml:lang xml:space xmlns
        xmlns:xlink y y1 y2 zoomAndPan]
 
-      ATTR_VAL_IS_URI = %w[href src cite action longdesc xlink:href xml:base]
+      ATTR_VAL_IS_URI = Set.new %w[href src cite action longdesc xlink:href xml:base]
 
-      SVG_ATTR_VAL_ALLOWS_REF = %w[clip-path color-profile cursor fill
+      SVG_ATTR_VAL_ALLOWS_REF = Set.new %w[clip-path color-profile cursor fill
       filter marker marker-start marker-mid marker-end mask stroke]
 
-      SVG_ALLOW_LOCAL_HREF = %w[altGlyph animate animateColor animateMotion
+      SVG_ALLOW_LOCAL_HREF = Set.new %w[altGlyph animate animateColor animateMotion
       animateTransform cursor feImage filter linearGradient pattern
       radialGradient textpath tref set use]
 
-      ACCEPTABLE_CSS_PROPERTIES = %w[azimuth background-color
+      ACCEPTABLE_CSS_PROPERTIES = Set.new %w[azimuth background-color
       border-bottom-color border-collapse border-color border-left-color
       border-right-color border-top-color clear color cursor direction
       display elevation float font font-family font-size font-style
@@ -119,16 +125,16 @@ module Loofah
       text-align text-decoration text-indent unicode-bidi vertical-align
       voice-family volume white-space width]
 
-      ACCEPTABLE_CSS_KEYWORDS = %w[auto aqua black block blue bold both bottom
+      ACCEPTABLE_CSS_KEYWORDS = Set.new %w[auto aqua black block blue bold both bottom
       brown center collapse dashed dotted fuchsia gray green !important
       italic left lime maroon medium none navy normal nowrap olive pointer
       purple red right solid silver teal top transparent underline white
       yellow]
 
-      ACCEPTABLE_SVG_PROPERTIES = %w[fill fill-opacity fill-rule stroke
+      ACCEPTABLE_SVG_PROPERTIES = Set.new %w[fill fill-opacity fill-rule stroke
       stroke-width stroke-linecap stroke-linejoin stroke-opacity]
 
-      ACCEPTABLE_PROTOCOLS = %w[ed2k ftp http https irc mailto news gopher nntp
+      ACCEPTABLE_PROTOCOLS = Set.new %w[ed2k ftp http https irc mailto news gopher nntp
       telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs]
 
       # subclasses may define their own versions of these constants
@@ -139,7 +145,7 @@ module Loofah
       ALLOWED_SVG_PROPERTIES = ACCEPTABLE_SVG_PROPERTIES
       ALLOWED_PROTOCOLS = ACCEPTABLE_PROTOCOLS
 
-      VOID_ELEMENTS = %w[
+      VOID_ELEMENTS = Set.new %w[
         base
         link
         meta
@@ -154,12 +160,12 @@ module Loofah
       ]
 
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
-      TAGS_SAFE_WITH_LIBXML2 = %w[html head body]
+      TAGS_SAFE_WITH_LIBXML2 = Set.new %w[html head body]
       ALLOWED_ELEMENTS_WITH_LIBXML2 = ALLOWED_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
     end      
 
     #
-    #  The HTML5lib whitelist arrays, transformed into hashes for faster lookup.
+    #  The HTML5lib whitelist sets, with lowercase versions added.
     #
     module HashedWhiteList
       include Loofah::MetaHelpers::HashifiedConstants(WhiteList)

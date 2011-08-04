@@ -14,18 +14,18 @@ module Loofah
                         else
                           attr_node.node_name
                         end
-            attr_node.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES[attr_name]
-            if HashedWhiteList::ATTR_VAL_IS_URI[attr_name]
+            attr_node.remove unless HashedWhiteList::ALLOWED_ATTRIBUTES.include?(attr_name)
+            if HashedWhiteList::ATTR_VAL_IS_URI.include?(attr_name)
               # this block lifted nearly verbatim from HTML5 sanitization
               val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(/`|[\000-\040\177\s]+|\302[\200-\240]/,'').downcase
-              if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ and HashedWhiteList::ALLOWED_PROTOCOLS[val_unescaped.split(':')[0]].nil?
+              if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! HashedWhiteList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(':')[0])
                 attr_node.remove
               end
             end
-            if HashedWhiteList::SVG_ATTR_VAL_ALLOWS_REF[attr_name]
+            if HashedWhiteList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
               attr_node.value = attr_node.value.gsub(/url\s*\(\s*[^#\s][^)]+?\)/m, ' ') if attr_node.value
             end
-            if HashedWhiteList::SVG_ALLOW_LOCAL_HREF[node.name] && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
+            if HashedWhiteList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
               attr_node.remove
             end
           end
@@ -47,14 +47,14 @@ module Loofah
           style.scan(/([-\w]+)\s*:\s*([^:;]*)/) do |prop, val|
             next if val.empty?
             prop.downcase!
-            if HashedWhiteList::ALLOWED_CSS_PROPERTIES[prop]
+            if HashedWhiteList::ALLOWED_CSS_PROPERTIES.include?(prop)
               clean << "#{prop}: #{val};"
             elsif %w[background border margin padding].include?(prop.split('-')[0])
               clean << "#{prop}: #{val};" unless val.split().any? do |keyword|
-                HashedWhiteList::ALLOWED_CSS_KEYWORDS[keyword].nil? and
+                HashedWhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) &&
                   keyword !~ /^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$/
               end
-            elsif HashedWhiteList::ALLOWED_SVG_PROPERTIES[prop]
+            elsif HashedWhiteList::ALLOWED_SVG_PROPERTIES.include?(prop)
               clean << "#{prop}: #{val};"
             end
           end
