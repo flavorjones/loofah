@@ -6,6 +6,10 @@ module Loofah
 
       class << self
 
+        def allowed_element? element_name
+          ::Loofah::HTML5::HashedWhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2.include? element_name
+        end
+
         #  alternative implementation of the html5lib attribute scrubbing algorithm
         def scrub_attributes node
           node.attribute_nodes.each do |attr_node|
