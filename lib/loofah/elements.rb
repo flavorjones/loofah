@@ -1,3 +1,5 @@
+require 'set'
+
 module Loofah
   module Elements
     # Block elements in HTML4
@@ -11,7 +13,5 @@ module Loofah
     BLOCK_LEVEL = STRICT_BLOCK_LEVEL + LOOSE_BLOCK_LEVEL
   end
 
-  module HashedElements
-    include Loofah::MetaHelpers::HashifiedConstants(Elements)
-  end
+  ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::Elements
 end

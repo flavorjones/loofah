@@ -189,7 +189,7 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless Loofah::HashedElements::BLOCK_LEVEL.include?(node.name)
+        return CONTINUE unless Loofah::Elements::BLOCK_LEVEL.include?(node.name)
         node.add_next_sibling Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
         node.remove
       end

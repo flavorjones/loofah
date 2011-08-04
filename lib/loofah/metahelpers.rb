@@ -1,18 +1,13 @@
 module Loofah
   module MetaHelpers
-    def self.HashifiedConstants(orig_module)
-      hashed_module = Module.new
-      orig_module.constants.each do |constant|
-        next unless orig_module.module_eval("#{constant}").is_a?(Set)
-        hashed_module.module_eval <<-CODE
-          #{constant} = Set.new
-          #{orig_module.name}::#{constant}.each do |c|
-            #{constant}.add c 
-            #{constant}.add c.downcase
-          end
-        CODE
+    def self.add_downcased_set_members_to_all_set_constants mojule
+      mojule.constants.each do |constant_sym|
+        constant = mojule.const_get constant_sym
+        next unless Set === constant
+        constant.dup.each do |member|
+          constant.add member.downcase
+        end
       end
-      hashed_module
     end
   end
 end

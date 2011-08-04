@@ -1,3 +1,5 @@
+require 'set'
+
 module Loofah
   module HTML5 # :nodoc:
     #
@@ -164,11 +166,6 @@ module Loofah
       ALLOWED_ELEMENTS_WITH_LIBXML2 = ALLOWED_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
     end      
 
-    #
-    #  The HTML5lib whitelist sets, with lowercase versions added.
-    #
-    module HashedWhiteList
-      include Loofah::MetaHelpers::HashifiedConstants(WhiteList)
-    end
+    ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::WhiteList
   end
 end
