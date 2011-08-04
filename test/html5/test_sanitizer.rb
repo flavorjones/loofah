@@ -172,18 +172,19 @@ class Html5TestSanitizer < Loofah::TestCase
   ##  libxml2 here, so let's rely on the unit tests above to take care
   ##  of our valid elements and attributes.
   ##
-  # Dir[File.join(File.dirname(__FILE__), 'testdata', '*.*')].each do |filename|
-  #   JSON::parse(open(filename).read).each do |test|
-  #     define_method "test_#{test['name']}" do
-  #       check_sanitization(
-  #         test['input'],
-  #         test['output'],
-  #         test['xhtml'] || test['output'],
-  #         test['rexml'] || test['output']
-  #       )
-  #     end
-  #   end
-  # end
+  require 'json'
+  Dir[File.join(File.dirname(__FILE__), '..', 'assets', 'testdata_sanitizer_tests1.dat')].each do |filename|
+    JSON::parse(open(filename).read).each do |test|
+      it "testdata sanitizer #{test['name']}" do
+        check_sanitization(
+          test['input'],
+          test['output'],
+          test['xhtml'] || test['output'],
+          test['rexml'] || test['output']
+        )
+      end
+    end
+  end
 
   ## added because we don't have any coverage above on SVG_ATTR_VAL_ALLOWS_REF
   HTML5::WhiteList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|  

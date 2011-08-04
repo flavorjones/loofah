@@ -9,6 +9,7 @@ gem "nokogiri", ">=1.4.4"
 gem "rake", ">=0.8", :group => [:development, :test]
 gem "minitest", "~>2.2", :group => [:development, :test]
 gem "rr", "~>1.0", :group => [:development, :test]
+gem "json", ">=0", :group => [:development, :test]
 gem "hoe-gemspec", ">=0", :group => [:development, :test]
 gem "hoe-debugging", ">=0", :group => [:development, :test]
 gem "hoe-bundler", ">=0", :group => [:development, :test]
