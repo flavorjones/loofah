@@ -4,6 +4,7 @@ class IntegrationTestHtml < Loofah::TestCase
   context "html fragment" do
     context "#to_s" do
       it "not include head tags (like style)" do
+        skip "depends on nokogiri version"
         html = Loofah.fragment "<style>foo</style><div>bar</div>"
         assert_equal "<div>bar</div>", html.to_s
       end
@@ -11,6 +12,7 @@ class IntegrationTestHtml < Loofah::TestCase
 
     context "#text" do
       it "not include head tags (like style)" do
+        skip "depends on nokogiri version"
         html = Loofah.fragment "<style>foo</style><div>bar</div>"
         assert_equal "bar", html.text
       end
