@@ -55,11 +55,11 @@ module Loofah
       #
       #  To use by default, call this in an application initializer:
       #
-      #      ActionView::Helpers::SanitizeHelper.full_sanitizer = ::Loofah::Helpers::ActionView::FullSanitizer.new
+      #    ActionView::Helpers::SanitizeHelper.full_sanitizer = ::Loofah::Helpers::ActionView::FullSanitizer.new
       #
       #  Or, to generally opt-in to Loofah's view sanitizers:
       #
-      #      Loofah::Helpers::ActionView.set_as_default_sanitizer
+      #    Loofah::Helpers::ActionView.set_as_default_sanitizer
       #
       class FullSanitizer
         def sanitize html, *args
@@ -72,11 +72,11 @@ module Loofah
       #
       #  To use by default, call this in an application initializer:
       #
-      #      ActionView::Helpers::SanitizeHelper.white_list_sanitizer = ::Loofah::Helpers::ActionView::WhiteListSanitizer.new
+      #    ActionView::Helpers::SanitizeHelper.white_list_sanitizer = ::Loofah::Helpers::ActionView::WhiteListSanitizer.new
       #
       #  Or, to generally opt-in to Loofah's view sanitizers:
       #
-      #      Loofah::Helpers::ActionView.set_as_default_sanitizer
+      #    Loofah::Helpers::ActionView.set_as_default_sanitizer
       #
       class WhiteListSanitizer
         def sanitize html, *args
