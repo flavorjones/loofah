@@ -2,6 +2,7 @@
 
 * http://github.com/flavorjones/loofah
 * http://rdoc.info/github/flavorjones/loofah/master/frames
+* http://librelist.com/browser/loofah/
 
 == Description
 
