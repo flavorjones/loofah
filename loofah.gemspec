@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{loofah}
-  s.version = "1.1.0.20110808020414"
+  s.version = "1.2.0.20110808125339"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Dalessio", "Bryan Helmkamp"]
@@ -43,7 +43,7 @@ http://github.com/flavorjones/loofah-activerecord).}
       s.add_development_dependency(%q<hoe-debugging>, [">= 0"])
       s.add_development_dependency(%q<hoe-bundler>, [">= 0"])
       s.add_development_dependency(%q<hoe-git>, [">= 0"])
-      s.add_development_dependency(%q<hoe>, [">= 2.9.4"])
+      s.add_development_dependency(%q<hoe>, ["~> 2.10"])
     else
       s.add_dependency(%q<nokogiri>, [">= 1.4.4"])
       s.add_dependency(%q<rake>, [">= 0.8"])
@@ -54,7 +54,7 @@ http://github.com/flavorjones/loofah-activerecord).}
       s.add_dependency(%q<hoe-debugging>, [">= 0"])
       s.add_dependency(%q<hoe-bundler>, [">= 0"])
       s.add_dependency(%q<hoe-git>, [">= 0"])
-      s.add_dependency(%q<hoe>, [">= 2.9.4"])
+      s.add_dependency(%q<hoe>, ["~> 2.10"])
     end
   else
     s.add_dependency(%q<nokogiri>, [">= 1.4.4"])
@@ -66,6 +66,6 @@ http://github.com/flavorjones/loofah-activerecord).}
     s.add_dependency(%q<hoe-debugging>, [">= 0"])
     s.add_dependency(%q<hoe-bundler>, [">= 0"])
     s.add_dependency(%q<hoe-git>, [">= 0"])
-    s.add_dependency(%q<hoe>, [">= 2.9.4"])
+    s.add_dependency(%q<hoe>, ["~> 2.10"])
   end
 end

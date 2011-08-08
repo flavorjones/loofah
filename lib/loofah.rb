@@ -29,7 +29,7 @@ require 'loofah/helpers'
 #
 module Loofah
   # The version of Loofah you are using
-  VERSION = '1.1.0'
+  VERSION = '1.2.0'
 
   class << self
     # Shortcut for Loofah::HTML::Document.parse
