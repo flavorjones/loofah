@@ -21,6 +21,7 @@ lib/loofah/scrubber.rb
 lib/loofah/scrubbers.rb
 lib/loofah/xml/document.rb
 lib/loofah/xml/document_fragment.rb
+test/assets/testdata_sanitizer_tests1.dat
 test/helper.rb
 test/html5/test_sanitizer.rb
 test/integration/test_ad_hoc.rb
@@ -29,6 +30,7 @@ test/integration/test_html.rb
 test/integration/test_scrubbers.rb
 test/integration/test_xml.rb
 test/unit/test_api.rb
+test/unit/test_encoding.rb
 test/unit/test_helpers.rb
 test/unit/test_scrubber.rb
 test/unit/test_scrubbers.rb
