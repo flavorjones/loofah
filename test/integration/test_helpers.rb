@@ -1,7 +1,7 @@
 require "helper"
 
 class IntegrationTestHelpers < Loofah::TestCase
-  context "#strip_tags" do
+  context ".strip_tags" do
     context "on safe markup" do
       it "strip out tags" do
         assert_equal "omgwtfbbq!!1!", Loofah::Helpers.strip_tags("<div>omgwtfbbq</div><span>!!1!</span>")
@@ -16,7 +16,7 @@ class IntegrationTestHelpers < Loofah::TestCase
     end
   end
 
-  context "#sanitize" do
+  context ".sanitize" do
     context "on safe markup" do
       it "render the safe html" do
         html = "<div>omgwtfbbq</div><span>!!1!</span>"
@@ -32,6 +32,12 @@ class IntegrationTestHelpers < Loofah::TestCase
       it "strips form tags" do
         assert_equal "alert('evil')<span>w00t</span>", Loofah::Helpers.sanitize("<script>alert('evil')</script><form action=\"/foo/bar\" method=\"post\"><input></form><span>w00t</span>")
       end
+    end
+  end
+
+  context ".sanitize_css" do
+    it "removes unsafe css properties" do
+      assert_equal "display: block; background-color: blue;", Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg);background-color:blue")
     end
   end
 end

@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{loofah}
-  s.version = "1.1.0.20110808012719"
+  s.version = "1.1.0.20110808020414"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Dalessio", "Bryan Helmkamp"]
@@ -26,7 +26,7 @@ http://github.com/flavorjones/loofah-activerecord).}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{loofah}
-  s.rubygems_version = %q{1.5.1}
+  s.rubygems_version = %q{1.6.0}
   s.summary = %q{Loofah is a general library for manipulating and transforming HTML/XML documents and fragments}
   s.test_files = ["test/unit/test_scrubber.rb", "test/unit/test_helpers.rb", "test/unit/test_api.rb", "test/unit/test_scrubbers.rb", "test/unit/test_encoding.rb", "test/html5/test_sanitizer.rb", "test/integration/test_helpers.rb", "test/integration/test_scrubbers.rb", "test/integration/test_ad_hoc.rb", "test/integration/test_xml.rb", "test/integration/test_html.rb"]
 
