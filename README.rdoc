@@ -1,8 +1,7 @@
 = Loofah
 
 * http://github.com/flavorjones/loofah
-* http://loofah.rubyforge.org
-* http://rubyforge.org/projects/loofah
+* http://rdoc.info/github/flavorjones/loofah/master/frames
 
 == Description
 
