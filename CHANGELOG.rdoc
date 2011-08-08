@@ -1,5 +1,12 @@
 = Changelog
 
+== 1.2.0 (2011-08-08)
+
+Enhancements:
+
+* Loofah::Helpers.sanitize_css is a replacement for Rails's built-in sanitize_css helper.
+* Improving ActionView integration.
+
 == 1.1.0 (2011-08-08)
 
 Enhancements:
