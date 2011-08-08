@@ -17,8 +17,11 @@ class UnitTestHelpers < Loofah::TestCase
   context "#sanitize" do
     it "invoke Loofah.scrub_fragment(:strip).to_s" do
       mock_doc = Object.new
+      mock_node = Object.new
       mock(Loofah).fragment(HTML_STRING) { mock_doc }
       mock(mock_doc).scrub!(:strip) { mock_doc }
+      mock(mock_doc).xpath("./form") { [mock_node] }
+      mock(mock_node).remove
       mock(mock_doc).to_s
 
       Loofah::Helpers.sanitize HTML_STRING

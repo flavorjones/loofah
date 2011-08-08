@@ -28,6 +28,10 @@ class IntegrationTestHelpers < Loofah::TestCase
       it "strip the unsafe tags" do
         assert_equal "alert('evil')<span>w00t</span>", Loofah::Helpers.sanitize("<script>alert('evil')</script><span>w00t</span>")
       end
+
+      it "strips form tags" do
+        assert_equal "alert('evil')<span>w00t</span>", Loofah::Helpers.sanitize("<script>alert('evil')</script><form action=\"/foo/bar\" method=\"post\"><input></form><span>w00t</span>")
+      end
     end
   end
 end

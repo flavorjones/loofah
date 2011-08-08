@@ -16,7 +16,10 @@ module Loofah
       #   Loofah::Helpers.sanitize("<script src=http://ha.ckers.org/xss.js></script>") # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
       #
       def sanitize(string_or_io)
-        Loofah.scrub_fragment(string_or_io, :strip).to_s
+        loofah_fragment = Loofah.fragment(string_or_io)
+        loofah_fragment.scrub!(:strip)
+        loofah_fragment.xpath("./form").each { |form| form.remove }
+        loofah_fragment.to_s
       end
 
       #
