@@ -31,9 +31,6 @@ module Loofah
   # The version of Loofah you are using
   VERSION = '1.0.0'
 
-  # The minimum required version of Nokogiri
-  REQUIRED_NOKOGIRI_VERSION = '1.3.3'
-
   class << self
     # Shortcut for Loofah::HTML::Document.parse
     # This method accepts the same parameters as Nokogiri::HTML::Document.parse
@@ -80,8 +77,4 @@ module Loofah
     end
 
   end
-end
-
-if Nokogiri::VERSION < Loofah::REQUIRED_NOKOGIRI_VERSION
-  raise RuntimeError, "Loofah requires Nokogiri #{Loofah::REQUIRED_NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end
