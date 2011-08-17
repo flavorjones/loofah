@@ -63,6 +63,6 @@ end
 desc "generate and upload docs to rubyforge"
 task :doc_upload_to_rubyforge => :docs do
   Dir.chdir "doc" do
-    `rsync -avz --delete * rubyforge.org:/var/www/gforge-projects/loofah/loofah`
+    system "rsync -avz --delete * rubyforge.org:/var/www/gforge-projects/loofah/loofah"
   end
 end
