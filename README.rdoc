@@ -77,8 +77,8 @@ or by implementing a method.
 
 Generally speaking, unless you expect to have a DOCTYPE and a single
 root node, you don't have a *document*, you have a *fragment*. For
-HTML, another rule of thumb is that *documents* have \&lt;html\&gt;
-and \&lt;body\&gt; tags, and *fragments* usually do not.
+HTML, another rule of thumb is that *documents* have +html+ and +body+
+tags, and *fragments* usually do not.
 
 HTML fragments should be parsed with Loofah.fragment. The result won't
 be wrapped in +html+ or +body+ tags, won't have a DOCTYPE declaration,
