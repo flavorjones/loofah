@@ -235,7 +235,7 @@ the Rails ActionView helpers of the same name.
 
 == Requirements
 
-* Nokogiri >= 1.3.3
+* Nokogiri >= 1.4.4
 
 == Installation
 
