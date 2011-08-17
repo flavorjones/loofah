@@ -60,7 +60,7 @@ task :fix_css do
   File.open("doc/rdoc.css", "a") { |f| f.write better_css }
 end
 
-desc "upload docs to rubyforge"
+desc "generate and upload docs to rubyforge"
 task :doc_upload_to_rubyforge => :docs do
   Dir.chdir "doc" do
     `rsync -avz --delete * rubyforge.org:/var/www/gforge-projects/loofah/loofah`
