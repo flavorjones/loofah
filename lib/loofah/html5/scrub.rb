@@ -1,3 +1,5 @@
+#encoding: US-ASCII
+
 require 'cgi'
 
 module Loofah
