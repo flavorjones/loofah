@@ -1,11 +1,17 @@
 = Changelog
 
+== 1.2.1 (2012-04-14)
+
+* Declaring encoding in html5/scrub.rb. Without this, use of the ruby -KU option would cause havoc. (#32)
+
+
 == 1.2.0 (2011-08-08)
 
 Enhancements:
 
 * Loofah::Helpers.sanitize_css is a replacement for Rails's built-in sanitize_css helper.
 * Improving ActionView integration.
+
 
 == 1.1.0 (2011-08-08)
 
@@ -16,12 +22,14 @@ Enhancements:
 * Whitelists (which are not part of the public API) are now Sets (were previously Arrays).
 * Don't explode when encountering UTF-8 URIs. (#25, #29)
 
+
 == 1.0.0 (2010-10-26)
 
 Notes:
 
 * Moved ActiveRecord functionality into `loofah-activerecord` gem.
 * Removed DEPRECATIONS.rdoc documenting 0.3.0 API changes.
+
 
 == 0.4.7 (2010-03-09)
 
@@ -35,6 +43,7 @@ Enhancements:
 * Loofah::HTML::Document#text and Loofah::HTML::DocumentFragment#text
   will return unescaped HTML entities by passing :encode_special_chars => false.
 
+
 == 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
 
 Enhancements:
@@ -44,6 +53,7 @@ Enhancements:
 Bug fixes:
 
 * Loofah::XssFoliate was not properly escaping HTML entities when implicitly scrubbing a string attribute. GH #17
+
 
 == 0.4.3 (2010-01-29)
 
@@ -57,6 +67,7 @@ Miscellaneous:
 * Modified documentation for bootstrapping XssFoliate in a Rails app,
   since the use of Bundler breaks the previously-documented method. To
   be safe, always use an initializer file.
+
 
 == 0.4.2 (2010-01-22)
 
@@ -76,11 +87,13 @@ Miscellaneous:
 * Mailing list is now loofah@librelist.com / http://librelist.com
 * IRC channel is now \#loofah on freenode.
 
+
 == 0.4.1 (2009-11-23)
 
 Bugfix:
 
 * Manifest fixed. Whoops.
+
 
 == 0.4.0 (2009-11-21)
 
@@ -91,11 +104,14 @@ Enhancements:
 * Added :nofollow HTML scrubber (thanks Luke Melia!)
 * Built-in scrubbing methods refactored to use Scrubber.
 
+
+
 == 0.3.1 (2009-10-12)
 
 Bug fixes:
 
 * Scrubbed Documents properly render html, head and body tags when serialized.
+
 
 == 0.3.0 (2009-10-06)
 
@@ -111,12 +127,14 @@ Deprecations:
   sanitize_document have been deprecated. See DEPRECATED.rdoc for
   details on the equivalent calls with the post-0.2 API.
 
+
 == 0.2.2 (2009-09-30)
 
 Enhancements:
 
 * ActiveRecord extension scrubs fields in a before_validation callback
   (was previously in a before_save)
+
 
 == 0.2.1 (2009-09-19)
 
@@ -132,6 +150,7 @@ Bugfixes:
 * init.rb fixed to support installation as a Rails plugin. GH #6
   (Thanks Josh Nichols!)
 
+
 == 0.2.0 (2009-09-11)
 
 * Swank new API.
@@ -141,9 +160,11 @@ Bugfixes:
 * Deprecated the Dryopteris sanitization methods. Will be removed in 0.3.0.
 * Documentation! Hey!
 
+
 == 0.1.2 (2009-04-30)
 
 * Added whitewashing -- removal of all attributes and namespaced nodes. You know, for microsofty HTML.
+
 
 == 0.1.0 (2009-02-10)
 
