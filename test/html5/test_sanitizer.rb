@@ -199,16 +199,6 @@ class Html5TestSanitizer < Loofah::TestCase
       output = "<rect fill='  #fff'></rect>"
       check_sanitization(input, output, output, output)
     end
-
-    define_method "test_uri_ref_with_space_in_svg_attribute_#{attr_name}" do
-      input = "<rect fill='url(\n#foo)' />"
-      rexml = "<rect fill='url(\n#foo)'></rect>"
-    end
-
-    define_method "test_absolute_uri_ref_with_space_in_svg_attribute_#{attr_name}" do
-      input = "<rect fill=\"url(\nhttp://bad.com/)\" />"
-      rexml = "<rect fill=' '></rect>"
-    end
   end
 end
 
