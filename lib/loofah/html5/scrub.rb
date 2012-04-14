@@ -68,7 +68,7 @@ module Loofah
               clean << "#{prop}: #{val};"
             elsif %w[background border margin padding].include?(prop.split('-')[0])
               clean << "#{prop}: #{val};" unless val.split().any? do |keyword|
-                WhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) &&
+                WhiteList::ALLOWED_CSS_KEYWORDS.exclude?(keyword) &&
                   keyword !~ /^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$/
               end
             elsif WhiteList::ALLOWED_SVG_PROPERTIES.include?(prop)
