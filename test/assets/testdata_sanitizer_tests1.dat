@@ -162,6 +162,12 @@
   },
 
   {
+    "name": "allow_styles_containing_vendor_prefixes",
+    "input": "<table cellspacing=\"0\" align=\"center\" style=\"border-top-color: #eaeae3; border-top-style: solid; border-top-width: 1px; -webkit-text-size-adjust: none;\" width=\"100%\" cellpadding=\"0\"></table>",
+    "output": "<table cellspacing='0' align='center' style='border-top-color: #eaeae3; border-top-style: solid; border-top-width: 1px;' width='100%' cellpadding='0'></table>"
+  },
+
+  {
     "name": "protocol_resolution_in_script_tag",
     "input": "<script src=//ha.ckers.org/.j></script>",
     "output": "&lt;script src=\"//ha.ckers.org/.j\"&gt;&lt;/script&gt;",
