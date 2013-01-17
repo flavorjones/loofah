@@ -1,4 +1,4 @@
-= Loofah
+= Loofah {<img src="https://travis-ci.org/flavorjones/loofah.png?branch=master" alt="Build Status" />}[https://travis-ci.org/flavorjones/loofah]
 
 * http://github.com/flavorjones/loofah
 * http://rubydoc.info/github/flavorjones/loofah/master/frames
