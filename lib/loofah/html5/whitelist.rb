@@ -47,7 +47,7 @@ module Loofah
     module WhiteList
       ACCEPTABLE_ELEMENTS = Set.new %w[a abbr acronym address area audio b big blockquote br
       button caption center cite code col colgroup dd del dfn dir div dl dt
-      em fieldset font form h1 h2 h3 h4 h5 h6 hr i img input ins kbd label
+      em fieldset figure font form h1 h2 h3 h4 h5 h6 hr i img input ins kbd label
       legend li map menu ol optgroup option p pre q s samp select small span
       strike strong sub sup table tbody td textarea tfoot th thead tr tt u
       ul var video]
@@ -164,7 +164,7 @@ module Loofah
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
       TAGS_SAFE_WITH_LIBXML2 = Set.new %w[html head body]
       ALLOWED_ELEMENTS_WITH_LIBXML2 = ALLOWED_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
-    end      
+    end
 
     ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::WhiteList
   end
