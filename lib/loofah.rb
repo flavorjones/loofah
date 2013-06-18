@@ -17,8 +17,6 @@ require 'loofah/xml/document_fragment'
 require 'loofah/html/document'
 require 'loofah/html/document_fragment'
 
-require 'loofah/helpers'
-
 # == Strings and IO Objects as Input
 #
 # Loofah.document and Loofah.fragment accept any IO object in addition
