@@ -136,6 +136,8 @@ module Loofah
       ACCEPTABLE_SVG_PROPERTIES = Set.new %w[fill fill-opacity fill-rule stroke
       stroke-width stroke-linecap stroke-linejoin stroke-opacity]
 
+      PROTOCOL_SEPARATOR = /:|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A/i
+
       ACCEPTABLE_PROTOCOLS = Set.new %w[ed2k ftp http https irc mailto news gopher nntp
       telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs]
 
@@ -164,7 +166,7 @@ module Loofah
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
       TAGS_SAFE_WITH_LIBXML2 = Set.new %w[html head body]
       ALLOWED_ELEMENTS_WITH_LIBXML2 = ALLOWED_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
-    end      
+    end
 
     ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::WhiteList
   end
