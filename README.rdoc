@@ -232,6 +232,7 @@ are the same thing as (and arguably semantically clearer than):
 Loofah has two "view helpers": Loofah::Helpers.sanitize and
 Loofah::Helpers.strip_tags, both of which are drop-in replacements for
 the Rails ActionView helpers of the same name.
+These are no longer required automatically. You must require `loofah/helpers`. 
 
 == Requirements
 
