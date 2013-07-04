@@ -15,7 +15,7 @@ Hoe.spec "loofah" do
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
 
-  extra_deps     << ["nokogiri", ">=1.4.4"]
+  extra_deps     << ["nokogiri", ">=1.6.0"]
 
   extra_dev_deps << ["rake", ">=0.8"]
   extra_dev_deps << ["minitest", "~>2.2"]
