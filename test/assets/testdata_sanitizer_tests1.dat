@@ -36,13 +36,13 @@
   {
     "name": "div_background_image_unicode_encoded",
     "input": "<div style=\"background-image:\u00a5\u00a2\u006C\u0028'\u006a\u0061\u00a6\u0061\u00a3\u0063\u00a2\u0069\u00a0\u00a4\u003a\u0061\u006c\u0065\u00a2\u00a4\u0028.1027\u0058.1053\u0053\u0027\u0029'\u0029\">foo</div>",
-    "output": "<div style=''>foo</div>"
+    "output": "<div>foo</div>"
   },
 
   {
     "name": "div_expression",
     "input": "<div style=\"width: expression(alert('XSS'));\">foo</div>",
-    "output": "<div style=''>foo</div>"
+    "output": "<div>foo</div>"
   },
 
   {
@@ -104,7 +104,7 @@
   {
     "name": "list_style_image",
     "input": "<li style=\"list-style-image: url(javascript:alert('XSS'))\">foo</li>",
-    "output": "<li style=''>foo</li>"
+    "output": "<li>foo</li>"
   },
 
   {
@@ -138,7 +138,7 @@
   {
     "name": "non_alpha_non_digit_II",
     "input": "<a href!\\#$%&()*~+-_.,:;?@[/|]^`=alert('XSS')>foo</a>",
-    "output": "<a href>foo</a>",
+    "output": "<a>foo</a>",
     "rexml": "Ill-formed XHTML!"
   },
 
@@ -253,7 +253,7 @@
   {
     "name": "should_not_fall_for_xss_image_hack_12",
     "input": "<img src=\" &#14;  javascript:alert('XSS');\" />",
-    "output": "<img src=''>",
+    "output": "<img>",
     "rexml": "<img />"
   },
 
@@ -404,7 +404,7 @@
   {
     "name": "xul",
     "input": "<p style=\"-moz-binding:url('http://ha.ckers.org/xssmoz.xml#xss')\">fubar</p>",
-    "output": "<p style=''>fubar</p>"
+    "output": "<p>fubar</p>"
   },
 
   {
@@ -441,9 +441,9 @@
   {
     "name": "absolute_uri_ref_with_space_in svg_attribute",
     "input": "<rect fill=\"url(\nhttp://bad.com/)\" />",
-    "rexml": "<rect fill=' '></rect>",
-    "xhtml": "<rect fill=' '></rect>",
-    "output": "<rect fill=' '/>"
+    "rexml": "<rect></rect>",
+    "xhtml": "<rect></rect>",
+    "output": "<rect/>"
   },
 
   {
@@ -484,14 +484,14 @@
     "xhtml": "<div style='color: blue;'></div>",
     "rexml": "<div style='color: blue;'></div>"
   },
-  
+
   {
    "name": "attributes_with_embedded_quotes",
    "input": "<img src=doesntexist.jpg\"'onerror=\"alert(1) />",
    "output": "<img src='doesntexist.jpg%22'onerror=%22alert(1)'>",
    "rexml": "Ill-formed XHTML!"
   },
-  
+
   {
    "name": "attributes_with_embedded_quotes_II",
    "input": "<img src=notthere.jpg\"\"onerror=\"alert(2) />",
