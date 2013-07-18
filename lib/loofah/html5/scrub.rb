@@ -66,7 +66,7 @@ module Loofah
             prop.downcase!
             if WhiteList::ALLOWED_CSS_PROPERTIES.include?(prop)
               clean << "#{prop}: #{val};"
-            elsif %w[background border margin padding].include?(prop.split('-')[0])
+            elsif WhiteList::SHORTHAND_CSS_PROPERTIES.include?(prop.split('-')[0])
               clean << "#{prop}: #{val};" unless val.split().any? do |keyword|
                 WhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) &&
                   keyword !~ /^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$/
