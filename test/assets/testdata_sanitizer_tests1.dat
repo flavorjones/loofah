@@ -152,7 +152,7 @@
   {
     "name": "platypus",
     "input": "<a href=\"http://www.ragingplatypus.com/\" style=\"display:block; position:absolute; left:0; top:0; width:100%; height:100%; z-index:1; background-color:black; background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg); background-x:center; background-y:center; background-repeat:repeat;\">never trust your upstream platypus</a>",
-    "output": "<a href='http://www.ragingplatypus.com/' style='display: block; width: 100%; height: 100%; background-color: black; background-repeat: repeat;'>never trust your upstream platypus</a>"
+    "output": "<a href='http://www.ragingplatypus.com/' style='display: block; width: 100%; height: 100%; background-color: black; background-x: center; background-y: center;'>never trust your upstream platypus</a>"
   },
 
   {
@@ -484,14 +484,14 @@
     "xhtml": "<div style='color: blue;'></div>",
     "rexml": "<div style='color: blue;'></div>"
   },
-  
+
   {
    "name": "attributes_with_embedded_quotes",
    "input": "<img src=doesntexist.jpg\"'onerror=\"alert(1) />",
    "output": "<img src='doesntexist.jpg%22'onerror=%22alert(1)'>",
    "rexml": "Ill-formed XHTML!"
   },
-  
+
   {
    "name": "attributes_with_embedded_quotes_II",
    "input": "<img src=notthere.jpg\"\"onerror=\"alert(2) />",
