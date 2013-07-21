@@ -108,7 +108,7 @@ module Loofah
        xlink:show xlink:title xlink:type xml:base xml:lang xml:space xmlns
        xmlns:xlink y y1 y2 zoomAndPan]
 
-      ATTR_VAL_IS_URI = Set.new %w[href src cite action longdesc xlink:href xml:base]
+      ATTR_VAL_IS_URI = Set.new %w[href src cite action longdesc xlink:href xml:base poster]
 
       SVG_ATTR_VAL_ALLOWS_REF = Set.new %w[clip-path color-profile cursor fill
       filter marker marker-start marker-mid marker-end mask stroke]
