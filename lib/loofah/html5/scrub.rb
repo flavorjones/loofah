@@ -6,11 +6,7 @@ module Loofah
   module HTML5 # :nodoc:
     module Scrub
 
-      CONTROL_CHARACTERS = if RUBY_VERSION =~ /^1\.8/
-                             /`|[\000-\040\177\s]+|\302[\200-\240]/
-                           else
-                             /[`\u0000-\u0020\u007F\s\u0080-\u0101]/
-                           end
+      CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
 
       class << self
 
