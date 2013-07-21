@@ -138,6 +138,8 @@ module Loofah
       ACCEPTABLE_SVG_PROPERTIES = Set.new %w[fill fill-opacity fill-rule stroke
       stroke-width stroke-linecap stroke-linejoin stroke-opacity]
 
+      PROTOCOL_SEPARATOR = /:|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A/i
+
       ACCEPTABLE_PROTOCOLS = Set.new %w[ed2k ftp http https irc mailto news gopher nntp
       telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs]
 
