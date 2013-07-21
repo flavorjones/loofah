@@ -70,7 +70,7 @@ module Loofah
       dir disabled enctype for frame headers height href hreflang hspace id
       ismap label lang longdesc loop loopcount loopend loopstart
       maxlength media method multiple name nohref
-      noshade nowrap poster prompt readonly rel rev rows rowspan rules scope
+      noshade nowrap poster preload prompt readonly rel rev rows rowspan rules scope
       selected shape size span src start style summary tabindex target title
       type usemap valign value vspace width xml:lang]
 
@@ -108,7 +108,7 @@ module Loofah
        xlink:show xlink:title xlink:type xml:base xml:lang xml:space xmlns
        xmlns:xlink y y1 y2 zoomAndPan]
 
-      ATTR_VAL_IS_URI = Set.new %w[href src cite action longdesc xlink:href xml:base poster]
+      ATTR_VAL_IS_URI = Set.new %w[href src cite action longdesc xlink:href xml:base poster preload]
 
       SVG_ATTR_VAL_ALLOWS_REF = Set.new %w[clip-path color-profile cursor fill
       filter marker marker-start marker-mid marker-end mask stroke]
@@ -134,7 +134,7 @@ module Loofah
       yellow]
 
       SHORTHAND_CSS_PROPERTIES = Set.new %w[background border margin padding]
-      
+
       ACCEPTABLE_SVG_PROPERTIES = Set.new %w[fill fill-opacity fill-rule stroke
       stroke-width stroke-linecap stroke-linejoin stroke-opacity]
 
