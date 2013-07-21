@@ -146,6 +146,11 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
+  def test_figure_element_is_valid
+    fragment = Loofah.scrub_fragment("<span>hello</span> <figure>asd</figure>", :prune)
+    assert fragment.at_css("figure"), "<figure> tag was scrubbed"
+  end
+
   ##
   ##  as tenderlove says, "care < 0"
   ##
@@ -162,7 +167,7 @@ class Html5TestSanitizer < Loofah::TestCase
 # This affects only NS4. Is it worth fixing?
 #  def test_javascript_includes
 #    input = %(<div size="&{alert('XSS')}">foo</div>)
-#    output = "<div>foo</div>"    
+#    output = "<div>foo</div>"
 #    check_sanitization(input, output, output, output)
 #  end
 
@@ -187,7 +192,7 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   ## added because we don't have any coverage above on SVG_ATTR_VAL_ALLOWS_REF
-  HTML5::WhiteList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|  
+  HTML5::WhiteList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|
     define_method "test_should_allow_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect fill='url(#foo)' />"
       output = "<rect fill='url(#foo)'></rect>"
