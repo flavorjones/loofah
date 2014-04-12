@@ -58,6 +58,21 @@ module Loofah
   #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
   #
+  #
+  #  === Loofah::Scrubbers::Unprintable / scrub!(:unprintable)
+  #
+  #  +:unprintable+ removes unprintable Unicode characters.
+  #
+  #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
+  #     Loofah.fragment(markup).scrub!(:unprintable)
+  #     => "<p>Some text with an unprintable character at the end</p>"
+  #
+  #  You may not be able to see the unprintable character in the above example, but there is a
+  #  U+2028 character right before the closing </p> tag. These characters can cause issues if
+  #  the content is ever parsed by JavaScript - more information here:
+  #
+  #     http://timelessrepo.com/json-isnt-a-javascript-subset
+  #
   module Scrubbers
     #
     #  === scrub!(:strip)
@@ -178,7 +193,7 @@ module Loofah
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
         node.set_attribute('rel', 'nofollow')
-        return STOP        
+        return STOP
       end
     end
 
@@ -196,6 +211,32 @@ module Loofah
     end
 
     #
+    #  === scrub!(:unprintable)
+    #
+    #  +:unprintable+ removes unprintable Unicode characters.
+    #
+    #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
+    #     Loofah.fragment(markup).scrub!(:unprintable)
+    #     => "<p>Some text with an unprintable character at the end</p>"
+    #
+    #  You may not be able to see the unprintable character in the above example, but there is a
+    #  U+2028 character right before the closing </p> tag. These characters can cause issues if
+    #  the content is ever parsed by JavaScript - more information here:
+    #
+    #     http://timelessrepo.com/json-isnt-a-javascript-subset
+    #
+    class Unprintable < Scrubber
+      def initialize
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        node.inner_html = node.inner_html.gsub("\u2028", '').gsub("\u2029", '')
+        return STOP
+      end
+    end
+
+    #
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
@@ -204,7 +245,8 @@ module Loofah
       :whitewash => Whitewash,
       :strip     => Strip,
       :nofollow  => NoFollow,
-      :newline_block_elements => NewlineBlockElements
+      :newline_block_elements => NewlineBlockElements,
+      :unprintable => Unprintable
     }
 
     #
