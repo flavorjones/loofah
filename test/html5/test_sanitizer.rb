@@ -88,6 +88,15 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
+  def test_should_allow_data_attributes
+    input = "<p data-foo='foo'>foo <bad>bar</bad> baz</p>"
+
+    output = "<p data-foo='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+    htmloutput = "<p data-foo='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+
+    check_sanitization(input, htmloutput, output, output)
+  end
+
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##

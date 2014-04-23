@@ -22,10 +22,16 @@ module Loofah
                         else
                           attr_node.node_name
                         end
+
+            if attr_name =~ /\Adata-\w+\z/
+              next
+            end
+
             unless WhiteList::ALLOWED_ATTRIBUTES.include?(attr_name)
               attr_node.remove
               next
             end
+
             if WhiteList::ATTR_VAL_IS_URI.include?(attr_name)
               # this block lifted nearly verbatim from HTML5 sanitization
               val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS,'').downcase
