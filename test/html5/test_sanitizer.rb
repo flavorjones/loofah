@@ -205,6 +205,12 @@ class Html5TestSanitizer < Loofah::TestCase
       check_sanitization(input, output, output, output)
     end
   end
+
+  def test_css_negative_value_sanitization
+    html = "<span style=\"letter-spacing:-0.03em;\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/-0.03em/, sane.inner_html
+  end
 end
 
 # <html5_license>
