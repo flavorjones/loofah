@@ -198,6 +198,7 @@ whitelist algorithm:
 Loofah also comes with some common transformation tasks: 
 
   doc.scrub!(:nofollow)    #     adds rel="nofollow" attribute to links
+  doc.scrub!(:unprintable) #  removes unprintable characters from text nodes
 
 See Loofah::Scrubbers for more details and example usage.
 
