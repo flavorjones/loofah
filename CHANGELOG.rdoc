@@ -4,22 +4,22 @@
 
 Compatibility notes:
 
-  * ActionView helpers now must be required explicitly: `require "loofah/helpers"`
-  * Support for Ruby 1.8.7 and prior has been dropped
+* ActionView helpers now must be required explicitly: `require "loofah/helpers"`
+* Support for Ruby 1.8.7 and prior has been dropped
 
 Enhancements:
 
-  * HTML5 whitelist allows `data-*` attributes. (Thanks, Rafael Franca!)
-  * HTML5 whitelist allows `<figure>` tags. (Thanks, Kristian Freeman!)
-  * HTML5 whitelist allows `poster` and `preload` URI attributes.
-  * `Loofah.fragment` accepts an optional encoding argument, compatible with `Nokogiri::HTML::DocumentFragment.parse`. #62 (Thanks, Ben Atkins!)
-  * Addition of the `:unprintable` scrubber to remove unprintable characters from text nodes. #65 (Thanks, Matt Swanson!)
-  * HTML5 sanitizers now remove attributes without values. (Thanks, Kasper Timm Hansen!)
+* HTML5 whitelist allows `data-*` attributes. (Thanks, Rafael Franca!)
+* HTML5 whitelist allows `<figure>` tags. (Thanks, Kristian Freeman!)
+* HTML5 whitelist allows `poster` and `preload` URI attributes.
+* `Loofah.fragment` accepts an optional encoding argument, compatible with `Nokogiri::HTML::DocumentFragment.parse`. #62 (Thanks, Ben Atkins!)
+* Addition of the `:unprintable` scrubber to remove unprintable characters from text nodes. #65 (Thanks, Matt Swanson!)
+* HTML5 sanitizers now remove attributes without values. (Thanks, Kasper Timm Hansen!)
 
 Bug fixes:
 
-  * HTML5 sanitizers' CSS keyword check now actually works (broken in v2.0). Additional regression tests added. (Thanks, Kasper Timm Hansen!)
-  * HTML5 sanitizers now allow negative arguments to CSS. #64 (Thanks, Jon Calhoun!)
+* HTML5 sanitizers' CSS keyword check now actually works (broken in v2.0). Additional regression tests added. (Thanks, Kasper Timm Hansen!)
+* HTML5 sanitizers now allow negative arguments to CSS. #64 (Thanks, Jon Calhoun!)
 
 
 == 1.2.1 (2012-04-14)
