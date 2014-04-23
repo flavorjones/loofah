@@ -14,6 +14,7 @@ Hoe.spec "loofah" do
   self.extra_rdoc_files = FileList["*.rdoc"]
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
+  self.license          = "MIT"
 
   extra_deps     << ["nokogiri", ">=1.5.9"]
 
