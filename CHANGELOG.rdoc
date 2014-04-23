@@ -1,5 +1,12 @@
 = Changelog
 
+== Unreleased
+
+Enhancements:
+
+* `Loofah.fragment` takes an encoding argument, compatible with `Nokogiri::HTML::DocumentFragment.parse`. #62 (Thanks, Ben Atkins!)
+
+
 == 1.2.1 (2012-04-14)
 
 * Declaring encoding in html5/scrub.rb. Without this, use of the ruby -KU option would cause havoc. (#32)
