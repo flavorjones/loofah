@@ -14,10 +14,13 @@ module Loofah
         #  constructor. Applications should use Loofah.fragment to
         #  parse a fragment.
         #
-        def parse tags
+        def parse tags, encoding = nil
           doc = Loofah::HTML::Document.new
-          doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
-          self.new(doc, tags)
+
+          encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : 'UTF-8'
+          doc.encoding = encoding
+
+          new(doc, tags)
         end
       end
 

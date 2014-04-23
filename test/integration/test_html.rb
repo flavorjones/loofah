@@ -29,6 +29,13 @@ class IntegrationTestHtml < Loofah::TestCase
         assert_equal "\ntweedle\n\nbeetle\n", html.to_text
       end
     end
+
+    context 'with an `encoding` arg' do
+      it "sets the parent document's encoding to accordingly" do
+        html = Loofah.fragment "<style>foo</style><div>bar</div>", 'US-ASCII'
+        assert_equal 'US-ASCII', html.document.encoding
+      end
+    end
   end
 
   context "html document" do
