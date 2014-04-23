@@ -13,7 +13,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
-  UNPRINTABLE_FRAGMENT = "<b>Loofah ro\u2028cks!</b>"
+  UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b>"
 
   ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"

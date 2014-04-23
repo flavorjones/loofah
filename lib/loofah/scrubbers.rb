@@ -231,8 +231,8 @@ module Loofah
       end
 
       def scrub(node)
-        node.inner_html = node.inner_html.gsub("\u2028", '').gsub("\u2029", '')
-        return STOP
+        node.inner_html = node.inner_html.gsub(/\u2028|\u2029/, '')
+        CONTINUE
       end
     end
 
