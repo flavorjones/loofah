@@ -13,6 +13,9 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
+  UNPRINTABLE_FRAGMENT = "<b>Loofah ro\u2028cks!</b>"
+  UNPRINTABLE_RESULT = "<b>Loofah rocks!</b>"
+
   ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
   ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'yaw00t)
 
@@ -68,6 +71,16 @@ class IntegrationTestScrubbers < Loofah::TestCase
           result = doc.scrub! :nofollow
 
           assert_equal NOFOLLOW_RESULT, doc.xpath('/html/body').inner_html
+          assert_equal doc, result
+        end
+      end
+
+      context ":unprintable" do
+        it "removes unprintable unicode characters" do
+          doc = Loofah::HTML::Document.parse "<html><body>#{UNPRINTABLE_FRAGMENT}</body></html>"
+          result = doc.scrub! :unprintable
+
+          assert_equal UNPRINTABLE_RESULT, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -187,7 +200,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
       end
     end
   end
-  
+
   context "DocumentFragment" do
     context "#scrub!" do
       context ":escape" do
@@ -236,6 +249,16 @@ class IntegrationTestScrubbers < Loofah::TestCase
           result = doc.scrub! :nofollow
 
           assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
+      end
+
+      context ":unprintable" do
+        it "removes unprintable unicode characters" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{UNPRINTABLE_FRAGMENT}</div>"
+          result = doc.scrub! :unprintable
+
+          assert_equal UNPRINTABLE_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
       end
