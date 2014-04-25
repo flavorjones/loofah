@@ -1,0 +1,63 @@
+#! /usr/bin/env ruby
+
+LOOFAH_LIB = File.join(File.dirname(__FILE__), "..", "lib")
+
+require "nokogiri"
+require "open-uri"
+require "set"
+require "yaml"
+
+whitelist = {}
+# ymlfile = File.join(LOOFAH_LIB, "loofah", "html5", "whitelists.yml")
+
+html5_spec = Nokogiri.HTML open "http://www.w3.org/TR/html-markup/elements.html"
+html5_els = Set.new html5_spec.css(".toc-section-name .element").map(&:content).map(&:downcase).map(&:strip)
+raise "couldn't parse valid spec" unless html5_els.length > 100
+whitelist["HTML5_ELEMENTS"] = html5_els.to_a.sort
+puts "found #{html5_els.length} html5 els in the spec:"
+puts html5_els.to_a.sort.to_s
+puts
+
+html4_spec = Nokogiri.HTML open "http://www.w3.org/TR/html4/index/elements.html"
+html4_els = Set.new html4_spec.css("td a").map(&:content).map(&:downcase).map(&:strip)
+raise "couldn't parse valid spec" unless html4_els.length > 90
+whitelist["HTML4_ELEMENTS"] = html4_els.to_a.sort
+puts "found #{html4_els.length} html4 els in the spec:"
+puts html4_els.to_a.sort.to_s
+puts
+
+html_els = html5_els + html4_els
+whitelist["HTML_ELEMENTS"] = html_els.to_a.sort
+puts "there are #{html_els.length} html els specified:"
+puts html_els.to_a.sort.to_s
+puts
+
+# html5 attributes   ???
+# html4 attributes   http://www.w3.org/TR/html4/index/attributes.html
+# mathml3 elements   http://www.w3.org/TR/MathML3/appendixi.html#index.elem
+# mathml3 attributes http://www.w3.org/TR/MathML3/appendixi.html#index.elem
+# mathml2 elements   http://www.w3.org/TR/MathML2/appendixl.html#index.elem
+# mathml2 attributes http://www.w3.org/TR/MathML2/appendixl.html#index.elem
+# svg1.1 elements    http://www.w3.org/TR/SVG/eltindex.html
+# svg1.1 attributes  http://www.w3.org/TR/SVG/attindex.html
+# svg1.1 properties  http://www.w3.org/TR/SVG/propidx.html
+
+# File.open(ymlfile, "w") { |f| f.write whitelist.to_yaml }
+
+
+#
+#  check for differences (for now)
+#
+$: << LOOFAH_LIB
+require "loofah"
+
+surprising_spec_elements = html_els - Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS
+interesting_whitelist_elements = Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS - html_els
+
+puts "found #{surprising_spec_elements.length} surprising new elements found in the spec:"
+puts surprising_spec_elements.to_a.sort.to_s
+puts
+
+puts "found #{interesting_whitelist_elements.length} interesting elements found in the whitelist:"
+puts interesting_whitelist_elements.to_a.to_s
+puts
