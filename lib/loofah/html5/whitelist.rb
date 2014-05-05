@@ -45,12 +45,16 @@ module Loofah
     #
     # </html5_license>
     module WhiteList
-      ACCEPTABLE_ELEMENTS = Set.new %w[a abbr acronym address area audio b big blockquote br
-      button caption center cite code col colgroup dd del dfn dir div dl dt
-      em fieldset figure font form h1 h2 h3 h4 h5 h6 hr i img input ins kbd label
-      legend li map menu ol optgroup option p pre q s samp select small span
-      strike strong sub sup table tbody td textarea tfoot th thead tr tt u
-      ul var video]
+
+      ACCEPTABLE_ELEMENTS = Set.new %w[a abbr acronym address area
+      article aside audio b bdi bdo big blockquote br button canvas
+      caption center cite code col colgroup command datalist dd del
+      details dfn dir div dl dt em fieldset figcaption figure footer
+      font form h1 h2 h3 h4 h5 h6 header hr i img input ins kbd label
+      legend li map mark menu meter nav ol output optgroup option p
+      pre q s samp section select small span strike strong sub summary
+      sup table tbody td textarea tfoot th thead time tr tt u ul var
+      video]
 
       MATHML_ELEMENTS = Set.new %w[annotation annotation-xml maction math merror mfrac
       mfenced mi mmultiscripts mn mo mover mpadded mphantom mprescripts mroot mrow
