@@ -67,3 +67,8 @@ task :doc_upload_to_rubyforge => :docs do
     system "rsync -avz --delete * rubyforge.org:/var/www/gforge-projects/loofah/loofah"
   end
 end
+
+desc "generate whitelists from W3C specifications"
+task :generate_whitelists do
+  load "tasks/generate-whitelists"
+end

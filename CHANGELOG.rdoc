@@ -9,11 +9,12 @@ Compatibility notes:
 
 Enhancements:
 
-* HTML5 whitelist allows `data-*` attributes. (Thanks, Rafael Franca!)
-* HTML5 whitelist allows `<figure>` tags. (Thanks, Kristian Freeman!)
-* HTML5 whitelist allows `poster` and `preload` URI attributes.
-* `Loofah.fragment` accepts an optional encoding argument, compatible with `Nokogiri::HTML::DocumentFragment.parse`. #62 (Thanks, Ben Atkins!)
+* HTML5 whitelist allows the following ...
+  * tags: `article`, `aside`, `bdi`, `bdo`, `canvas`, `command`, `datalist`, `details`, `figcaption`, `figure`, `footer`, `header`, `mark`, `meter`, `nav`, `output`, `section`, `summary`, `time`
+  * attributes: `data-*` (Thanks, Rafael Franca!)
+  * URI attributes: `poster` and `preload`
 * Addition of the `:unprintable` scrubber to remove unprintable characters from text nodes. #65 (Thanks, Matt Swanson!)
+* `Loofah.fragment` accepts an optional encoding argument, compatible with `Nokogiri::HTML::DocumentFragment.parse`. #62 (Thanks, Ben Atkins!)
 * HTML5 sanitizers now remove attributes without values. (Thanks, Kasper Timm Hansen!)
 
 Bug fixes:
