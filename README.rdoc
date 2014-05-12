@@ -1,6 +1,6 @@
 = Loofah {<img src="https://travis-ci.org/flavorjones/loofah.png?branch=master" alt="Build Status" />}[https://travis-ci.org/flavorjones/loofah]
 
-* http://github.com/flavorjones/loofah
+* https://github.com/flavorjones/loofah
 * http://rubydoc.info/github/flavorjones/loofah/master/frames
 * http://librelist.com/browser/loofah
 
@@ -17,7 +17,7 @@ not been evaluated by Netexperts.)
 
 ActiveRecord extensions for sanitization are available in the
 `loofah-activerecord` gem (see
-http://github.com/flavorjones/loofah-activerecord).
+https://github.com/flavorjones/loofah-activerecord).
 
 == Features
 
@@ -43,7 +43,7 @@ Loofah works on XML, XHTML and HTML documents.
 Also, it's pretty fast. Here is a benchmark comparing Loofah to other
 commonly-used libraries (ActionView, Sanitize, HTML5lib and HTMLfilter):
 
-* http://gist.github.com/170193
+* https://gist.github.com/170193
 
 Lastly, Loofah is extensible. It's super-easy to write your own custom
 scrubbers for whatever document manipulation you need. You don't like
@@ -248,7 +248,7 @@ Unsurprisingly:
 
 The bug tracker is available here:
 
-* http://github.com/flavorjones/loofah/issues
+* https://github.com/flavorjones/loofah/issues
 
 And the mailing list is on librelist:
 
@@ -260,11 +260,11 @@ And the IRC channel is \#loofah on freenode.
 
 * Nokogiri: http://nokogiri.org
 * libxml2: http://xmlsoft.org
-* html5lib: http://code.google.com/p/html5lib
+* html5lib: https://code.google.com/p/html5lib
 
 == Authors
 
-* {Mike Dalessio}[http://mike.daless.io] (@flavorjones[http://twitter.com/flavorjones])
+* {Mike Dalessio}[http://mike.daless.io] (@flavorjones[https://twitter.com/flavorjones])
 * Bryan Helmkamp
 
 Featuring code contributed by:
@@ -279,7 +279,7 @@ And a big shout-out to Corey Innis for the name, and feedback on the API.
 
 == Thank You
 
-The following people have generously donated via the Pledgie[http://pledgie.com] badge on the {Loofah github page}[http://github.com/flavorjones/loofah]:
+The following people have generously donated via the Pledgie[http://pledgie.com] badge on the {Loofah github page}[https://github.com/flavorjones/loofah]:
 
 * Bill Harding
 
