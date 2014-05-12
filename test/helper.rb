@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'rr'
 require 'minitest/unit'
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'rr'
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "loofah"))
 
