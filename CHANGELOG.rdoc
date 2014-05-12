@@ -1,5 +1,12 @@
 = Changelog
 
+== 2.0.1 / unreleased
+
+Bug fixes:
+
+* Load RR correctly when running test files directly. (Thanks, ktdreyer!)
+
+
 == 2.0.0 / 2014-05-09
 
 Compatibility notes:
