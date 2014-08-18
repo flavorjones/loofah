@@ -1,3 +1,4 @@
+.travis.yml
 CHANGELOG.rdoc
 Gemfile
 MIT-LICENSE.txt
@@ -21,6 +22,8 @@ lib/loofah/scrubber.rb
 lib/loofah/scrubbers.rb
 lib/loofah/xml/document.rb
 lib/loofah/xml/document_fragment.rb
+loofah.gemspec
+tasks/generate-whitelists
 test/assets/testdata_sanitizer_tests1.dat
 test/helper.rb
 test/html5/test_sanitizer.rb
