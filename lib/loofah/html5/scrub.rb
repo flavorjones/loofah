@@ -48,13 +48,17 @@ module Loofah
               next
             end
           end
-          if node.attributes['style']
-            node['style'] = scrub_css node.attributes['style']
-          end
+
+          scrub_css_attribute node
 
           node.attribute_nodes.each do |attr_node|
             node.remove_attribute(attr_node.name) if attr_node.value !~ /[^[:space:]]/
           end
+        end
+
+        def scrub_css_attribute node
+          style = node.attributes['style']
+          style.value = scrub_css(style.value) if style
         end
 
         #  lifted nearly verbatim from html5lib
