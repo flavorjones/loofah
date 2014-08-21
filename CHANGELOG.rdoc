@@ -1,10 +1,15 @@
 = Changelog
 
-== 2.0.1 / unreleased
+== 2.0.1 / 2014-08-21
 
 Bug fixes:
 
-* Load RR correctly when running test files directly. (Thanks, ktdreyer!)
+* Load RR correctly when running test files directly. (Thanks, @ktdreyer!)
+
+
+Notes:
+
+* Extracted HTML5::Scrub#scrub_css_attribute to accommodate the Rails integration work. (Thanks, @kaspth!)
 
 
 == 2.0.0 / 2014-05-09
