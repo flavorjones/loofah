@@ -2,19 +2,19 @@
 require "helper"
 
 class UnitTestEncoding < Loofah::TestCase
-  def setup
-    @utf8_string = "日本語"
-  end
+  UTF8_STRING = "日本語"
 
   if String.new.respond_to?(:encoding)
-    def test_html_fragment_string_sets_encoding
-      escaped = Loofah.scrub_fragment(@utf8_string, :escape).to_s
-      assert_equal @utf8_string.encoding, escaped.encoding
-    end
+    describe "scrub_fragment" do
+      it "sets the encoding for html" do
+        escaped = Loofah.scrub_fragment(UTF8_STRING, :escape).to_s
+        assert_equal UTF8_STRING.encoding, escaped.encoding
+      end
 
-    def test_xml_fragment_string_sets_encoding
-      escaped = Loofah.scrub_xml_fragment(@utf8_string, :escape).to_s
-      assert_equal @utf8_string.encoding, escaped.encoding
+      it "sets the encoding for xml" do
+        escaped = Loofah.scrub_xml_fragment(UTF8_STRING, :escape).to_s
+        assert_equal UTF8_STRING.encoding, escaped.encoding
+      end
     end
   end
 end
