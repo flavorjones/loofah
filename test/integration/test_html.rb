@@ -39,9 +39,11 @@ class IntegrationTestHtml < Loofah::TestCase
   end
 
   context "html document" do
-    it "not include head tags (like style)" do
-      html = Loofah.document "<style>foo</style><div>bar</div>"
-      assert_equal "bar", html.text
+    context "#text" do
+      it "not include head tags (like style)" do
+        html = Loofah.document "<style>foo</style><div>bar</div>"
+        assert_equal "bar", html.text
+      end
     end
 
     context "#to_text" do
