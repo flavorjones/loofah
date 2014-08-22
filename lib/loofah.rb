@@ -74,5 +74,9 @@ module Loofah
       Loofah.xml_document(string_or_io).scrub!(method)
     end
 
+    # A helper to remove extraneous whitespace from text-ified HTML
+    def remove_extraneous_whitespace(string)
+      string.gsub(/\n\s*\n\s*\n/,"\n\n")
+    end
   end
 end

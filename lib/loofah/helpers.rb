@@ -33,9 +33,10 @@ module Loofah
 
       #
       #  A helper to remove extraneous whitespace from text-ified HTML
+      #  TODO: remove this in a future major-point-release.
       #
       def remove_extraneous_whitespace(string)
-        string.gsub(/\n\s*\n\s*\n/,"\n\n")
+        Loofah.remove_extraneous_whitespace string
       end
     end
 
