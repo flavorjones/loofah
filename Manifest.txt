@@ -1,3 +1,4 @@
+.gemtest
 CHANGELOG.rdoc
 Gemfile
 MIT-LICENSE.txt
