@@ -6,6 +6,10 @@ class IntegrationTestScrubbers < Loofah::TestCase
   INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
   INVALID_PRUNED   = "<div>quux</div>"
   INVALID_STRIPPED = "foo<p>bar</p>bazz<div>quux</div>"
+  
+  COMPLICATED_CSS_FRAGMENT = <<-HTML
+    <span style='text-transform: uppercase; font-family: "Garamond","serif"; font-size: 28pt; mso-fareast-font-family: "Times New Roman"; mso-bidi-font-family: Arial; mso-style-textoutline-type: solid; mso-style-textoutline-fill-color: #5C437A; mso-style-textoutline-fill-themecolor: accent4; mso-style-textoutline-fill-alpha: 100.0%; mso-style-textoutline-outlinestyle-dpiwidth: .354pt; mso-style-textoutline-outlinestyle-linecap: flat; mso-style-textoutline-outlinestyle-join: round; mso-style-textoutline-outlinestyle-pctmiterlimit: 0%; mso-style-textoutline-outlinestyle-dash: solid; mso-style-textoutline-outlinestyle-align: center; mso-style-textoutline-outlinestyle-compound: simple; mso-effects-reflection-dpiradius: 1.0pt; mso-effects-reflection-dpidistance: .079pt; mso-effects-reflection-angdirection: 5400000; mso-effects-reflection-pctsx: 100.0%; mso-effects-reflection-pctsy: -100.0%; mso-effects-reflection-anglekx: 0; mso-effects-reflection-angleky: 0; mso-effects-reflection-pctalphastart: 28.0%; mso-effects-reflection-pctstartpos: 0%; mso-effects-reflection-pctalphaend: 0%; mso-effects-reflection-pctendpos: 45.0%; mso-effects-reflection-angfadedirection: 5400000; mso-effects-reflection-align: bottomleft; mso-style-textoutline-fill-colortransforms: "shade=50000 satm=120000"; mso-style-textfill-type: gradient; mso-style-textfill-fill-gradientfill-shadetype: linear; mso-style-textfill-fill-gradientfill-shade-linearshade-angle: 5400000; mso-style-textfill-fill-gradientfill-shade-linearshade-fscaled: no;'><font size="6">GUCCI</font></span>
+  HTML
 
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid><!--[if gts mso9]><div>microsofty stuff</div><![endif]-->"
   WHITEWASH_RESULT   = "<div>foo</div>"
@@ -42,6 +46,18 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
           assert_equal INVALID_PRUNED, doc.xpath('/html/body').inner_html
           assert_equal doc, result
+        end
+        
+        it "finish parsing complicated styles" do
+          doc = Loofah::HTML::Document.parse "<html><body>#{COMPLICATED_CSS_FRAGMENT}</body></html>"
+          
+          begin
+            Timeout.timeout 60 do
+              doc.scrub! :prune
+            end
+          rescue Timeout::Error
+            assert false, 'Timed out'
+          end
         end
       end
 
