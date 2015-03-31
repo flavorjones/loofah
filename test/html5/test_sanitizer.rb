@@ -220,6 +220,12 @@ class Html5TestSanitizer < Loofah::TestCase
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/-0.03em/, sane.inner_html
   end
+
+  def test_css_negative_value_sanitization_shorthand_css_properties
+    html = "<span style=\"margin-left:-0.05em;\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/-0.05em/, sane.inner_html
+  end
 end
 
 # <html5_license>
