@@ -97,6 +97,14 @@ class Html5TestSanitizer < Loofah::TestCase
     check_sanitization(input, htmloutput, output, output)
   end
 
+  def test_should_allow_data_attributes_with_dash
+    input = "<p data-index-number='123456'>123456</p>"
+
+    output = "<p data-index-number='123456'>123456</p>"
+    check_sanitization(input, output, output, output)
+  end
+
+
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##

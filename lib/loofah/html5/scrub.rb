@@ -23,7 +23,7 @@ module Loofah
                           attr_node.node_name
                         end
 
-            if attr_name =~ /\Adata-\w+\z/
+            if attr_name =~ /\Adata-\S+\z/
               next
             end
 
