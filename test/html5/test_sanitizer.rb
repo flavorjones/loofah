@@ -97,6 +97,13 @@ class Html5TestSanitizer < Loofah::TestCase
     check_sanitization(input, htmloutput, output, output)
   end
 
+  def test_should_allow_multi_word_data_attributes
+    input = "<p data-foo-bar-id='11'>foo <bad>bar</bad> baz</p>"
+    output = htmloutput = "<p data-foo-bar-id='11'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+
+    check_sanitization(input, htmloutput, output, output)
+  end
+
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##
