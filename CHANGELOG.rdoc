@@ -6,6 +6,7 @@ Bug fixes:
 
 * Fix error with `#to_text` when Loofah::Helpers hadn't been required. #75
 * Allow multi-word data attributes. #84 (Thanks, @jstorimer!)
+* Allow negative values in CSS properties. #85 (Thanks, @siddhartham!)
 
 
 == 2.0.1 / 2014-08-21
