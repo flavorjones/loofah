@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
-# stub: loofah 2.0.1.20140822104400 ruby lib
+# stub: loofah 2.0.2.20150505160052 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "loofah"
-  s.version = "2.0.1.20140822104400"
+  s.version = "2.0.2.20150505160052"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Mike Dalessio", "Bryan Helmkamp"]
-  s.date = "2014-08-22"
+  s.date = "2015-05-05"
   s.description = "Loofah is a general library for manipulating and transforming HTML/XML\ndocuments and fragments. It's built on top of Nokogiri and libxml2, so\nit's fast and has a nice API.\n\nLoofah excels at HTML sanitization (XSS prevention). It includes some\nnice HTML sanitizers, which are based on HTML5lib's whitelist, so it\nmost likely won't make your codes less secure. (These statements have\nnot been evaluated by Netexperts.)\n\nActiveRecord extensions for sanitization are available in the\n`loofah-activerecord` gem (see\nhttps://github.com/flavorjones/loofah-activerecord)."
   s.email = ["mike.dalessio@gmail.com", "bryan@brynary.com"]
   s.extra_rdoc_files = ["CHANGELOG.rdoc", "MIT-LICENSE.txt", "Manifest.txt", "README.rdoc", "CHANGELOG.rdoc", "README.rdoc"]
@@ -16,9 +16,8 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/flavorjones/loofah"
   s.licenses = ["MIT"]
   s.rdoc_options = ["--main", "README.rdoc"]
-  s.rubygems_version = "2.2.2"
+  s.rubygems_version = "2.4.5"
   s.summary = "Loofah is a general library for manipulating and transforming HTML/XML documents and fragments"
-  s.test_files = ["test/html5/test_sanitizer.rb", "test/unit/test_helpers.rb", "test/unit/test_scrubbers.rb", "test/unit/test_scrubber.rb", "test/unit/test_encoding.rb", "test/unit/test_api.rb", "test/integration/test_helpers.rb", "test/integration/test_xml.rb", "test/integration/test_ad_hoc.rb", "test/integration/test_scrubbers.rb", "test/integration/test_html.rb"]
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
@@ -34,7 +33,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<hoe-debugging>, [">= 0"])
       s.add_development_dependency(%q<hoe-bundler>, [">= 0"])
       s.add_development_dependency(%q<hoe-git>, [">= 0"])
-      s.add_development_dependency(%q<hoe>, ["~> 3.12"])
+      s.add_development_dependency(%q<hoe>, ["~> 3.13"])
     else
       s.add_dependency(%q<nokogiri>, [">= 1.5.9"])
       s.add_dependency(%q<rdoc>, ["~> 4.0"])
@@ -46,7 +45,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<hoe-debugging>, [">= 0"])
       s.add_dependency(%q<hoe-bundler>, [">= 0"])
       s.add_dependency(%q<hoe-git>, [">= 0"])
-      s.add_dependency(%q<hoe>, ["~> 3.12"])
+      s.add_dependency(%q<hoe>, ["~> 3.13"])
     end
   else
     s.add_dependency(%q<nokogiri>, [">= 1.5.9"])
@@ -59,6 +58,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<hoe-debugging>, [">= 0"])
     s.add_dependency(%q<hoe-bundler>, [">= 0"])
     s.add_dependency(%q<hoe-git>, [">= 0"])
-    s.add_dependency(%q<hoe>, ["~> 3.12"])
+    s.add_dependency(%q<hoe>, ["~> 3.13"])
   end
 end
