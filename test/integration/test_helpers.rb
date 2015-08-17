@@ -37,7 +37,7 @@ class IntegrationTestHelpers < Loofah::TestCase
 
   context ".sanitize_css" do
     it "removes unsafe css properties" do
-      assert_equal "display: block; background-color: blue;", Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg);background-color:blue")
+      assert_match /display:\s*block;\s*background-color:\s*blue;/, Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg);background-color:blue")
     end
   end
 end

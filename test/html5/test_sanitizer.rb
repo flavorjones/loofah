@@ -229,14 +229,12 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   def test_css_negative_value_sanitization
-    skip "pending better CSS parsing, see https://github.com/flavorjones/loofah/issues/90"
     html = "<span style=\"letter-spacing:-0.03em;\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/-0.03em/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization_shorthand_css_properties
-    skip "pending better CSS parsing, see https://github.com/flavorjones/loofah/issues/90"
     html = "<span style=\"margin-left:-0.05em;\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/-0.05em/, sane.inner_html
@@ -248,6 +246,31 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_completes_in_reasonable_time {
       Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     }
+  end
+
+  def test_upper_case_css_property
+    html = "<div style=\"COLOR: BLUE; NOTAPROPERTY: RED;\">asdf</div>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    assert_match /COLOR:\s*BLUE/i, sane.at_css("div")["style"]
+    refute_match /NOTAPROPERTY/i, sane.at_css("div")["style"]
+  end
+
+  def test_many_properties_some_allowed
+    html = "<div style=\"background: bold notaproperty center alsonotaproperty 10px;\">asdf</div>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    assert_match /bold\s+center\s+10px/, sane.at_css("div")["style"]
+  end
+
+  def test_many_properties_non_allowed
+    html = "<div style=\"background: notaproperty alsonotaproperty;\">asdf</div>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    assert_nil sane.at_css("div")["style"]
+  end
+
+  def test_svg_properties
+    html = "<line style='stroke-width: 10px;'></line>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    assert_match /stroke-width:\s*10px/, sane.at_css("line")["style"]
   end
 end
 
