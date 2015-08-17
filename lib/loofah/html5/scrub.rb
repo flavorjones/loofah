@@ -67,7 +67,7 @@ module Loofah
           style = style.to_s.gsub(/url\s*\(\s*[^\s)]+?\s*\)\s*/, ' ')
 
           # gauntlet
-          return '' unless style =~ /\A([-:,;#%.\sa-zA-Z0-9!]|\w-\w|\'[\s\w]+\'|\"[\s\w]+\"|\([\d,\s]+\))*\z/
+          return '' unless style =~ /\A([:,;#%.\sa-zA-Z0-9!]|\w-\w|\'[\s\w]+\'|\"[\s\w]+\"|\([\d,\s]+\))*\z/
           return '' unless style =~ /\A\s*([-\w]+\s*:[^:;]*(;\s*|$))*\z/
 
           clean = []

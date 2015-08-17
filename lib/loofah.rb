@@ -27,7 +27,7 @@ require 'loofah/html/document_fragment'
 #
 module Loofah
   # The version of Loofah you are using
-  VERSION = '2.0.2'
+  VERSION = '2.0.3'
 
   class << self
     # Shortcut for Loofah::HTML::Document.parse
