@@ -229,12 +229,14 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   def test_css_negative_value_sanitization
+    skip "pending better CSS parsing, see https://github.com/flavorjones/loofah/issues/90"
     html = "<span style=\"letter-spacing:-0.03em;\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/-0.03em/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization_shorthand_css_properties
+    skip "pending better CSS parsing, see https://github.com/flavorjones/loofah/issues/90"
     html = "<span style=\"margin-left:-0.05em;\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/-0.05em/, sane.inner_html
