@@ -243,6 +243,8 @@ class Html5TestSanitizer < Loofah::TestCase
   def test_issue_90_slow_regex
     html = %q{<span style="background: url('data:image/svg&#43;xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23D4C8AE%22%20d%3D%22M0%200h32v32h-32z%22%2F%3E%3Cpath%20fill%3D%22%2383604B%22%20d%3D%22M0%200h31.99v11.75h-31.99z%22%2F%3E%3Cpath%20fill%3D%22%233D2319%22%20d%3D%22M0%2011.5h32v.5h-32z%22%2F%3E%3Cpath%20fill%3D%22%23F83651%22%20d%3D%22M5%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%23FCD050%22%20d%3D%22M6%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%2371C797%22%20d%3D%22M7%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%23509CF9%22%20d%3D%22M8%200h1v10.5h-1z%22%2F%3E%3ClinearGradient%20id%3D%22a%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2224.996%22%20y1%3D%2210.5%22%20x2%3D%2224.996%22%20y2%3D%224.5%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23796055%22%2F%3E%3Cstop%20offset%3D%22.434%22%20stop-color%3D%22%23614C43%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233D2D28%22%2F%3E%3C%2FlinearGradient%3E%3Cpath%20fill%3D%22url(%23a)%22%20d%3D%22M28%208.5c0%201.1-.9%202-2%202h-2c-1.1%200-2-.9-2-2v-2c0-1.1.9-2%202-2h2c1.1%200%202%20.9%202%202v2z%22%2F%3E%3Cpath%20fill%3D%22%235F402E%22%20d%3D%22M28%208c0%201.1-.9%202-2%202h-2c-1.1%200-2-.9-2-2v-2c0-1.1.9-2%202-2h2c1.1%200%202%20.9%202%202v2z%22%2F%3E%3C');"></span>}
 
+    html = %q{<span style='mso-effects-reflection-anglekx: 0; mso-effects-reflection-angleky: 0; mso-effects-reflection-pctalphastart: 28.0%; mso-effects-reflection-pctstartpos: 0%; mso-effects-reflection-pctalphaend: 0%; mso-effects-reflection-pctendpos: 45.0%; mso-effects-reflection-angfadedirection: 5400000; mso-effects-reflection-align: bottomleft; mso-style-textoutline-fill-colortransforms: \"shade=50000 satm=120000\"; mso-style-textfill-type: gradient; mso-style-textfill-fill-gradientfill-shadetype: linear; mso-style-textfill-fill-gradientfill-shade-linearshade-angle: 5400000; mso-style-textfill-fill-gradientfill-shade-linearshade-fscaled: no;'>asdf</span>}
+
     assert_completes_in_reasonable_time {
       Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     }
@@ -251,14 +253,14 @@ class Html5TestSanitizer < Loofah::TestCase
   def test_upper_case_css_property
     html = "<div style=\"COLOR: BLUE; NOTAPROPERTY: RED;\">asdf</div>"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
-    assert_match /COLOR:\s*BLUE/i, sane.at_css("div")["style"]
-    refute_match /NOTAPROPERTY/i, sane.at_css("div")["style"]
+    assert_match(/COLOR:\s*BLUE/i, sane.at_css("div")["style"])
+    refute_match(/NOTAPROPERTY/i, sane.at_css("div")["style"])
   end
 
   def test_many_properties_some_allowed
     html = "<div style=\"background: bold notaproperty center alsonotaproperty 10px;\">asdf</div>"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
-    assert_match /bold\s+center\s+10px/, sane.at_css("div")["style"]
+    assert_match(/bold\s+center\s+10px/, sane.at_css("div")["style"])
   end
 
   def test_many_properties_non_allowed
@@ -270,7 +272,7 @@ class Html5TestSanitizer < Loofah::TestCase
   def test_svg_properties
     html = "<line style='stroke-width: 10px;'></line>"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
-    assert_match /stroke-width:\s*10px/, sane.at_css("line")["style"]
+    assert_match(/stroke-width:\s*10px/, sane.at_css("line")["style"])
   end
 end
 
