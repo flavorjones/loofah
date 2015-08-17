@@ -1,12 +1,15 @@
 #encoding: US-ASCII
 
 require 'cgi'
+require 'crass'
 
 module Loofah
   module HTML5 # :nodoc:
     module Scrub
 
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
+      CSS_KEYWORDISH = /\A(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)\z/
+      CRASS_SEMICOLON = {:node => :semicolon, :raw => ";"}
 
       class << self
 
@@ -61,36 +64,35 @@ module Loofah
           style.value = scrub_css(style.value) if style
         end
 
-        #  lifted nearly verbatim from html5lib
         def scrub_css style
-          # disallow urls
-          style = style.to_s.gsub(/url\s*\(\s*[^\s)]+?\s*\)\s*/, ' ')
+          style_tree = Crass.parse_properties style
+          sanitized_tree = []
 
-          # gauntlet
-          return '' unless style =~ /\A([:,;#%.\sa-zA-Z0-9!]|\w-\w|\'[\s\w]+\'|\"[\s\w]+\"|\([\d,\s]+\))*\z/
-          return '' unless style =~ /\A\s*([-\w]+\s*:[^:;]*(;\s*|$))*\z/
-
-          clean = []
-          style.scan(/([-\w]+)\s*:\s*([^:;]*)/) do |prop, val|
-            next if val.empty?
-            prop.downcase!
-            if WhiteList::ALLOWED_CSS_PROPERTIES.include?(prop)
-              clean << "#{prop}: #{val};"
-            elsif WhiteList::SHORTHAND_CSS_PROPERTIES.include?(prop.split('-')[0])
-              clean << "#{prop}: #{val};" unless val.split().any? do |keyword|
-                !WhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) &&
-                  keyword !~ /\A(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)\z/
+          style_tree.each do |node|
+            next unless node[:node] == :property
+            next if node[:children].any? do |child|
+              [:url, :bad_url, :function].include? child[:node]
+            end
+            name = node[:name].downcase
+            if WhiteList::ALLOWED_CSS_PROPERTIES.include?(name) || WhiteList::ALLOWED_SVG_PROPERTIES.include?(name)
+              sanitized_tree << node << CRASS_SEMICOLON
+            elsif WhiteList::SHORTHAND_CSS_PROPERTIES.include?(name.split('-').first)
+              value = node[:value].split.map do |keyword|
+                if WhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) || keyword =~ CSS_KEYWORDISH
+                  keyword
+                end
+              end.compact
+              unless value.empty?
+                propstring = sprintf "%s:%s", name, value.join(" ")
+                sanitized_node = Crass.parse_properties(propstring).first
+                sanitized_tree << sanitized_node << CRASS_SEMICOLON
               end
-            elsif WhiteList::ALLOWED_SVG_PROPERTIES.include?(prop)
-              clean << "#{prop}: #{val};"
             end
           end
 
-          style = clean.join(' ')
+          Crass::Parser.stringify sanitized_tree
         end
-
       end
-
     end
   end
 end

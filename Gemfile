@@ -5,6 +5,7 @@
 source "https://rubygems.org/"
 
 gem "nokogiri", ">=1.5.9"
+gem "crass", "~>1.0.2"
 
 gem "rdoc", "~>4.0", :group => [:development, :test]
 gem "rake", ">=0.8", :group => [:development, :test]
@@ -15,6 +16,6 @@ gem "hoe-gemspec", ">=0", :group => [:development, :test]
 gem "hoe-debugging", ">=0", :group => [:development, :test]
 gem "hoe-bundler", ">=0", :group => [:development, :test]
 gem "hoe-git", ">=0", :group => [:development, :test]
-gem "hoe", "~>3.6", :group => [:development, :test]
+gem "hoe", "~>3.13", :group => [:development, :test]
 
 # vim: syntax=ruby

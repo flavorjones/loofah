@@ -17,6 +17,7 @@ Hoe.spec "loofah" do
   self.license          "MIT"
 
   extra_deps     << ["nokogiri", ">=1.5.9"]
+  extra_deps     << ["crass", "~> 1.0.2"]
 
   extra_dev_deps << ["rake", ">=0.8"]
   extra_dev_deps << ["minitest", "~>2.2"]
