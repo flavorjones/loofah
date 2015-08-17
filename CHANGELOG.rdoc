@@ -1,5 +1,16 @@
 = Changelog
 
+== 2.1.0.rc1 / 2015-08-17
+
+Notes:
+
+* Re-implemented CSS parsing and sanitization using the {crass}[https://github.com/rgrove/crass] library. #91
+
+Bug fixes:
+
+* Allow negative values in CSS properties. Restores functionality that was reverted in v2.0.3. #91
+
+
 == 2.0.3 / 2015-08-17
 
 Bug fixes:
