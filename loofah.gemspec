@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<nokogiri>, [">= 1.5.9"])
+      s.add_runtime_dependency(%q<nokogiri>, [">= 1.6.6.4"])
       s.add_runtime_dependency(%q<crass>, ["~> 1.0.2"])
       s.add_development_dependency(%q<rdoc>, ["~> 4.0"])
       s.add_development_dependency(%q<rake>, [">= 0.8"])
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<hoe-git>, [">= 0"])
       s.add_development_dependency(%q<hoe>, ["~> 3.13"])
     else
-      s.add_dependency(%q<nokogiri>, [">= 1.5.9"])
+      s.add_dependency(%q<nokogiri>, [">= 1.6.6.4"])
       s.add_dependency(%q<crass>, ["~> 1.0.2"])
       s.add_dependency(%q<rdoc>, ["~> 4.0"])
       s.add_dependency(%q<rake>, [">= 0.8"])
@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<hoe>, ["~> 3.13"])
     end
   else
-    s.add_dependency(%q<nokogiri>, [">= 1.5.9"])
+    s.add_dependency(%q<nokogiri>, [">= 1.6.6.4"])
     s.add_dependency(%q<crass>, ["~> 1.0.2"])
     s.add_dependency(%q<rdoc>, ["~> 4.0"])
     s.add_dependency(%q<rake>, [">= 0.8"])
