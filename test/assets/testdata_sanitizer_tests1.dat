@@ -345,6 +345,7 @@
     "name": "should_sanitize_script_tag_with_multiple_open_brackets",
     "input": "<<script>alert(\"XSS\");//<</script>",
     "output": "alert(\"XSS\");//",
+    "xhtml": "&lt;&lt;script&gt;alert('XSS');//&lt;&lt;/script&gt;",
     "rexml": "Ill-formed XHTML!"
   },
 
