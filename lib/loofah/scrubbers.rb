@@ -59,6 +59,15 @@ module Loofah
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
   #
   #
+  #  === Loofah::Scrubbers::NoOpener / scrub!(:noopener)
+  #
+  #  +:noopener+ adds a rel="noopener" attribute to all links
+  #
+  #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+  #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+  #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
+  #
+  #
   #  === Loofah::Scrubbers::Unprintable / scrub!(:unprintable)
   #
   #  +:unprintable+ removes unprintable Unicode characters.
@@ -197,6 +206,27 @@ module Loofah
       end
     end
 
+    #
+    #  === scrub!(:nofollow)
+    #
+    #  +:noopener+ adds a rel="noopener" attribute to all links
+    #
+    #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+    #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+    #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
+    #
+    class NoOpener < Scrubber
+      def initialize
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
+        node.set_attribute('rel', 'noopener')
+        return STOP
+      end
+    end
+
     # This class probably isn't useful publicly, but is used for #to_text's current implemention
     class NewlineBlockElements < Scrubber # :nodoc:
       def initialize
@@ -247,6 +277,7 @@ module Loofah
       :whitewash => Whitewash,
       :strip     => Strip,
       :nofollow  => NoFollow,
+      :noopener => NoOpener,
       :newline_block_elements => NewlineBlockElements,
       :unprintable => Unprintable
     }

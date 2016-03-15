@@ -13,6 +13,9 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
+  NOOPENER_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
+  NOOPENER_RESULT   = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
+
   UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b>"
 
@@ -249,6 +252,16 @@ class IntegrationTestScrubbers < Loofah::TestCase
           result = doc.scrub! :nofollow
 
           assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
+      end
+
+      context ":noopener" do
+        it "add a 'noopener' attribute to hyperlinks" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_FRAGMENT}</div>"
+          result = doc.scrub! :noopener
+
+          assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
       end
