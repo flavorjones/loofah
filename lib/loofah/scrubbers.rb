@@ -201,13 +201,13 @@ module Loofah
 
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
-        node.set_attribute('rel', 'nofollow')
+        append_attribute(node, 'rel', 'nofollow')
         return STOP
       end
     end
 
     #
-    #  === scrub!(:nofollow)
+    #  === scrub!(:noopener)
     #
     #  +:noopener+ adds a rel="noopener" attribute to all links
     #
@@ -222,7 +222,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
-        node.set_attribute('rel', 'noopener')
+        append_attribute(node, 'rel', 'noopener')
         return STOP
       end
     end
