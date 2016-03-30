@@ -52,8 +52,8 @@ module Loofah
       details dfn dir div dl dt em fieldset figcaption figure footer
       font form h1 h2 h3 h4 h5 h6 header hr i img input ins kbd label
       legend li map mark menu meter nav ol output optgroup option p
-      pre q s samp section select small span strike strong sub summary
-      sup table tbody td textarea tfoot th thead time tr tt u ul var
+      pre q s samp section select small source span strike strong sub summary
+      sup table tbody td textarea tfoot th thead time tr track tt u ul var
       video]
 
       MATHML_ELEMENTS = Set.new %w[annotation annotation-xml maction math merror mfrac
@@ -72,10 +72,10 @@ module Loofah
       align alt axis border cellpadding cellspacing char charoff charset
       checked cite class clear cols colspan color compact coords datetime
       dir disabled enctype for frame headers height href hreflang hspace id
-      ismap label lang longdesc loop loopcount loopend loopstart
+      ismap kind label lang longdesc loop loopcount loopend loopstart
       maxlength media method multiple name nohref
       noshade nowrap poster preload prompt readonly rel rev rows rowspan rules scope
-      selected shape size span src start style summary tabindex target title
+      selected shape size span src srclang start style summary tabindex target title
       type usemap valign value vspace width xml:lang]
 
       MATHML_ATTRIBUTES = Set.new %w[actiontype align close
