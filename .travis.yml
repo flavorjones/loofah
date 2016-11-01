@@ -14,8 +14,9 @@ rvm:
   - rbx-2
 
 matrix:
-  - rvm: jruby-9.1.5.0
-    env: JRUBY_OPTS="--dev -J-Djruby.launch.inproc=true -J-Xmx1024M"
+  include:
+    - rvm: jruby-9.1.5.0
+      env: JRUBY_OPTS="--dev -J-Djruby.launch.inproc=true -J-Xmx1024M"
   allow_failures:
     - rvm: jruby-1.7.22
     - rvm: jruby-9.1.5.0
