@@ -2,6 +2,7 @@ language: ruby
 sudo: required
 dist: trusty
 group: stable
+cache: bundler
 
 matrix:
   include:
