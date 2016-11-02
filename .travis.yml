@@ -1,7 +1,7 @@
 language: ruby
 sudo: required
 dist: trusty
-group: stable
+group: beta
 cache: bundler
 
 matrix:
