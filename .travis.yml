@@ -1,7 +1,7 @@
 language: ruby
-sudo: false
+sudo: required
 dist: trusty
-group: beta
+group: stable
 
 matrix:
   include:
