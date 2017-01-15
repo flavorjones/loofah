@@ -13,6 +13,15 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
+  NOFOLLOW_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
+  NOFOLLOW_WITH_REL_RESULT   = '<a href="http://www.example.com/" rel="noopener nofollow">Click here</a>'
+
+  NOOPENER_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
+  NOOPENER_RESULT   = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
+
+  NOOPENER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
+  NOOPENER_WITH_REL_RESULT   = '<a href="http://www.example.com/" rel="nofollow noopener">Click here</a>'
+
   UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b>"
 
@@ -244,12 +253,49 @@ class IntegrationTestScrubbers < Loofah::TestCase
       end
 
       context ":nofollow" do
-        it "add a 'nofollow' attribute to hyperlinks" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
-          result = doc.scrub! :nofollow
 
-          assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
-          assert_equal doc, result
+        context "for a hyperlink that does not have a rel attribute" do
+          it "add a 'nofollow' attribute to hyperlinks" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
+            result = doc.scrub! :nofollow
+
+            assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
+        end
+
+        context "for a hyperlink that does have a rel attribute" do
+          it "appends nofollow to rel attribute" do
+              doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
+              result = doc.scrub! :nofollow
+
+              assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
+              assert_equal doc, result
+          end
+        end
+
+
+      end
+
+      context ":noopener" do
+        context "for a hyperlink without a 'rel' attribute" do
+          it "add a 'noopener' attribute to hyperlinks" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_FRAGMENT}</div>"
+            result = doc.scrub! :noopener
+
+            assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
+        end
+
+        context "for a hyperlink that does have a rel attribute" do
+          it "appends 'noopener' to 'rel' attribute" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
+            result = doc.scrub! :noopener
+
+            assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
         end
       end
 

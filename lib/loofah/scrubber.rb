@@ -86,6 +86,17 @@ module Loofah
       raise ScrubberNotFound, "No scrub method has been defined on #{self.class.to_s}"
     end
 
+    #
+    # If the attribute is not set, add it
+    # If the attribute is set, don't overwrite the existing value
+    #
+    def append_attribute(node, attribute, value)
+      current_value = node.get_attribute(attribute) || ''
+      current_values = current_value.split(/\s+/)
+      updated_value = current_values | [value]
+      node.set_attribute(attribute, updated_value.join(' '))
+    end
+
     private
 
     def html5lib_sanitize(node)
