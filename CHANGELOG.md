@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.0.rc3 / unreleased
+
+Features:
+
+* Added :noopener HTML scrubber (Thanks, @tastycode!)
+
+
 ## 2.1.0.rc2 / 2016-01-11
 
 Notes:
