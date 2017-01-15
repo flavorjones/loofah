@@ -1,20 +1,30 @@
 language: ruby
-
-sudo: false
-
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.1.7
-  - 2.2.3
-  - ruby-head
-  - jruby-1.7.22
-  - jruby-9.0.1.0
-  - rbx-19mode
-  - rbx-2
+sudo: required
+dist: trusty
+group: beta
+cache: bundler
 
 matrix:
+  include:
+    - rvm: 1.9.3
+    - rvm: 2.0.0
+    - rvm: 2.1.10
+    - rvm: 2.2.5
+    - rvm: 2.3.1
+    - rvm: ruby-head
+    - rvm: jruby-9.1.5.0
+      env: JRUBY_OPTS="--dev -J-Djruby.launch.inproc=true -J-Xmx1024M"
+    - rvm: jruby-1.7.26
+      env: JRUBY_OPTS="--dev -J-Djruby.launch.inproc=true -J-Xmx1024M"
+    - rvm: rbx-3
   allow_failures:
-    - rvm: jruby-1.7.22
-    - rvm: jruby-9.0.1.0
-    - rvm: rbx-2
+    - rvm: jruby-1.7.26
+    - rvm: jruby-9.1.5.0
+    - rvm: rbx-3
+
+# https://github.com/jruby/jruby/wiki/FAQs#why-is-jruby-so-slow-to-install-via-rvm
+# https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
+addons:
+  apt:
+    packages:
+    - haveged
