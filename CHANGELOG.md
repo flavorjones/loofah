@@ -1,6 +1,6 @@
-= Changelog
+# Changelog
 
-== 2.1.0.rc2 / 2016-01-11
+## 2.1.0.rc2 / 2016-01-11
 
 Notes:
 
@@ -13,14 +13,14 @@ Bug fixes:
 * Allow negative values in CSS properties. Restores functionality that was reverted in v2.0.3. #91
 
 
-== 2.0.3 / 2015-08-17
+## 2.0.3 / 2015-08-17
 
 Bug fixes:
 
 * Revert support for negative values in CSS properties due to slow performance. #90 (Related to #85.)
 
 
-== 2.0.2 / 2015-05-05
+## 2.0.2 / 2015-05-05
 
 Bug fixes:
 
@@ -29,7 +29,7 @@ Bug fixes:
 * Allow negative values in CSS properties. #85 (Thanks, @siddhartham!)
 
 
-== 2.0.1 / 2014-08-21
+## 2.0.1 / 2014-08-21
 
 Bug fixes:
 
@@ -41,7 +41,7 @@ Notes:
 * Extracted HTML5::Scrub#scrub_css_attribute to accommodate the Rails integration work. (Thanks, @kaspth!)
 
 
-== 2.0.0 / 2014-05-09
+## 2.0.0 / 2014-05-09
 
 Compatibility notes:
 
@@ -64,12 +64,12 @@ Bug fixes:
 * HTML5 sanitizers now allow negative arguments to CSS. #64 (Thanks, Jon Calhoun!)
 
 
-== 1.2.1 (2012-04-14)
+## 1.2.1 (2012-04-14)
 
 * Declaring encoding in html5/scrub.rb. Without this, use of the ruby -KU option would cause havoc. (#32)
 
 
-== 1.2.0 (2011-08-08)
+## 1.2.0 (2011-08-08)
 
 Enhancements:
 
@@ -77,7 +77,7 @@ Enhancements:
 * Improving ActionView integration.
 
 
-== 1.1.0 (2011-08-08)
+## 1.1.0 (2011-08-08)
 
 Enhancements:
 
@@ -87,7 +87,7 @@ Enhancements:
 * Don't explode when encountering UTF-8 URIs. (#25, #29)
 
 
-== 1.0.0 (2010-10-26)
+## 1.0.0 (2010-10-26)
 
 Notes:
 
@@ -95,7 +95,7 @@ Notes:
 * Removed DEPRECATIONS.rdoc documenting 0.3.0 API changes.
 
 
-== 0.4.7 (2010-03-09)
+## 0.4.7 (2010-03-09)
 
 Enhancements:
 
@@ -108,7 +108,7 @@ Enhancements:
   will return unescaped HTML entities by passing :encode_special_chars => false.
 
 
-== 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
+## 0.4.4, 0.4.5, 0.4.6 (2010-02-01)
 
 Enhancements:
 
@@ -119,7 +119,7 @@ Bug fixes:
 * Loofah::XssFoliate was not properly escaping HTML entities when implicitly scrubbing a string attribute. GH #17
 
 
-== 0.4.3 (2010-01-29)
+## 0.4.3 (2010-01-29)
 
 Enhancements:
 
@@ -133,7 +133,7 @@ Miscellaneous:
   be safe, always use an initializer file.
 
 
-== 0.4.2 (2010-01-22)
+## 0.4.2 (2010-01-22)
 
 Enhancements:
 
@@ -152,14 +152,14 @@ Miscellaneous:
 * IRC channel is now \#loofah on freenode.
 
 
-== 0.4.1 (2009-11-23)
+## 0.4.1 (2009-11-23)
 
 Bugfix:
 
 * Manifest fixed. Whoops.
 
 
-== 0.4.0 (2009-11-21)
+## 0.4.0 (2009-11-21)
 
 Enhancements:
 
@@ -170,14 +170,14 @@ Enhancements:
 
 
 
-== 0.3.1 (2009-10-12)
+## 0.3.1 (2009-10-12)
 
 Bug fixes:
 
 * Scrubbed Documents properly render html, head and body tags when serialized.
 
 
-== 0.3.0 (2009-10-06)
+## 0.3.0 (2009-10-06)
 
 Enhancements:
 
@@ -192,7 +192,7 @@ Deprecations:
   details on the equivalent calls with the post-0.2 API.
 
 
-== 0.2.2 (2009-09-30)
+## 0.2.2 (2009-09-30)
 
 Enhancements:
 
@@ -200,7 +200,7 @@ Enhancements:
   (was previously in a before_save)
 
 
-== 0.2.1 (2009-09-19)
+## 0.2.1 (2009-09-19)
 
 Enhancements:
 
@@ -215,7 +215,7 @@ Bugfixes:
   (Thanks Josh Nichols!)
 
 
-== 0.2.0 (2009-09-11)
+## 0.2.0 (2009-09-11)
 
 * Swank new API.
 * ActiveRecord extension.
@@ -225,11 +225,11 @@ Bugfixes:
 * Documentation! Hey!
 
 
-== 0.1.2 (2009-04-30)
+## 0.1.2 (2009-04-30)
 
 * Added whitewashing -- removal of all attributes and namespaced nodes. You know, for microsofty HTML.
 
 
-== 0.1.0 (2009-02-10)
+## 0.1.0 (2009-02-10)
 
 * Birthday!
