@@ -4,6 +4,10 @@ dist: trusty
 group: beta
 cache: bundler
 
+before_install:
+  - gem update --system
+  - gem install bundler --pre
+
 matrix:
   include:
     - rvm: 1.9.3
