@@ -9,7 +9,7 @@ gem "crass", "~>1.0.2"
 
 gem "rake", ">=0.8", :group => [:development, :test]
 gem "minitest", "~>2.2", :group => [:development, :test]
-gem "rr", "~>1.1.0", :group => [:development, :test]
+gem "rr", "~>1.2.0", :group => [:development, :test]
 if RUBY_VERSION > '2.4'
   gem "json", ">= 2.0", :group => [:development, :test]
   gem "rdoc", ">= 5.0.0.beta2", :group => [:development, :test]
