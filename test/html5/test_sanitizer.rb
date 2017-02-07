@@ -34,7 +34,7 @@ class Html5TestSanitizer < Loofah::TestCase
   def assert_completes_in_reasonable_time &block
     t0 = Time.now
     block.call
-    assert_in_delta t0, Time.now, 0.01 # arbitrary seconds
+    assert_in_delta t0, Time.now, 0.1 # arbitrary seconds
   end
 
   (HTML5::WhiteList::ALLOWED_ELEMENTS).each do |tag_name|
