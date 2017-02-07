@@ -153,7 +153,8 @@ jobs:
         version: every
         passed:
           - ruby-<%= RUBIES[:mri].last %>-pr
-#          - jruby-<%= RUBIES[:jruby].last %>-pr
+          ## allow-failure
+          # - jruby-<%= RUBIES[:jruby].last %>-pr
           - rbx-<%= RUBIES[:rbx].last %>-pr
       - put: loofah-pr
         params:
@@ -192,6 +193,7 @@ jobs:
           inputs:
             - name: loofah-pr
               path: loofah
+        ## allow-failure
         # on_failure:
         #   put: loofah-pr
         #   params:
