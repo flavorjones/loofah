@@ -1,6 +1,7 @@
 require 'rubygems'
 gem 'hoe', '>= 2.3.0'
 require 'hoe'
+require 'concourse'
 
 Hoe.plugin :git
 Hoe.plugin :gemspec
@@ -27,6 +28,7 @@ Hoe.spec "loofah" do
   extra_dev_deps << ["hoe-debugging", ">=0"]
   extra_dev_deps << ["hoe-bundler", ">=0"]
   extra_dev_deps << ["hoe-git", ">=0"]
+  extra_dev_deps << ["concourse", ">=0"]
 end
 
 task :gemspec do
@@ -73,3 +75,5 @@ desc "generate whitelists from W3C specifications"
 task :generate_whitelists do
   load "tasks/generate-whitelists"
 end
+
+Concourse.new("loofah").create_tasks!

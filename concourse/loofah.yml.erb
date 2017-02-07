@@ -1,0 +1,216 @@
+<%
+def anchorify string
+  string.tr '^a-zA-Z0-9', '_'
+end
+%>
+
+groups:
+  - name: loofah
+    jobs:
+      <% for ruby_version in RUBIES[:mri] %>
+        - "ruby-<%= ruby_version %>"
+      <% end %>
+      <% for jruby_version in RUBIES[:jruby] %>
+        - "jruby-<%= jruby_version %>"
+      <% end %>
+      <% for rbx_version in RUBIES[:rbx] %>
+        - "rbx-<%= rbx_version %>"
+      <% end %>
+  - name: PRs
+    jobs:
+      - pr-pending
+      - ruby-<%= RUBIES[:mri].last %>-pr
+      - jruby-<%= RUBIES[:jruby].last %>-pr
+      - rbx-<%= RUBIES[:rbx].last %>-pr
+      - pr-success
+
+resources:
+  - name: loofah
+    type: git
+    source:
+      uri: https://github.com/flavorjones/loofah/
+      branch: master
+      ignore_paths:
+        - concourse/**
+  - name: loofah-pr
+    type: pull-request
+    source:
+      repo: flavorjones/loofah
+      access_token: {{github-repo-status-access-token}}
+      ignore_paths:
+        - concourse/**
+
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+jobs:
+  <% for ruby_version in RUBIES[:mri] %>
+  - name: ruby-<%= ruby_version %>
+    public: true
+    plan:
+      - get: loofah
+        trigger: true
+      - task: rake-test
+        config: &<%= anchorify "ruby-#{ruby_version}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source:
+              repository: ruby
+              tag: "<%= ruby_version %>"
+          platform: linux
+          inputs:
+            - name: loofah
+          run:
+            dir: loofah
+            path: bash
+            args:
+              - "-ce"
+              - |
+                bundle config build.nokogiri --use-system-libraries
+                bundle install
+                bundle exec rake test
+  <% end %>
+
+  <% for jruby_version in RUBIES[:jruby] %>
+  - name: jruby-<%= jruby_version %>
+    public: true
+    plan:
+      - get: loofah
+        trigger: true
+      - task: rake-test
+        config: &<%= anchorify "jruby-#{jruby_version}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source:
+              repository: jruby
+              tag: "<%= jruby_version %>-jdk"
+          platform: linux
+          inputs:
+            - name: loofah
+          params:
+            JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
+          run:
+            dir: loofah
+            path: bash
+            args:
+              - "-ce"
+              - |
+                bundle install
+                bundle exec rake test
+  <% end %>
+
+  <% for rbx_version in RUBIES[:rbx] %>
+  - name: rbx-<%= rbx_version %>
+    public: true
+    plan:
+      - get: loofah
+        trigger: true
+      - task: rake-test
+        config: &<%= anchorify "rbx-#{rbx_version}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source:
+              repository: rubinius/docker
+              tag: "<%= rbx_version %>"
+          platform: linux
+          inputs:
+            - name: loofah
+          run:
+            dir: loofah
+            path: bash
+            args:
+              - "-ce"
+              - |
+                apt-get update
+                apt-get install -y ca-certificates gcc pkg-config libxml2-dev libxslt-dev
+                bundle config build.nokogiri --use-system-libraries
+                bundle install
+                bundle exec rake test
+  <% end %>
+
+  - name: pr-pending
+    public: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+      - put: loofah-pr
+        params:
+          path: loofah-pr
+          status: pending
+
+  - name: pr-success
+    public: true
+    disable_manual_trigger: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed:
+          - ruby-<%= RUBIES[:mri].last %>-pr
+          - jruby-<%= RUBIES[:jruby].last %>-pr
+          - rbx-<%= RUBIES[:rbx].last %>-pr
+      - put: loofah-pr
+        params:
+          path: loofah-pr
+          status: success
+
+  - name: ruby-<%= RUBIES[:mri].last %>-pr
+    public: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          <<: *<%= anchorify "ruby-#{RUBIES[:mri].last}-rake-test-config" %>
+          inputs:
+            - name: loofah-pr
+              path: loofah
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+
+  - name: jruby-<%= RUBIES[:jruby].last %>-pr
+    public: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          <<: *<%= anchorify "jruby-#{RUBIES[:jruby].last}-rake-test-config" %>
+          inputs:
+            - name: loofah-pr
+              path: loofah
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+
+  - name: rbx-<%= RUBIES[:rbx].last %>-pr
+    public: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          <<: *<%= anchorify "rbx-#{RUBIES[:rbx].last}-rake-test-config" %>
+          inputs:
+            - name: loofah-pr
+              path: loofah
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
