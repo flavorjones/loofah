@@ -8,21 +8,23 @@ groups:
   - name: loofah
     jobs:
       <% for ruby_version in RUBIES[:mri] %>
-        - "ruby-<%= ruby_version %>"
-      <% end %>
-      <% for jruby_version in RUBIES[:jruby] %>
-        - "jruby-<%= jruby_version %>"
+      - "ruby-<%= ruby_version %>"
       <% end %>
       <% for rbx_version in RUBIES[:rbx] %>
-        - "rbx-<%= rbx_version %>"
+      - "rbx-<%= rbx_version %>"
       <% end %>
   - name: PRs
     jobs:
       - pr-pending
       - ruby-<%= RUBIES[:mri].last %>-pr
-      - jruby-<%= RUBIES[:jruby].last %>-pr
       - rbx-<%= RUBIES[:rbx].last %>-pr
       - pr-success
+  - name: allow-failure
+    jobs:
+      <% for jruby_version in RUBIES[:jruby] %>
+      - "jruby-<%= jruby_version %>"
+      <% end %>
+      - "jruby-<%= RUBIES[:jruby].last %>-pr"
 
 resources:
   - name: loofah
