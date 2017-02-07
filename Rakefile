@@ -12,7 +12,7 @@ Hoe.spec "loofah" do
   developer "Bryan Helmkamp", "bryan@brynary.com"
 
   self.extra_rdoc_files = FileList["*.rdoc"]
-  self.history_file     = "CHANGELOG.rdoc"
+  self.history_file     = "CHANGELOG.md"
   self.readme_file      = "README.rdoc"
   self.license          "MIT"
 
