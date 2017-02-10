@@ -10,17 +10,13 @@ gem "crass", "~>1.0.2"
 gem "rake", ">=0.8", :group => [:development, :test]
 gem "minitest", "~>2.2", :group => [:development, :test]
 gem "rr", "~>1.2.0", :group => [:development, :test]
-if RUBY_VERSION > '2.4'
-  gem "json", ">= 2.0", :group => [:development, :test]
-  gem "rdoc", ">= 5.0.0.beta2", :group => [:development, :test]
-else
-  gem "json", ">=0", :group => [:development, :test]
-  gem "rdoc", "~>4.0", :group => [:development, :test]
-end
+gem "json", ">=0", :group => [:development, :test]
 gem "hoe-gemspec", ">=0", :group => [:development, :test]
 gem "hoe-debugging", ">=0", :group => [:development, :test]
 gem "hoe-bundler", ">=0", :group => [:development, :test]
 gem "hoe-git", ">=0", :group => [:development, :test]
-gem "hoe", "~>3.13", :group => [:development, :test]
+gem "concourse", ">=0", :group => [:development, :test]
+gem "rdoc", "~>4.0", :group => [:development, :test]
+gem "hoe", "~>3.15", :group => [:development, :test]
 
 # vim: syntax=ruby
