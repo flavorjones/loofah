@@ -22,7 +22,7 @@ Hoe.spec "loofah" do
 
   extra_dev_deps << ["rake", ">=0.8"]
   extra_dev_deps << ["minitest", "~>2.2"]
-  extra_dev_deps << ["rr", "~>1.1.0"]
+  extra_dev_deps << ["rr", "~>1.2.0"]
   extra_dev_deps << ["json", ">=0"]
   extra_dev_deps << ["hoe-gemspec", ">=0"]
   extra_dev_deps << ["hoe-debugging", ">=0"]
