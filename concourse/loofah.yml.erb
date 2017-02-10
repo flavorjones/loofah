@@ -146,6 +146,7 @@ jobs:
 
   - name: pr-success
     public: true
+    serial_groups: [pr]
     disable_manual_trigger: true
     plan:
       - get: loofah-pr
@@ -163,6 +164,7 @@ jobs:
 
   - name: ruby-<%= RUBIES[:mri].last %>-pr
     public: true
+    serial_groups: [pr]
     plan:
       - get: loofah-pr
         trigger: true
@@ -182,6 +184,7 @@ jobs:
 
   - name: jruby-<%= RUBIES[:jruby].last %>-pr
     public: true
+    serial_groups: [pr]
     plan:
       - get: loofah-pr
         trigger: true
@@ -202,6 +205,7 @@ jobs:
 
   - name: rbx-<%= RUBIES[:rbx].last %>-pr
     public: true
+    serial_groups: [pr]
     plan:
       - get: loofah-pr
         trigger: true
