@@ -1,9 +1,3 @@
-<%
-def anchorify string
-  string.tr '^a-zA-Z0-9', '_'
-end
-%>
-
 groups:
   - name: master
     jobs:
@@ -27,6 +21,12 @@ groups:
       - "jruby-<%= RUBIES[:jruby].last %>-pr"
 
 resources:
+  - name: ci
+    type: git
+    source:
+      uri: https://github.com/flavorjones/loofah/
+      branch: master
+      disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah
     type: git
     source:
@@ -53,84 +53,66 @@ jobs:
   - name: ruby-<%= ruby_version %>
     public: true
     plan:
+      - get: ci
       - get: loofah
         trigger: true
       - task: rake-test
-        config: &<%= anchorify "ruby-#{ruby_version}-rake-test-config" %>
+        config:
           image_resource:
             type: docker-image
-            source:
-              repository: ruby
-              tag: "<%= ruby_version %>"
+            source: {repository: ruby, tag: "<%= ruby_version %>"}
           platform: linux
           inputs:
+            - name: ci
             - name: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
           run:
-            dir: loofah
-            path: bash
-            args:
-              - "-ce"
-              - |
-                bundle config build.nokogiri --use-system-libraries
-                bundle install
-                bundle exec rake test
+            path: ci/concourse/tasks/rake-test/run.sh
   <% end %>
 
   <% for jruby_version in RUBIES[:jruby] %>
   - name: jruby-<%= jruby_version %>
     public: true
     plan:
+      - get: ci
       - get: loofah
         trigger: true
       - task: rake-test
-        config: &<%= anchorify "jruby-#{jruby_version}-rake-test-config" %>
+        config:
           image_resource:
             type: docker-image
-            source:
-              repository: jruby
-              tag: "<%= jruby_version %>-jdk"
+            source: {repository: jruby, tag: "<%= jruby_version %>-jdk"}
           platform: linux
           inputs:
+            - name: ci
             - name: loofah
           params:
             JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
           run:
-            dir: loofah
-            path: bash
-            args:
-              - "-ce"
-              - |
-                bundle install
-                bundle exec rake test
+            path: ci/concourse/tasks/rake-test/run.sh
   <% end %>
 
   <% for rbx_version in RUBIES[:rbx] %>
   - name: rbx-<%= rbx_version %>
     public: true
     plan:
+      - get: ci
       - get: loofah
         trigger: true
       - task: rake-test
-        config: &<%= anchorify "rbx-#{rbx_version}-rake-test-config" %>
+        config:
           image_resource:
             type: docker-image
-            source:
-              repository: rubinius/docker
-              tag: "<%= rbx_version %>"
+            source: {repository: rubinius/docker, tag: "<%= rbx_version %>"}
           platform: linux
           inputs:
+            - name: ci
             - name: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
           run:
-            dir: loofah
-            path: bash
-            args:
-              - "-ce"
-              - |
-                apt-get update
-                apt-get install -y ca-certificates gcc pkg-config libxml2-dev libxslt-dev
-                bundle config build.nokogiri --use-system-libraries
-                bundle install
-                bundle exec rake test
+            path: ci/concourse/tasks/rake-test/run.sh
   <% end %>
 
   - name: pr-pending
@@ -166,16 +148,25 @@ jobs:
     public: true
     serial_groups: [pr]
     plan:
+      - get: ci
       - get: loofah-pr
         trigger: true
         version: every
         passed: [pr-pending]
       - task: rake-test
         config:
-          <<: *<%= anchorify "ruby-#{RUBIES[:mri].last}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "<%= ruby_version %>"}
+          platform: linux
           inputs:
+            - name: ci
             - name: loofah-pr
               path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
         on_failure:
           put: loofah-pr
           params:
@@ -186,16 +177,30 @@ jobs:
     public: true
     serial_groups: [pr]
     plan:
+      - get: ci
       - get: loofah-pr
         trigger: true
         version: every
         passed: [pr-pending]
       - task: rake-test
         config:
-          <<: *<%= anchorify "jruby-#{RUBIES[:jruby].last}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source: {repository: jruby, tag: "<%= jruby_version %>-jdk"}
+          platform: linux
           inputs:
+            - name: ci
             - name: loofah-pr
               path: loofah
+          params:
+            JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
         ## allow-failure
         # on_failure:
         #   put: loofah-pr
@@ -207,16 +212,25 @@ jobs:
     public: true
     serial_groups: [pr]
     plan:
+      - get: ci
       - get: loofah-pr
         trigger: true
         version: every
         passed: [pr-pending]
       - task: rake-test
         config:
-          <<: *<%= anchorify "rbx-#{RUBIES[:rbx].last}-rake-test-config" %>
+          image_resource:
+            type: docker-image
+            source: {repository: rubinius/docker, tag: "<%= rbx_version %>"}
+          platform: linux
           inputs:
+            - name: ci
             - name: loofah-pr
               path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
         on_failure:
           put: loofah-pr
           params:
