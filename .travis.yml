@@ -9,6 +9,7 @@ matrix:
     - rvm: 2.1.10
     - rvm: 2.2.5
     - rvm: 2.3.1
+    - rvm: 2.4.1
     - rvm: ruby-head
     - rvm: jruby-9.1.5.0
       env: JRUBY_OPTS="--dev -J-Djruby.launch.inproc=true -J-Xmx1024M"
@@ -19,6 +20,7 @@ matrix:
     - rvm: jruby-1.7.26
     - rvm: jruby-9.1.5.0
     - rvm: rbx-3
+  fast_finish: true
 
 # https://github.com/jruby/jruby/wiki/FAQs#why-is-jruby-so-slow-to-install-via-rvm
 # https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
