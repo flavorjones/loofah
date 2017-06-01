@@ -145,7 +145,7 @@ module Loofah
       PROTOCOL_SEPARATOR = /:|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A/i
 
       ACCEPTABLE_PROTOCOLS = Set.new %w[ed2k ftp http https irc mailto news gopher nntp
-      telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs]
+      telnet webcal xmpp callto feed urn aim rsync tag ssh sftp rtsp afs data]
 
       # subclasses may define their own versions of these constants
       ALLOWED_ELEMENTS = ACCEPTABLE_ELEMENTS + MATHML_ELEMENTS + SVG_ELEMENTS
