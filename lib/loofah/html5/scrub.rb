@@ -71,7 +71,7 @@ module Loofah
           style_tree.each do |node|
             next unless node[:node] == :property
             next if node[:children].any? do |child|
-              [:url, :bad_url, :function].include? child[:node]
+              [:url, :bad_url].include?(child[:node]) || (child[:node] == :function && !WhiteList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase))
             end
             name = node[:name].downcase
             if WhiteList::ALLOWED_CSS_PROPERTIES.include?(name) || WhiteList::ALLOWED_SVG_PROPERTIES.include?(name)
