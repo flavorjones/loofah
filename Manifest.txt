@@ -1,5 +1,5 @@
 .gemtest
-CHANGELOG.rdoc
+CHANGELOG.md
 Gemfile
 MIT-LICENSE.txt
 Manifest.txt
