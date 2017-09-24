@@ -261,7 +261,7 @@ module Loofah
       end
 
       def scrub(node)
-        if node.type == Nokogiri::XML::Node::TEXT_NODE
+        if node.type == Nokogiri::XML::Node::TEXT_NODE || node.type == Nokogiri::XML::Node::CDATA_SECTION_NODE
           node.content = node.content.gsub(/\u2028|\u2029/, '')
         end
         CONTINUE

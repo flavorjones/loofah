@@ -7,6 +7,11 @@ Features:
 * Added :noopener HTML scrubber (Thanks, @tastycode!)
 
 
+Bugfixes:
+
+* The :unprintable scrubber now scrubs unprintable characters in CDATA nodes (like `<script>`). #124
+
+
 ## 2.1.0.rc2 / 2016-01-11
 
 Notes:

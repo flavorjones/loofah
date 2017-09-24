@@ -22,8 +22,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOOPENER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
   NOOPENER_WITH_REL_RESULT   = '<a href="http://www.example.com/" rel="nofollow noopener">Click here</a>'
 
-  UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b>"
-  UNPRINTABLE_RESULT = "<b>Loofah rocks!</b>"
+  UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b><script>x\u2028y</script>"
+  UNPRINTABLE_RESULT = "<b>Loofah rocks!</b><script>xy</script>"
 
   ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
   ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'yaw00t)
