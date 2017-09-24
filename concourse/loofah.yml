@@ -111,6 +111,7 @@ jobs:
             - name: loofah
           params:
             NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+            TMPDIR: /scratch
           run:
             path: ci/concourse/tasks/rake-test/run.sh
   <% end %>
@@ -229,6 +230,7 @@ jobs:
               path: loofah
           params:
             NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+            TMPDIR: /scratch
           run:
             path: ci/concourse/tasks/rake-test/run.sh
         on_failure:

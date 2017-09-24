@@ -15,8 +15,8 @@ gem "hoe-gemspec", ">=0", :group => [:development, :test]
 gem "hoe-debugging", ">=0", :group => [:development, :test]
 gem "hoe-bundler", ">=0", :group => [:development, :test]
 gem "hoe-git", ">=0", :group => [:development, :test]
-gem "concourse", ">=0", :group => [:development, :test]
+gem "concourse", ">=0.14.0", :group => [:development, :test]
 gem "rdoc", "~>4.0", :group => [:development, :test]
-gem "hoe", "~>3.15", :group => [:development, :test]
+gem "hoe", "~>3.16", :group => [:development, :test]
 
 # vim: syntax=ruby
