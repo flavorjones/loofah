@@ -41,6 +41,14 @@ module Loofah
               if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! WhiteList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[0])
                 attr_node.remove
                 next
+              elsif val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[0] == 'data'
+                # permit only allowed data mediatypes
+                mediatype = val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[1]
+                mediatype, base64 = mediatype.split(';')[0..1] if mediatype
+                if mediatype && !WhiteList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
+                  attr_node.remove
+                  next
+                end
               end
             end
             if WhiteList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
