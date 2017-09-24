@@ -142,6 +142,10 @@ class Html5TestSanitizer < Loofah::TestCase
       input = %(<a href="data:#{data_uri_type}">foo</a>)
       output = "<a href='data:#{data_uri_type}'>foo</a>"
       check_sanitization(input, output, output, output)
+
+      input = %(<a href="data:#{data_uri_type};base64,R0lGODlhAQABA">foo</a>)
+      output = "<a href='data:#{data_uri_type};base64,R0lGODlhAQABA'>foo</a>"
+      check_sanitization(input, output, output, output)
     end
   end
 
@@ -151,6 +155,20 @@ class Html5TestSanitizer < Loofah::TestCase
       output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
       check_sanitization(input, output, output, output)
     end
+  end
+
+  def test_should_disallow_other_uri_mediatypes
+    input = %(<a href="data:foo">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    input = %(<a href="data:image/xxx">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    input = %(<a href="data:image/xxx;base64,R0lGODlhAQABA">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
   end
 
 

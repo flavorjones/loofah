@@ -5,6 +5,7 @@
 Features:
 
 * Added :noopener HTML scrubber (Thanks, @tastycode!)
+* Support `data` URIs with the following media types: text/plain, text/css, image/png, image/gif, image/jpeg, image/svg+xml. #101, #120. (Thanks, @mrpasquini!)
 
 
 Bugfixes:
