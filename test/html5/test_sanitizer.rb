@@ -136,6 +136,41 @@ class Html5TestSanitizer < Loofah::TestCase
       check_sanitization(input, output, output, output)
     end
   end
+  
+  HTML5::WhiteList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
+    define_method "test_should_allow_data_#{data_uri_type}_uris" do
+      input = %(<a href="data:#{data_uri_type}">foo</a>)
+      output = "<a href='data:#{data_uri_type}'>foo</a>"
+      check_sanitization(input, output, output, output)
+
+      input = %(<a href="data:#{data_uri_type};base64,R0lGODlhAQABA">foo</a>)
+      output = "<a href='data:#{data_uri_type};base64,R0lGODlhAQABA'>foo</a>"
+      check_sanitization(input, output, output, output)
+    end
+  end
+
+  HTML5::WhiteList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
+    define_method "test_should_allow_uppercase_data_#{data_uri_type}_uris" do
+      input = %(<a href="DATA:#{data_uri_type.upcase}">foo</a>)
+      output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
+      check_sanitization(input, output, output, output)
+    end
+  end
+
+  def test_should_disallow_other_uri_mediatypes
+    input = %(<a href="data:foo">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    input = %(<a href="data:image/xxx">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    input = %(<a href="data:image/xxx;base64,R0lGODlhAQABA">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+  end
+
 
   HTML5::WhiteList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
     next unless HTML5::WhiteList::ALLOWED_ELEMENTS.include?(tag_name)
