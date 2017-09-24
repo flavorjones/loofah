@@ -1,6 +1,11 @@
 # Changelog
 
-## 2.1.0.rc3 / unreleased
+## 2.1.0 / 2017-09-24
+
+Notes:
+
+* Re-implemented CSS parsing and sanitization using the {crass}[https://github.com/rgrove/crass] library. #91
+
 
 Features:
 
@@ -11,18 +16,6 @@ Features:
 Bugfixes:
 
 * The :unprintable scrubber now scrubs unprintable characters in CDATA nodes (like `<script>`). #124
-
-
-## 2.1.0.rc2 / 2016-01-11
-
-Notes:
-
-* Re-implemented CSS parsing and sanitization using the {crass}[https://github.com/rgrove/crass] library. #91
-* Updated tests to ensure support for libxml 2.9.3.
-
-
-Bug fixes:
-
 * Allow negative values in CSS properties. Restores functionality that was reverted in v2.0.3. #91
 
 
