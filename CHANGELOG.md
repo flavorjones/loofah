@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1 / 2017-09-24
+
+Bugfixes:
+
+* Removed warning for unused variable. #124 (Thanks, @y-yagi!)
+
+
 ## 2.1.0 / 2017-09-24
 
 Notes:
