@@ -7,6 +7,9 @@ groups:
       <% for rbx_version in RUBIES[:rbx] %>
       - "rbx-<%= rbx_version %>"
       <% end %>
+      <% for ruby_version in RUBIES[:windows] %>
+      - "win-ruby-<%= ruby_version %>-devkit"
+      <% end %>
   - name: PRs
     jobs:
       - pr-pending
@@ -114,6 +117,27 @@ jobs:
             TMPDIR: /scratch
           run:
             path: ci/concourse/tasks/rake-test/run.sh
+  <% end %>
+
+  <% for ruby_version in RUBIES[:windows] %>
+  - name: win-ruby-<%= ruby_version %>-devkit
+    public: true
+    plan:
+      - get: ci
+      - get: loofah
+        trigger: true
+        passed: ["ruby-<%= ruby_version %>"]
+      - task: rake-test
+        config:
+          platform: windows
+          inputs:
+            - name: ci
+            - name: loofah
+          params:
+            WIN_RUBY_VERSION: "<%= ruby_version %>"
+          run:
+            path: powershell
+            args: ["-File", "ci/concourse/tasks/rake-test/run.ps1"]
   <% end %>
 
   - name: pr-pending

@@ -28,7 +28,7 @@ Hoe.spec "loofah" do
   extra_dev_deps << ["hoe-debugging", ">=0"]
   extra_dev_deps << ["hoe-bundler", ">=0"]
   extra_dev_deps << ["hoe-git", ">=0"]
-  extra_dev_deps << ["concourse", ">=0.14.0"]
+  extra_dev_deps << ["concourse", ">=0.15.0"]
 end
 
 task :gemspec do

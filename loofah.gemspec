@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
-# stub: loofah 2.1.0.20170924164114 ruby lib
+# stub: loofah 2.1.1.20170924234214 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "loofah".freeze
-  s.version = "2.1.0.20170924164114"
+  s.version = "2.1.1.20170924234214"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Mike Dalessio".freeze, "Bryan Helmkamp".freeze]
-  s.date = "2017-09-24"
+  s.date = "2017-09-25"
   s.description = "Loofah is a general library for manipulating and transforming HTML/XML\ndocuments and fragments. It's built on top of Nokogiri and libxml2, so\nit's fast and has a nice API.\n\nLoofah excels at HTML sanitization (XSS prevention). It includes some\nnice HTML sanitizers, which are based on HTML5lib's whitelist, so it\nmost likely won't make your codes less secure. (These statements have\nnot been evaluated by Netexperts.)\n\nActiveRecord extensions for sanitization are available in the\n`loofah-activerecord` gem (see\nhttps://github.com/flavorjones/loofah-activerecord).".freeze
   s.email = ["mike.dalessio@gmail.com".freeze, "bryan@brynary.com".freeze]
-  s.extra_rdoc_files = ["CHANGELOG.rdoc".freeze, "MIT-LICENSE.txt".freeze, "Manifest.txt".freeze, "README.rdoc".freeze, "README.rdoc".freeze]
-  s.files = [".gemtest".freeze, "CHANGELOG.rdoc".freeze, "Gemfile".freeze, "MIT-LICENSE.txt".freeze, "Manifest.txt".freeze, "README.rdoc".freeze, "Rakefile".freeze, "benchmark/benchmark.rb".freeze, "benchmark/fragment.html".freeze, "benchmark/helper.rb".freeze, "benchmark/www.slashdot.com.html".freeze, "lib/loofah.rb".freeze, "lib/loofah/elements.rb".freeze, "lib/loofah/helpers.rb".freeze, "lib/loofah/html/document.rb".freeze, "lib/loofah/html/document_fragment.rb".freeze, "lib/loofah/html5/scrub.rb".freeze, "lib/loofah/html5/whitelist.rb".freeze, "lib/loofah/instance_methods.rb".freeze, "lib/loofah/metahelpers.rb".freeze, "lib/loofah/scrubber.rb".freeze, "lib/loofah/scrubbers.rb".freeze, "lib/loofah/xml/document.rb".freeze, "lib/loofah/xml/document_fragment.rb".freeze, "test/assets/testdata_sanitizer_tests1.dat".freeze, "test/helper.rb".freeze, "test/html5/test_sanitizer.rb".freeze, "test/integration/test_ad_hoc.rb".freeze, "test/integration/test_helpers.rb".freeze, "test/integration/test_html.rb".freeze, "test/integration/test_scrubbers.rb".freeze, "test/integration/test_xml.rb".freeze, "test/unit/test_api.rb".freeze, "test/unit/test_encoding.rb".freeze, "test/unit/test_helpers.rb".freeze, "test/unit/test_scrubber.rb".freeze, "test/unit/test_scrubbers.rb".freeze]
+  s.extra_rdoc_files = ["CHANGELOG.md".freeze, "MIT-LICENSE.txt".freeze, "Manifest.txt".freeze, "README.rdoc".freeze, "README.rdoc".freeze]
+  s.files = [".gemtest".freeze, "CHANGELOG.md".freeze, "Gemfile".freeze, "MIT-LICENSE.txt".freeze, "Manifest.txt".freeze, "README.rdoc".freeze, "Rakefile".freeze, "benchmark/benchmark.rb".freeze, "benchmark/fragment.html".freeze, "benchmark/helper.rb".freeze, "benchmark/www.slashdot.com.html".freeze, "lib/loofah.rb".freeze, "lib/loofah/elements.rb".freeze, "lib/loofah/helpers.rb".freeze, "lib/loofah/html/document.rb".freeze, "lib/loofah/html/document_fragment.rb".freeze, "lib/loofah/html5/scrub.rb".freeze, "lib/loofah/html5/whitelist.rb".freeze, "lib/loofah/instance_methods.rb".freeze, "lib/loofah/metahelpers.rb".freeze, "lib/loofah/scrubber.rb".freeze, "lib/loofah/scrubbers.rb".freeze, "lib/loofah/xml/document.rb".freeze, "lib/loofah/xml/document_fragment.rb".freeze, "test/assets/testdata_sanitizer_tests1.dat".freeze, "test/helper.rb".freeze, "test/html5/test_sanitizer.rb".freeze, "test/integration/test_ad_hoc.rb".freeze, "test/integration/test_helpers.rb".freeze, "test/integration/test_html.rb".freeze, "test/integration/test_scrubbers.rb".freeze, "test/integration/test_xml.rb".freeze, "test/unit/test_api.rb".freeze, "test/unit/test_encoding.rb".freeze, "test/unit/test_helpers.rb".freeze, "test/unit/test_scrubber.rb".freeze, "test/unit/test_scrubbers.rb".freeze]
   s.homepage = "https://github.com/flavorjones/loofah".freeze
   s.licenses = ["MIT".freeze]
   s.rdoc_options = ["--main".freeze, "README.rdoc".freeze]
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<hoe-debugging>.freeze, [">= 0"])
       s.add_development_dependency(%q<hoe-bundler>.freeze, [">= 0"])
       s.add_development_dependency(%q<hoe-git>.freeze, [">= 0"])
-      s.add_development_dependency(%q<concourse>.freeze, [">= 0.14.0"])
+      s.add_development_dependency(%q<concourse>.freeze, [">= 0.15.0"])
       s.add_development_dependency(%q<rdoc>.freeze, ["~> 4.0"])
       s.add_development_dependency(%q<hoe>.freeze, ["~> 3.16"])
     else
@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<hoe-debugging>.freeze, [">= 0"])
       s.add_dependency(%q<hoe-bundler>.freeze, [">= 0"])
       s.add_dependency(%q<hoe-git>.freeze, [">= 0"])
-      s.add_dependency(%q<concourse>.freeze, [">= 0.14.0"])
+      s.add_dependency(%q<concourse>.freeze, [">= 0.15.0"])
       s.add_dependency(%q<rdoc>.freeze, ["~> 4.0"])
       s.add_dependency(%q<hoe>.freeze, ["~> 3.16"])
     end
@@ -62,7 +62,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<hoe-debugging>.freeze, [">= 0"])
     s.add_dependency(%q<hoe-bundler>.freeze, [">= 0"])
     s.add_dependency(%q<hoe-git>.freeze, [">= 0"])
-    s.add_dependency(%q<concourse>.freeze, [">= 0.14.0"])
+    s.add_dependency(%q<concourse>.freeze, [">= 0.15.0"])
     s.add_dependency(%q<rdoc>.freeze, ["~> 4.0"])
     s.add_dependency(%q<hoe>.freeze, ["~> 3.16"])
   end
