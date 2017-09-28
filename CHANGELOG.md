@@ -11,7 +11,7 @@ Bugfixes:
 
 Notes:
 
-* Re-implemented CSS parsing and sanitization using the {crass}[https://github.com/rgrove/crass] library. #91
+* Re-implemented CSS parsing and sanitization using the [crass](https://github.com/rgrove/crass) library. #91
 
 
 Features:
