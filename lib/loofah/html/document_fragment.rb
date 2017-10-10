@@ -7,6 +7,8 @@ module Loofah
     #
     class DocumentFragment < Nokogiri::HTML::DocumentFragment
       include Loofah::TextBehavior
+      include Loofah::StateRestore
+
 
       class << self
         #
@@ -24,12 +26,10 @@ module Loofah
         end
       end
 
-      #
-      #  Returns the HTML markup contained by the fragment
-      #
       def to_s
         serialize_root.children.to_s
       end
+
       alias :serialize :to_s
 
       def serialize_root

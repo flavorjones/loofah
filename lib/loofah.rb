@@ -47,11 +47,18 @@ module Loofah
       Loofah.fragment(string_or_io).scrub!(method)
     end
 
+    def recursive_scrub_fragment(string_or_io, method, times = 3)
+      Loofah.fragment(string_or_io).scrub!(method, times, true)
+    end
+
     # Shortcut for Loofah.document(string_or_io).scrub!(method)
     def scrub_document(string_or_io, method)
       Loofah.document(string_or_io).scrub!(method)
     end
 
+    def recursive_scrub_document(string_or_io, method, times = 3)
+      Loofah.document(string_or_io).scrub!(method, times, true)
+    end
     # Shortcut for Loofah::XML::Document.parse
     # This method accepts the same parameters as Nokogiri::XML::Document.parse
     def xml_document(*args, &block)
