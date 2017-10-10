@@ -230,6 +230,13 @@ class IntegrationTestScrubbers < Loofah::TestCase
           assert_equal INVALID_PRUNED, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
+        it "should retain the behaviour on recursive pruning" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
+          result = doc.scrub! :prune, 3, true
+
+          assert_equal INVALID_PRUNED, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
       end
 
       context ":strip" do
@@ -240,12 +247,29 @@ class IntegrationTestScrubbers < Loofah::TestCase
           assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
+
+
+        it "should retain the behaviour on recursive stripping" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
+          result = doc.scrub! :strip, 3, true
+
+          assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
       end
 
       context ":whitewash" do
         it "whitewash the markup" do
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
+
+          assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
+
+        it "should retain the behaviour on recursive whitewashed markup" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
+          result = doc.scrub! :whitewash, 3, true
 
           assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
@@ -262,6 +286,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
             assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
             assert_equal doc, result
           end
+
+          it "should retain the behaviour on recursive nofollow" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
+            result = doc.scrub! :nofollow, 3, true
+
+            assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
         end
 
         context "for a hyperlink that does have a rel attribute" do
@@ -271,6 +303,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
               assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
+          end
+
+          it "should retain the behaviour on recursive nofollow" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
+            result = doc.scrub! :nofollow, 3, true
+
+            assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
           end
         end
 
@@ -286,12 +326,28 @@ class IntegrationTestScrubbers < Loofah::TestCase
             assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
             assert_equal doc, result
           end
+
+          it "should retain the behaviour on  'noopener' recursive hyperlink" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_FRAGMENT}</div>"
+            result = doc.scrub! :noopener, 3, true
+
+            assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
         end
 
         context "for a hyperlink that does have a rel attribute" do
           it "appends 'noopener' to 'rel' attribute" do
             doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
             result = doc.scrub! :noopener
+
+            assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
+          end
+
+          it "should retain the behaviour on  'noopener' recursive hyperlink" do
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
+            result = doc.scrub! :noopener, 3, true
 
             assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
             assert_equal doc, result
@@ -307,6 +363,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
           assert_equal UNPRINTABLE_RESULT, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
+
+        it "should retain the behaviour on  unprintable recursive" do
+          doc = Loofah::HTML::DocumentFragment.parse "<div>#{UNPRINTABLE_FRAGMENT}</div>"
+          result = doc.scrub! :unprintable, 3, true
+
+          assert_equal UNPRINTABLE_RESULT, doc.xpath("./div").inner_html
+          assert_equal doc, result
+        end
       end
     end
 
@@ -317,6 +381,16 @@ class IntegrationTestScrubbers < Loofah::TestCase
         mock(mock_doc).scrub!(:method)
 
         Loofah.scrub_fragment(:string_or_io, :method)
+      end
+    end
+
+    context "#recursive_scrub_fragment" do
+      it "be a shortcut for parse-and-scrub with arguments :times = 3, true" do
+        mock_doc = Object.new
+        mock(Loofah).fragment(:string_or_io) { mock_doc }
+        mock(mock_doc).scrub!(:method, 3, true)
+
+        Loofah.recursive_scrub_fragment(:string_or_io, :method)
       end
     end
 

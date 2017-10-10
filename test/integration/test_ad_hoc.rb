@@ -16,6 +16,26 @@ class IntegrationTestAdHoc < Loofah::TestCase
     end
   end
 
+  def test_removal_of_a_nested_type1_illegal_tag
+    html = <<-HTML
+      following this there should be no jim tags
+      <jim><jim>jim</jim></jim>
+      was there?
+    HTML
+    sane = Nokogiri::HTML(Loofah.recursive_scrub_fragment(html, :escape).raw_text)
+    assert sane.xpath("//jim").empty?
+  end
+
+  def test_removal_of_a_nested_type2_illegal_tag
+    html = <<-HTML
+      following this there should be no jim tags
+      <<jim>jim>jim<</jim>/jim>
+      was there?
+    HTML
+    sane = Nokogiri::HTML(Loofah.recursive_scrub_fragment(html, :escape).raw_text)
+    assert sane.xpath("//jim").empty?
+  end
+
   def test_removal_of_illegal_tag
     html = <<-HTML
       following this there should be no jim tag
@@ -57,8 +77,20 @@ class IntegrationTestAdHoc < Loofah::TestCase
     assert_equal "This fragment has no tags.", Loofah.scrub_fragment("This fragment has no tags.", :escape).to_xml
   end
 
+  def test_fragment_with_no_tags_on_recursive
+    assert_equal "This fragment has no tags.", Loofah.recursive_scrub_fragment("This fragment has no tags.", :escape).to_xml
+  end
+
   def test_fragment_in_p_tag
     assert_equal "<p>This fragment is in a p.</p>", Loofah.scrub_fragment("<p>This fragment is in a p.</p>", :escape).to_xml
+  end
+
+  def test_fragment_in_p_tag_plus_stuff_on_recursive
+    assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Loofah.recursive_scrub_fragment("<p>This fragment is in a p.</p>foo<strong>bar</strong>", :escape).to_xml
+  end
+
+  def test_fragment_with_text_nodes_leading_and_trailing_on_recursive
+    assert_equal "text<p>fragment</p>text", Loofah.recursive_scrub_fragment("text<p>fragment</p>text", :escape).to_xml
   end
 
   def test_fragment_in_p_tag_plus_stuff

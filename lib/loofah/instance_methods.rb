@@ -28,7 +28,21 @@ module Loofah
   #
   module ScrubBehavior
     module Node # :nodoc:
-      def scrub!(scrubber)
+      def scrub!(scrubber, countdown = 0, clean_state_when_exhausted = false)
+        do_scrub!(scrubber)
+
+        if can_take_recursive_action? && requires_changes?
+          if countdown > 0
+            self.restore_state!
+            self.scrub!(scrubber, countdown - 1, clean_state_when_exhausted)
+          else
+            self.clean_state! if clean_state_when_exhausted
+          end
+        end
+        self
+      end
+
+      def do_scrub!(scrubber)
         #
         #  yes. this should be three separate methods. but nokogiri
         #  decorates (or not) based on whether the module name has
@@ -46,6 +60,14 @@ module Loofah
           scrubber.traverse(self)
         end
         self
+      end
+
+      def requires_changes?
+         self.raw_text != self.class.parse(self.raw_text).raw_text
+      end
+
+      def can_take_recursive_action?
+        self.kind_of?(Loofah::HTML::DocumentFragment) || self.kind_of?(Loofah::HTML::Document)
       end
     end
 
@@ -65,6 +87,20 @@ module Loofah
     end
   end
 
+  module StateRestore
+    def clean_state!
+      self.children = ""
+    end
+
+    def restore_state!
+      clean_fragment = self.class.parse(self.raw_text)
+      if respond_to? :root
+        self.root.children = clean_fragment.root.children
+      else
+        self.children = clean_fragment.children.to_s
+      end
+    end
+  end
   #
   #  Overrides +text+ in HTML::Document and HTML::DocumentFragment,
   #  and mixes in +to_text+.
@@ -91,6 +127,12 @@ module Loofah
     #    # decidedly not ok for browser:
     #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
     #
+    def raw_text
+      text(encode_special_chars: false)
+    end
+    #
+    #  Returns the HTML markup contained by the fragment
+    #
     def text(options={})
       result = serialize_root.children.inner_text rescue ""
       if options[:encode_special_chars] == false
@@ -99,6 +141,7 @@ module Loofah
         encode_special_chars result
       end
     end
+
     alias :inner_text :text
     alias :to_str     :text
 

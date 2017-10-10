@@ -9,6 +9,7 @@ module Loofah
       include Loofah::ScrubBehavior::Node
       include Loofah::DocumentDecorator
       include Loofah::TextBehavior
+      include Loofah::StateRestore
 
       def serialize_root
         at_xpath("/html/body")
