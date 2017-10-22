@@ -157,6 +157,20 @@ mso-bidi-language:#0400;}
       assert_equal "", Loofah.scrub_document('<script>test</script>', :prune).text
     end
 
+    def test_nested_script_cdata_tags_should_be_scrubbed
+      html = "<script><script src='malicious.js'></script>"
+      stripped = Loofah.fragment(html).scrub!(:strip)
+      assert_empty stripped.xpath("//script")
+      refute_match("<script", stripped.to_html)
+    end
+
+    def test_nested_script_cdata_tags_should_be_scrubbed_2
+      html = "<script><script>alert('a');</script></script>"
+      stripped = Loofah.fragment(html).scrub!(:strip)
+      assert_empty stripped.xpath("//script")
+      refute_match("<script", stripped.to_html)
+    end
+
     def test_removal_of_all_tags
       html = <<-HTML
       What's up <strong>doc</strong>?

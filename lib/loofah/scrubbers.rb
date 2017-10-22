@@ -99,7 +99,12 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
-        node.before node.children
+        if node.children.length == 1 && node.children.first.cdata?
+          sanitized_text = Loofah.fragment(node.children.first.to_html).scrub!(:strip).to_html
+          node.before Nokogiri::XML::Text.new(sanitized_text, node.document)
+        else
+          node.before node.children
+        end
         node.remove
       end
     end
