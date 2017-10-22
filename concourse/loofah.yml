@@ -13,7 +13,9 @@ groups:
   - name: PRs
     jobs:
       - pr-pending
-      - ruby-<%= RUBIES[:mri].last %>-pr
+      <% for ruby_version in RUBIES[:mri] %>
+      - ruby-<%= ruby_version %>-pr
+      <% end %>
       - rbx-<%= RUBIES[:rbx].last %>-pr
       - pr-success
   - name: allow-failure
@@ -160,7 +162,9 @@ jobs:
         trigger: true
         version: every
         passed:
-          - ruby-<%= RUBIES[:mri].last %>-pr
+<% for ruby_version in RUBIES[:mri] %>
+          - ruby-<%= ruby_version %>-pr
+<% end %>
           ## allow-failure
           # - jruby-<%= RUBIES[:jruby].last %>-pr
           - rbx-<%= RUBIES[:rbx].last %>-pr
@@ -169,7 +173,8 @@ jobs:
           path: loofah-pr
           status: success
 
-  - name: ruby-<%= RUBIES[:mri].last %>-pr
+<% for ruby_version in RUBIES[:mri] %>
+  - name: ruby-<%= ruby_version %>-pr
     public: true
     serial_groups: [pr]
     plan:
@@ -197,6 +202,7 @@ jobs:
           params:
             path: loofah-pr
             status: failure
+<% end %>
 
   - name: jruby-<%= RUBIES[:jruby].last %>-pr
     public: true
