@@ -16,66 +16,67 @@ class IntegrationTestAdHoc < Loofah::TestCase
     end
   end
 
-  def test_removal_of_illegal_tag
-    html = <<-HTML
+  context "tests" do
+    def test_removal_of_illegal_tag
+      html = <<-HTML
       following this there should be no jim tag
       <jim>jim</jim>
       was there?
     HTML
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-    assert sane.xpath("//jim").empty?
-  end
+      sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+      assert sane.xpath("//jim").empty?
+    end
 
-  def test_removal_of_illegal_attribute
-    html = "<p class=bar foo=bar abbr=bar />"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-    node = sane.xpath("//p").first
-    assert node.attributes['class']
-    assert node.attributes['abbr']
-    assert_nil node.attributes['foo']
-  end
+    def test_removal_of_illegal_attribute
+      html = "<p class=bar foo=bar abbr=bar />"
+      sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+      node = sane.xpath("//p").first
+      assert node.attributes['class']
+      assert node.attributes['abbr']
+      assert_nil node.attributes['foo']
+    end
 
-  def test_removal_of_illegal_url_in_href
-    html = <<-HTML
+    def test_removal_of_illegal_url_in_href
+      html = <<-HTML
       <a href='jimbo://jim.jim/'>this link should have its href removed because of illegal url</a>
       <a href='http://jim.jim/'>this link should be fine</a>
     HTML
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-    nodes = sane.xpath("//a")
-    assert_nil nodes.first.attributes['href']
-    assert nodes.last.attributes['href']
-  end
+      sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+      nodes = sane.xpath("//a")
+      assert_nil nodes.first.attributes['href']
+      assert nodes.last.attributes['href']
+    end
 
-  def test_css_sanitization
-    html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-    assert_match %r/#000/,    sane.inner_html
-    refute_match %r/foo\.com/, sane.inner_html
-  end
+    def test_css_sanitization
+      html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
+      sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+      assert_match %r/#000/,    sane.inner_html
+      refute_match %r/foo\.com/, sane.inner_html
+    end
 
-  def test_fragment_with_no_tags
-    assert_equal "This fragment has no tags.", Loofah.scrub_fragment("This fragment has no tags.", :escape).to_xml
-  end
+    def test_fragment_with_no_tags
+      assert_equal "This fragment has no tags.", Loofah.scrub_fragment("This fragment has no tags.", :escape).to_xml
+    end
 
-  def test_fragment_in_p_tag
-    assert_equal "<p>This fragment is in a p.</p>", Loofah.scrub_fragment("<p>This fragment is in a p.</p>", :escape).to_xml
-  end
+    def test_fragment_in_p_tag
+      assert_equal "<p>This fragment is in a p.</p>", Loofah.scrub_fragment("<p>This fragment is in a p.</p>", :escape).to_xml
+    end
 
-  def test_fragment_in_p_tag_plus_stuff
-    assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Loofah.scrub_fragment("<p>This fragment is in a p.</p>foo<strong>bar</strong>", :escape).to_xml
-  end
+    def test_fragment_in_p_tag_plus_stuff
+      assert_equal "<p>This fragment is in a p.</p>foo<strong>bar</strong>", Loofah.scrub_fragment("<p>This fragment is in a p.</p>foo<strong>bar</strong>", :escape).to_xml
+    end
 
-  def test_fragment_with_text_nodes_leading_and_trailing
-    assert_equal "text<p>fragment</p>text", Loofah.scrub_fragment("text<p>fragment</p>text", :escape).to_xml
-  end
+    def test_fragment_with_text_nodes_leading_and_trailing
+      assert_equal "text<p>fragment</p>text", Loofah.scrub_fragment("text<p>fragment</p>text", :escape).to_xml
+    end
 
-  def test_whitewash_on_fragment
-    html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
-    whitewashed = Loofah.scrub_document(html, :whitewash).xpath("/html/body/*").to_s
-    assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n","")
-  end
+    def test_whitewash_on_fragment
+      html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
+      whitewashed = Loofah.scrub_document(html, :whitewash).xpath("/html/body/*").to_s
+      assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n","")
+    end
 
-  MSWORD_HTML = <<-EOHTML
+    MSWORD_HTML = <<-EOHTML
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="ProgId" content="Word.Document"><meta name="Generator" content="Microsoft Word 11"><meta name="Originator" content="Microsoft Word 11"><link rel="File-List" href="file:///C:%5CDOCUME%7E1%5CNICOLE%7E1%5CLOCALS%7E1%5CTemp%5Cmsohtml1%5C01%5Cclip_filelist.xml"><!--[if gte mso 9]><xml>
 <w:WordDocument>
  <w:View>Normal</w:View>
@@ -141,36 +142,38 @@ mso-bidi-language:#0400;}
 <p class="MsoNormal">Foo <b style="">BOLD<o:p></o:p></b></p>
   EOHTML
 
-  def test_fragment_whitewash_on_microsofty_markup
-    whitewashed = Loofah.fragment(MSWORD_HTML).scrub!(:whitewash)
-    assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
-  end
+    def test_fragment_whitewash_on_microsofty_markup
+      whitewashed = Loofah.fragment(MSWORD_HTML).scrub!(:whitewash)
+      assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
+    end
 
-  def test_document_whitewash_on_microsofty_markup
-    whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
-    assert_match %r(<p>Foo <b>BOLD</b></p>), whitewashed.to_s
-    assert_equal "<p>Foo <b>BOLD</b></p>",   whitewashed.xpath("/html/body/*").to_s
-  end
+    def test_document_whitewash_on_microsofty_markup
+      whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
+      assert_match %r(<p>Foo <b>BOLD</b></p>), whitewashed.to_s
+      assert_equal "<p>Foo <b>BOLD</b></p>",   whitewashed.xpath("/html/body/*").to_s
+    end
 
-  def test_return_empty_string_when_nothing_left
-    assert_equal "", Loofah.scrub_document('<script>test</script>', :prune).text
-  end
+    def test_return_empty_string_when_nothing_left
+      assert_equal "", Loofah.scrub_document('<script>test</script>', :prune).text
+    end
 
-  def test_removal_of_all_tags
-    html = <<-HTML
+    def test_removal_of_all_tags
+      html = <<-HTML
       What's up <strong>doc</strong>?
     HTML
-    stripped = Loofah.scrub_document(html, :prune).text
-    assert_equal %Q(What\'s up doc?).strip, stripped.strip
-  end
+      stripped = Loofah.scrub_document(html, :prune).text
+      assert_equal %Q(What\'s up doc?).strip, stripped.strip
+    end
 
-  def test_dont_remove_whitespace
-    html = "Foo\nBar"
-    assert_equal html, Loofah.scrub_document(html, :prune).text
-  end
+    def test_dont_remove_whitespace
+      html = "Foo\nBar"
+      assert_equal html, Loofah.scrub_document(html, :prune).text
+    end
 
-  def test_dont_remove_whitespace_between_tags
-    html = "<p>Foo</p>\n<p>Bar</p>"
-    assert_equal "Foo\nBar", Loofah.scrub_document(html, :prune).text
+    def test_dont_remove_whitespace_between_tags
+      html = "<p>Foo</p>\n<p>Bar</p>"
+      assert_equal "Foo\nBar", Loofah.scrub_document(html, :prune).text
+    end
   end
 end
+
