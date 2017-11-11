@@ -51,7 +51,7 @@ module Loofah
       caption center cite code col colgroup command datalist dd del
       details dfn dir div dl dt em fieldset figcaption figure footer
       font form h1 h2 h3 h4 h5 h6 header hr i img input ins kbd label
-      legend li map mark menu meter nav ol output optgroup option p
+      legend li main map mark menu meter nav ol output optgroup option p
       pre q s samp section select small span strike strong sub summary
       sup table tbody td textarea tfoot th thead time tr tt u ul var
       video]
