@@ -1,5 +1,12 @@
 # Changelog
 
+## unreleased
+
+Features:
+
+* Support HTML5 `<main>` tag. #133 (Thanks, @MothOnMars!)
+
+
 ## 2.1.1 / 2017-09-24
 
 Bugfixes:
