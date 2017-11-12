@@ -5,6 +5,7 @@
 Features:
 
 * Support HTML5 `<main>` tag. #133 (Thanks, @MothOnMars!)
+* Support SVG `<symbol>` tag. #131 (Thanks, @baopham!)
 
 
 ## 2.1.1 / 2017-09-24
