@@ -65,7 +65,7 @@ module Loofah
       circle clipPath defs desc ellipse feGaussianBlur filter font-face
       font-face-name font-face-src foreignObject
       g glyph hkern linearGradient line marker mask metadata missing-glyph
-      mpath path polygon polyline radialGradient rect set stop svg switch
+      mpath path polygon polyline radialGradient rect set stop svg switch symbol
       text textPath title tspan use]
 
       ACCEPTABLE_ATTRIBUTES = Set.new %w[abbr accept accept-charset accesskey action
