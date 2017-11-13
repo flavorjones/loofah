@@ -20,9 +20,9 @@ class Html5TestSanitizer < Loofah::TestCase
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     ##  libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
     sane = sanitize_html(input).gsub('"',"'")
-    htmloutput.gsub!('"',"'")
-    xhtmloutput.gsub!('"',"'")
-    rexmloutput.gsub!('"',"'")
+    htmloutput = htmloutput.gsub('"',"'")
+    xhtmloutput = xhtmloutput.gsub('"',"'")
+    rexmloutput = rexmloutput.gsub('"',"'")
 
     ##  HTML5's parsers are shit. there's so much inconsistency with what has closing tags, etc, that
     ##  it would require a lot of manual hacking to make the tests match libxml's output.
