@@ -8,6 +8,11 @@ Features:
 * Support SVG `<symbol>` tag. #131 (Thanks, @baopham!)
 
 
+Bugfixes:
+
+* Properly handle nested `script` tags. #127.
+
+
 ## 2.1.1 / 2017-09-24
 
 Bugfixes:
