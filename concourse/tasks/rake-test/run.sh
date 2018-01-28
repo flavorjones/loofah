@@ -20,6 +20,7 @@ pushd loofah
   if rbx-engine ; then
     apt-get update
     apt-get install -y ca-certificates gcc pkg-config libxml2-dev libxslt-dev
+    echo "gem 'racc'" >> Gemfile # https://github.com/rubinius/rubinius/issues/2632
   fi
 
   bundle install
