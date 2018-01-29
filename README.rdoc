@@ -114,7 +114,7 @@ Loofah overrides +to_s+ to return HTML:
 
   unsafe_html = "ohai! <div>div is safe</div> <script>but script is not</script>"
 
-  doc = Loofah.fragment(unsafe_html).scrub!(:strip)
+  doc = Loofah.fragment(unsafe_html).scrub!(:prune)
   doc.to_s    # => "ohai! <div>div is safe</div> "
 
 and +text+ to return plain text:
