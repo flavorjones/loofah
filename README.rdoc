@@ -257,6 +257,16 @@ And the mailing list is on librelist:
 
 And the IRC channel is \#loofah on freenode.
 
+== Security
+
+Some tools may incorrectly report loofah is a potential security vulnerability.
+Loofah depends on Nokogiri, and it's possible to use Nokogiri in a dangerous way
+(by enabling its DTDLOAD option and disabling its NONET option).
+This dangerous Nokogiri configuration, which is sometimes used by other components,
+can create an XML External Entity (XXE) vulnerability if the XML data is not trusted.
+However, loofah never enables this dangerous Nokogiri configuration;
+loofah never enables DTDLOAD, and it never disables NONET.
+
 == Related Links
 
 * Nokogiri: http://nokogiri.org
