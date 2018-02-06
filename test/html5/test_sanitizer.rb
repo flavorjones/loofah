@@ -282,7 +282,7 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
-    html = "<span style=\"width: attr(data-evil-attr)\">"
+    html = "<span style=\"width:attr(data-evil-attr)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
   end
