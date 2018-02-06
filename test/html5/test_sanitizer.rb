@@ -275,6 +275,18 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/-0.05em/, sane.inner_html
   end
 
+  def test_css_function_sanitization_leaves_whitelisted_functions
+    html = "<span style=\"width:calc(5%)\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/calc\(5%\)/, sane.inner_html
+  end
+
+  def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
+    html = "<span style=\"width: attr(data-evil-attr)\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/<span><\/span>/, sane.inner_html
+  end
+
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")
 
