@@ -5,6 +5,7 @@
 Features:
 
 * Support HTML5 `<main>` tag. #133 (Thanks, @MothOnMars!)
+* Recognize HTML5 block elements. #136 (Thanks, @MothOnMars!)
 * Support SVG `<symbol>` tag. #131 (Thanks, @baopham!)
 * Support for whitelisting CSS functions, initially just `calc`. #122/#123 (Thanks, @NikoRoberts!)
 
