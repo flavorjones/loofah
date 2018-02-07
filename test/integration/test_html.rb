@@ -19,8 +19,13 @@ class IntegrationTestHtml < Loofah::TestCase
     end
 
     context "#to_text" do
-      it "add newlines before and after block elements" do
+      it "add newlines before and after html4 block elements" do
         html = Loofah.fragment "<div>tweedle<h1>beetle</h1>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
+        assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
+      end
+
+      it "add newlines before and after html5 block elements" do
+        html = Loofah.fragment "<div>tweedle<section>beetle</section>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
         assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
       end
 
@@ -47,8 +52,13 @@ class IntegrationTestHtml < Loofah::TestCase
     end
 
     context "#to_text" do
-      it "add newlines before and after block elements" do
+      it "add newlines before and after html4 block elements" do
         html = Loofah.document "<div>tweedle<h1>beetle</h1>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
+        assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
+      end
+
+      it "add newlines before and after html5 block elements" do
+        html = Loofah.document "<div>tweedle<section>beetle</section>bottle<span>puddle</span>paddle<div>battle</div>muddle</div>"
         assert_equal "\ntweedle\nbeetle\nbottlepuddlepaddle\nbattle\nmuddle\n", html.to_text
       end
 
