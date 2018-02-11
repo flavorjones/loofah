@@ -8,7 +8,7 @@ Features:
 * Recognize HTML5 block elements. #136 (Thanks, @MothOnMars!)
 * Support SVG `<symbol>` tag. #131 (Thanks, @baopham!)
 * Support for whitelisting CSS functions, initially just `calc` and `rgb`. #122/#123/#129 (Thanks, @NikoRoberts!)
-
+* Whitelist CSS property `list-style-type`. #68/#137/#142 (Thanks, @andela-ysanni and @NikoRoberts!)
 
 Bugfixes:
 
