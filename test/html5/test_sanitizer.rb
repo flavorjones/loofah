@@ -136,7 +136,7 @@ class Html5TestSanitizer < Loofah::TestCase
       check_sanitization(input, output, output, output)
     end
   end
-  
+
   HTML5::WhiteList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
       input = %(<a href="data:#{data_uri_type}">foo</a>)
@@ -289,6 +289,12 @@ class Html5TestSanitizer < Loofah::TestCase
     html = '<span style="color: rgb(255, 0, 0)">'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/rgb\(255, 0, 0\)/, sane.inner_html
+  end
+
+  def test_css_function_sanitization_leaves_whitelisted_list_style_type
+    html = "<ol style='list-style-type:lower-greek;'></ol>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/list-style-type:lower-greek/, sane.inner_html
   end
 
   def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
