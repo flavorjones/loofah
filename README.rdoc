@@ -1,4 +1,4 @@
-= Loofah {<img src="https://travis-ci.org/flavorjones/loofah.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/flavorjones/loofah]
+= Loofah {<img src="https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge" alt="Build Status" />}[https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master]
 
 * https://github.com/flavorjones/loofah
 * http://rubydoc.info/github/flavorjones/loofah/master/frames
