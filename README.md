@@ -345,7 +345,7 @@ And a big shout-out to Corey Innis for the name, and feedback on the API.
 
 ## Thank You
 
-The following people have generously donated via the Pledgie[http://pledgie.com] badge on the {Loofah github page}[https://github.com/flavorjones/loofah]:
+The following people have generously donated via the [Pledgie](http://pledgie.com) badge on the [Loofah github page](https://github.com/flavorjones/loofah):
 
 * Bill Harding
 
