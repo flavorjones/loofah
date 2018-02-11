@@ -3,7 +3,7 @@ CHANGELOG.md
 Gemfile
 MIT-LICENSE.txt
 Manifest.txt
-README.rdoc
+README.md
 Rakefile
 benchmark/benchmark.rb
 benchmark/fragment.html
