@@ -137,7 +137,7 @@ module Loofah
       purple red right solid silver teal top transparent underline white
       yellow]
 
-      ACCEPTABLE_CSS_FUNCTIONS = Set.new %w[calc]
+      ACCEPTABLE_CSS_FUNCTIONS = Set.new %w[calc rgb]
 
       SHORTHAND_CSS_PROPERTIES = Set.new %w[background border margin padding]
 

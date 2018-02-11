@@ -275,14 +275,28 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/-0.05em/, sane.inner_html
   end
 
-  def test_css_function_sanitization_leaves_whitelisted_functions
+  def test_css_function_sanitization_leaves_whitelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/calc\(5%\)/, sane.inner_html
+
+    html = "<span style=\"width: calc(5%)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
   end
 
+  def test_css_function_sanitization_leaves_whitelisted_functions_rgb
+    html = '<span style="color: rgb(255, 0, 0)">'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/rgb\(255, 0, 0\)/, sane.inner_html
+  end
+
   def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
     html = "<span style=\"width:attr(data-evil-attr)\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    assert_match %r/<span><\/span>/, sane.inner_html
+
+    html = "<span style=\"width: attr(data-evil-attr)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
   end
