@@ -12,9 +12,9 @@ Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
   developer "Bryan Helmkamp", "bryan@brynary.com"
 
-  self.extra_rdoc_files = FileList["*.rdoc"]
+  self.extra_rdoc_files = FileList["*.md"]
   self.history_file     = "CHANGELOG.md"
-  self.readme_file      = "README.rdoc"
+  self.readme_file      = "README.md"
   self.license          "MIT"
 
   extra_deps     << ["nokogiri", ">=1.5.9"]
