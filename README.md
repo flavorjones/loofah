@@ -219,7 +219,7 @@ end
 Loofah.xml_document(File.read('plague.xml')).scrub!(bring_out_your_dead)
 ```
 
-=== Built-In HTML Scrubbers
+### Built-In HTML Scrubbers
 
 Loofah comes with a set of sanitizing scrubbers that use HTML5lib's
 whitelist algorithm:
@@ -272,6 +272,22 @@ Loofah.fragment(unsafe_html).scrub!(:prune)
 Loofah.document(unsafe_html).scrub!(:prune)
 Loofah.xml_fragment(bad_xml).scrub!(custom_scrubber)
 Loofah.xml_document(bad_xml).scrub!(custom_scrubber)
+```
+
+
+### Whitelisting CSS functions
+
+Loofah by default whitelists only two CSS functions: `calc` and `rgb`
+(see [#123](https://github.com/flavorjones/loofah/pull/123)). You can whitelist additional
+CSS functions in the following way:
+
+```ruby
+Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_FUNCTIONS.merge Set.new(%w[
+  calc rgb rgba hsl hsla opacity
+  rotate rotate3d rotateX rotateY rotateZ
+  scale scale3d scaleX scaleY scaleZ
+  translate translate3d translateX translateY translateZ
+])
 ```
 
 
