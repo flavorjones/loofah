@@ -310,14 +310,22 @@ And the IRC channel is \#loofah on freenode.
 
 ## Security
 
-Some tools may incorrectly report loofah is a potential security
-vulnerability. Loofah depends on Nokogiri, and it's possible to use
-Nokogiri in a dangerous way (by enabling its DTDLOAD option and
-disabling its NONET option).  This dangerous Nokogiri configuration,
-which is sometimes used by other components, can create an XML
-External Entity (XXE) vulnerability if the XML data is not trusted.
-However, loofah never enables this dangerous Nokogiri configuration;
-loofah never enables DTDLOAD, and it never disables NONET.
+See [`SECURITY.md`](SECURITY.md) for vulnerability reporting details.
+
+
+### "Secure by Default"
+
+Some tools may incorrectly report Loofah as a potential security
+vulnerability.
+
+Loofah depends on Nokogiri, and it's _possible_ to use Nokogiri in a
+dangerous way (by enabling its DTDLOAD option and disabling its NONET
+option). This specifically allows the opportunity for an XML External
+Entity (XXE) vulnerability if the XML data is untrusted.
+
+However, Loofah __never enables this Nokogiri configuration__; Loofah
+never enables DTDLOAD, and it never disables NONET, thereby protecting
+you by default from this XXE vulnerability.
 
 
 ## Related Links
