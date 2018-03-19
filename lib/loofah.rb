@@ -6,6 +6,7 @@ require 'loofah/metahelpers'
 require 'loofah/elements'
 
 require 'loofah/html5/whitelist'
+require 'loofah/html5/libxml2_workarounds'
 require 'loofah/html5/scrub'
 
 require 'loofah/scrubber'

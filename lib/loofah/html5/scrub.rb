@@ -1,5 +1,3 @@
-#encoding: US-ASCII
-
 require 'cgi'
 require 'crass'
 
@@ -65,6 +63,8 @@ module Loofah
           node.attribute_nodes.each do |attr_node|
             node.remove_attribute(attr_node.name) if attr_node.value !~ /[^[:space:]]/
           end
+
+          force_correct_attribute_escaping! node
         end
 
         def scrub_css_attribute node
@@ -100,6 +100,35 @@ module Loofah
 
           Crass::Parser.stringify sanitized_tree
         end
+
+        private
+
+        #
+        #  libxml2 >= 2.9.2 fails to escape comments within some attributes.
+        #
+        #  see comments about CVE-2018-8048 within the tests for more information
+        #
+        def force_correct_attribute_escaping! node
+          return unless Nokogiri::VersionInfo.instance.libxml2?
+
+          node.attribute_nodes.each do |attr_node|
+            next unless LibxmlWorkarounds::BROKEN_ESCAPING_ATTRIBUTES.include?(attr_node.name)
+
+            tag_name = LibxmlWorkarounds::BROKEN_ESCAPING_ATTRIBUTES_QUALIFYING_TAG[attr_node.name]
+            next unless tag_name.nil? || tag_name == node.name
+
+            #
+            #  this block is just like CGI.escape in Ruby 2.4, but
+            #  only encodes space and double-quote, to mimic
+            #  pre-2.9.2 behavior
+            #
+            encoding = attr_node.value.encoding
+            attr_node.value = attr_node.value.gsub(/[ "]/) do |m|
+              '%' + m.unpack('H2' * m.bytesize).join('%').upcase
+            end.force_encoding(encoding)
+          end
+        end
+
       end
     end
   end
