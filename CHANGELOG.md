@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.1 / 2018-03-19
+
+Addresses CVE-2018-8048. Loofah allowed non-whitelisted attributes to be present in sanitized output when input with specially-crafted HTML fragments.
+
+This CVE's public notice is at https://github.com/flavorjones/loofah/issues/144
+
+
 ## 2.2.0 / 2018-02-11
 
 Features:

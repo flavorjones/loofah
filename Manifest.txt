@@ -5,6 +5,7 @@ MIT-LICENSE.txt
 Manifest.txt
 README.md
 Rakefile
+SECURITY.md
 benchmark/benchmark.rb
 benchmark/fragment.html
 benchmark/helper.rb
@@ -14,6 +15,7 @@ lib/loofah/elements.rb
 lib/loofah/helpers.rb
 lib/loofah/html/document.rb
 lib/loofah/html/document_fragment.rb
+lib/loofah/html5/libxml2_workarounds.rb
 lib/loofah/html5/scrub.rb
 lib/loofah/html5/whitelist.rb
 lib/loofah/instance_methods.rb
