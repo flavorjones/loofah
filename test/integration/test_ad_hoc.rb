@@ -231,7 +231,7 @@ mso-bidi-language:#0400;}
         attributes = reparsed.at_css(config[:tag]).attribute_nodes
 
         assert_equal [config[:attr]], attributes.collect(&:name)
-        if Nokogiri::VersionInfo.new.libxml2?
+        if Nokogiri::VersionInfo.instance.libxml2?
           if config[:unescaped]
             #
             #  this attribute was emitted wrapped in single-quotes, so a double quote is A-OK.
