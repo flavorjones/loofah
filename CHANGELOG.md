@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.2 / 2018-03-22
+
+Make public `Loofah::HTML5::Scrub.force_correct_attribute_escaping!`,
+which was previously a private method. This is so that downstream gems
+(like rails-html-sanitizer) can use this logic directly for their own
+attribute scrubbers should they need to address CVE-2018-8048.
+
+
 ## 2.2.1 / 2018-03-19
 
 Addresses CVE-2018-8048. Loofah allowed non-whitelisted attributes to be present in sanitized output when input with specially-crafted HTML fragments.

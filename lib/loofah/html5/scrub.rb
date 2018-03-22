@@ -101,8 +101,6 @@ module Loofah
           Crass::Parser.stringify sanitized_tree
         end
 
-        private
-
         #
         #  libxml2 >= 2.9.2 fails to escape comments within some attributes.
         #
