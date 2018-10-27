@@ -24,6 +24,7 @@ lib/loofah/scrubber.rb
 lib/loofah/scrubbers.rb
 lib/loofah/xml/document.rb
 lib/loofah/xml/document_fragment.rb
+test/assets/msword.html
 test/assets/testdata_sanitizer_tests1.dat
 test/helper.rb
 test/html5/test_sanitizer.rb
