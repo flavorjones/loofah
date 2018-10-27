@@ -92,7 +92,7 @@ module Loofah
        color-interpolation-filters color-rendering content cx cy d dx
        dy descent display dur end fill fill-opacity fill-rule
        filterRes filterUnits font-family
-       font-size font-stretch font-style font-variant font-weight from fx fy g1
+       font-size font-stretch font-style font-variant font-weight fx fy g1
        g2 glyph-name gradientUnits hanging height horiz-adv-x horiz-origin-x id
        ideographic k keyPoints keySplines keyTimes lang marker-end
        marker-mid marker-start markerHeight markerUnits markerWidth
