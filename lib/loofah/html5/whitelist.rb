@@ -390,7 +390,6 @@ module Loofah
                                  "font-style",
                                  "font-variant",
                                  "font-weight",
-                                 "from",
                                  "fx",
                                  "fy",
                                  "g1",

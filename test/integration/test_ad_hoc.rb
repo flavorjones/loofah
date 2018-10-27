@@ -188,8 +188,17 @@ class IntegrationTestAdHoc < Loofah::TestCase
           assert_equal %{examp<!--%22 unsafeattr=foo()>-->le.com}, attributes.first.value
         end
       end
-
     end
 
+    # see:
+    # - https://github.com/flavorjones/loofah/issues/154
+    # - https://hackerone.com/reports/429267
+    context "xss protection from svg xmlns:xlink animate attribute" do
+      it "sanitizes appropriate attributes" do
+        html = %Q{<svg><a xmlns:xlink=http://www.w3.org/1999/xlink xlink:href=?><circle r=400 /><animate attributeName=xlink:href begin=0 from=javascript:alert(1) to=%26>}
+        sanitized = Loofah.scrub_fragment(html, :escape)
+        assert_nil sanitized.at_css("animate")["from"]
+      end
+    end
   end
 end
