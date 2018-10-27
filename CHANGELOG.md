@@ -1,5 +1,15 @@
 # Changelog
 
+## Meta / 2018-10-27
+
+The mailing list is now on Google Groups [#146](https://github.com/flavorjones/loofah/issues/146):
+
+* Mail: loofah-talk@googlegroups.com
+* Archive: https://groups.google.com/forum/#!forum/loofah-talk
+
+This change was made because librelist no longer appears to be maintained.
+
+
 ## 2.2.2 / 2018-03-22
 
 Make public `Loofah::HTML5::Scrub.force_correct_attribute_escaping!`,

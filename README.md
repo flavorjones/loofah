@@ -1,8 +1,8 @@
 # Loofah
 
-* https://github.com/flavorjones/loofah
-* http://rubydoc.info/github/flavorjones/loofah/master/frames
-* http://librelist.com/browser/loofah
+* Homepage: https://github.com/flavorjones/loofah
+* Docs: http://rubydoc.info/github/flavorjones/loofah/master/frames
+* Mailing list: [loofah-talk@googlegroups.com](https://groups.google.com/forum/#!forum/loofah-talk)
 
 ## Status
 
@@ -301,9 +301,10 @@ The bug tracker is available here:
 
 * https://github.com/flavorjones/loofah/issues
 
-And the mailing list is on librelist:
+And the mailing list is on Google Groups:
 
-* loofah@librelist.com / http://librelist.com
+* Mail: loofah-talk@googlegroups.com
+* Archive: https://groups.google.com/forum/#!forum/loofah-talk
 
 And the IRC channel is \#loofah on freenode.
 

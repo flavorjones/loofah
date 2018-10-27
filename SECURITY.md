@@ -9,7 +9,7 @@ Your report will be acknowledged within 24 hours, and you'll receive a more deta
 If you have not received a reply to your submission within 48 hours, there are a few steps you can take:
 
 * Contact the current security coordinator (Mike Dalessio <mike.dalessio@gmail.com>)
-* Email the Loofah user group at loofah@librelist.com (archive at http://librelist.com)
+* Email the Loofah user group at loofah-talk@googlegroups.com (archive at https://groups.google.com/forum/#!forum/loofah-talk)
 
 Please note, the user group list is a public area. When escalating in that venue, please do not discuss your issue. Simply say that you're trying to get a hold of someone from the core team.
 
