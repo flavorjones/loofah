@@ -6,6 +6,7 @@ Features:
 
 * Expand set of allowed protocols to include `tel:` and `line:`. [#104, #147]
 * Expand set of allowed CSS functions. [related to #122]
+* Allow greater precision in shorthand CSS values. [#149] (Thanks, @danfstucky!)
 
 
 ## Meta / 2018-10-27
