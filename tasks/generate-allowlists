@@ -1,0 +1,56 @@
+#! /usr/bin/env ruby
+
+require "open3"
+require "json"
+require "fileutils"
+
+TEMP_DIR = "tmp"
+DOMPURIFY_URL = "https://github.com/cure53/DOMPurify"
+DOMPURIFY_VERSION = "1.0.8"
+
+# FileUtils.mkdir_p TEMP_DIR
+# Dir.chdir TEMP_DIR do
+#   system("git clone #{DOMPURIFY_URL}")unless Dir.exist?("DOMPurify")
+
+#   Dir.chdir "DOMPurify" do
+#     system("npm install") unless Dir.exist?("node_modules")
+#     system "git checkout #{DOMPURIFY_VERSION}"
+#   end
+# end
+
+dompurify_metadata = Open3.popen2("tasks/dompurify-to-json") do |stdin, stdout, wait_thr|
+  raise wait_thr.value.to_s unless wait_thr.value.success?
+  JSON.parse(stdout.read)
+end
+
+dompurify_metadata.each { |k, v| puts "#{k}: #{v.keys}" }
+
+require "loofah"
+
+pairs = {
+  "html:tags" => [Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS, dompurify_metadata["tags"]["html"]],
+  "mathml:tags" => [Loofah::HTML5::WhiteList::MATHML_ELEMENTS, dompurify_metadata["tags"]["mathMl"]],
+  "svg:tags" => [Loofah::HTML5::WhiteList::SVG_ELEMENTS, dompurify_metadata["tags"]["svg"]],
+  "html:attrs" => [Loofah::HTML5::WhiteList::ACCEPTABLE_ATTRIBUTES, dompurify_metadata["attrs"]["html"]],
+  "mathml:attrs" => [Loofah::HTML5::WhiteList::MATHML_ATTRIBUTES, dompurify_metadata["attrs"]["mathMl"]],
+  "svg:attrs" => [Loofah::HTML5::WhiteList::SVG_ATTRIBUTES, dompurify_metadata["attrs"]["svg"]],
+}
+
+pairs.each do |name, v|
+  existing, updated = *v
+
+  existing = existing.to_a.sort
+  updated = updated.to_a.sort
+
+  removals = existing - updated
+  additions = updated - existing
+
+  puts "#{name}:"
+  puts "  removals (#{removals.length}):"
+  puts "    #{removals}"
+  puts "  additions (#{additions.length}):"
+  puts "    #{additions}"
+  puts
+end
+
+# TODO actually generate whitelists

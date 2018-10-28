@@ -1,0 +1,15 @@
+#! /usr/bin/env node
+
+require('babel-register')({
+    presets: [ 'env' ]
+})
+
+const dir = "../../DOMPurify" ;
+// const dir = "../tmp/DOMPUrify" ;
+
+metadata = {
+  "attrs": require(dir + "/src/attrs"),
+  "tags": require(dir + "/src/tags")
+};
+
+process.stdout.write(JSON.stringify(metadata));
