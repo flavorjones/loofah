@@ -8,9 +8,8 @@
 
 |System|Status|
 |--|--|
-| Concourse | [![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master) |
+| Concourse CI | [![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master) |
 | Code Climate | [![Code Climate](https://codeclimate.com/github/flavorjones/loofah.svg)](https://codeclimate.com/github/flavorjones/loofah) |
-| Version Eye | [![Version Eye](https://www.versioneye.com/ruby/loofah/badge.png)](https://www.versioneye.com/ruby/loofah) |
 
 
 ## Description
