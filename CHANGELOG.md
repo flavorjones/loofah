@@ -9,6 +9,15 @@ Features:
 * Allow greater precision in shorthand CSS values. [#149] (Thanks, @danfstucky!)
 
 
+## 2.2.3 / 2018-10-30
+
+### Security
+
+Address CVE-2018-16468: Unsanitized JavaScript may occur in sanitized output when a crafted SVG element is republished.
+
+This CVE's public notice is at https://github.com/flavorjones/loofah/issues/154
+
+
 ## Meta / 2018-10-27
 
 The mailing list is now on Google Groups [#146](https://github.com/flavorjones/loofah/issues/146):
