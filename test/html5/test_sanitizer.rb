@@ -37,7 +37,7 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_in_delta t0, Time.now, 0.1 # arbitrary seconds
   end
 
-  (HTML5::WhiteList::ALLOWED_ELEMENTS).each do |tag_name|
+  (HTML5::SafeList::ALLOWED_ELEMENTS).each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
       input       = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
       htmloutput  = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
@@ -58,7 +58,7 @@ class Html5TestSanitizer < Loofah::TestCase
         htmloutput = "<img title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
-      elsif HTML5::WhiteList::VOID_ELEMENTS.include?(tag_name)
+      elsif HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
         htmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         htmloutput += '<br/>' if tag_name == 'br'
@@ -71,7 +71,7 @@ class Html5TestSanitizer < Loofah::TestCase
   ##
   ##  libxml2 downcases elements, so this is moot.
   ##
-  # HTML5::WhiteList::ALLOWED_ELEMENTS.each do |tag_name|
+  # HTML5::SafeList::ALLOWED_ELEMENTS.each do |tag_name|
   #   define_method "test_should_forbid_#{tag_name.upcase}_tag" do
   #     input = "<#{tag_name.upcase} title='1'>foo <bad>bar</bad> baz</#{tag_name.upcase}>"
   #     output = "&lt;#{tag_name.upcase} title=\"1\"&gt;foo &lt;bad&gt;bar&lt;/bad&gt; baz&lt;/#{tag_name.upcase}&gt;"
@@ -79,7 +79,7 @@ class Html5TestSanitizer < Loofah::TestCase
   #   end
   # end
 
-  HTML5::WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
+  HTML5::SafeList::ALLOWED_ATTRIBUTES.each do |attribute_name|
     next if attribute_name == 'style'
     define_method "test_should_allow_#{attribute_name}_attribute" do
         input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
@@ -113,7 +113,7 @@ class Html5TestSanitizer < Loofah::TestCase
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##
-  # HTML5::WhiteList::ALLOWED_ATTRIBUTES.each do |attribute_name|
+  # HTML5::SafeList::ALLOWED_ATTRIBUTES.each do |attribute_name|
   #   define_method "test_should_forbid_#{attribute_name.upcase}_attribute" do
   #     input = "<p #{attribute_name.upcase}='display: none;'>foo <bad>bar</bad> baz</p>"
   #     output =  "<p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
@@ -121,7 +121,7 @@ class Html5TestSanitizer < Loofah::TestCase
   #   end
   # end
 
-  HTML5::WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
+  HTML5::SafeList::ALLOWED_PROTOCOLS.each do |protocol|
     define_method "test_should_allow_#{protocol}_uris" do
       input = %(<a href="#{protocol}">foo</a>)
       output = "<a href='#{protocol}'>foo</a>"
@@ -129,7 +129,7 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
-  HTML5::WhiteList::ALLOWED_PROTOCOLS.each do |protocol|
+  HTML5::SafeList::ALLOWED_PROTOCOLS.each do |protocol|
     define_method "test_should_allow_uppercase_#{protocol}_uris" do
       input = %(<a href="#{protocol.upcase}">foo</a>)
       output = "<a href='#{protocol.upcase}'>foo</a>"
@@ -137,7 +137,7 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
-  HTML5::WhiteList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
+  HTML5::SafeList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
       input = %(<a href="data:#{data_uri_type}">foo</a>)
       output = "<a href='data:#{data_uri_type}'>foo</a>"
@@ -149,7 +149,7 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
-  HTML5::WhiteList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
+  HTML5::SafeList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
     define_method "test_should_allow_uppercase_data_#{data_uri_type}_uris" do
       input = %(<a href="DATA:#{data_uri_type.upcase}">foo</a>)
       output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
@@ -172,8 +172,8 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
 
-  HTML5::WhiteList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
-    next unless HTML5::WhiteList::ALLOWED_ELEMENTS.include?(tag_name)
+  HTML5::SafeList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
+    next unless HTML5::SafeList::ALLOWED_ELEMENTS.include?(tag_name)
     define_method "test_#{tag_name}_should_allow_local_href" do
       input = %(<#{tag_name} xlink:href="#foo"/>)
       output = "<#{tag_name.downcase} xlink:href='#foo'></#{tag_name.downcase}>"
@@ -249,7 +249,7 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   ## added because we don't have any coverage above on SVG_ATTR_VAL_ALLOWS_REF
-  HTML5::WhiteList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|
+  HTML5::SafeList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|
     define_method "test_should_allow_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect fill='url(#foo)' />"
       output = "<rect fill='url(#foo)'></rect>"
@@ -281,7 +281,7 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/0.3333333334em/, sane.inner_html
   end
 
-  def test_css_function_sanitization_leaves_whitelisted_functions_calc
+  def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
@@ -291,13 +291,13 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/calc\(5%\)/, sane.inner_html
   end
 
-  def test_css_function_sanitization_leaves_whitelisted_functions_rgb
+  def test_css_function_sanitization_leaves_safelisted_functions_rgb
     html = '<span style="color: rgb(255, 0, 0)">'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/rgb\(255, 0, 0\)/, sane.inner_html
   end
 
-  def test_css_function_sanitization_leaves_whitelisted_list_style_type
+  def test_css_function_sanitization_leaves_safelisted_list_style_type
     html = "<ol style='list-style-type:lower-greek;'></ol>"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
     assert_match %r/list-style-type:lower-greek/, sane.inner_html

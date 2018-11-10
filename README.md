@@ -19,7 +19,7 @@ documents and fragments. It's built on top of Nokogiri and libxml2, so
 it's fast and has a nice API.
 
 Loofah excels at HTML sanitization (XSS prevention). It includes some
-nice HTML sanitizers, which are based on HTML5lib's whitelist, so it
+nice HTML sanitizers, which are based on HTML5lib's safelist, so it
 most likely won't make your codes less secure. (These statements have
 not been evaluated by Netexperts.)
 
@@ -29,7 +29,7 @@ ActiveRecord extensions for sanitization are available in the
 
 ## Features
 
-* Easily write custom scrubbers for HTML/XML leveraging the sweetness of Nokogiri (and HTML5lib's whitelists).
+* Easily write custom scrubbers for HTML/XML leveraging the sweetness of Nokogiri (and HTML5lib's safelists).
 * Common HTML sanitizing tasks are built-in:
   * _Strip_ unsafe tags, leaving behind only the inner text.
   * _Prune_ unsafe tags and their subtrees, removing all traces that they ever existed.
@@ -221,7 +221,7 @@ Loofah.xml_document(File.read('plague.xml')).scrub!(bring_out_your_dead)
 === Built-In HTML Scrubbers
 
 Loofah comes with a set of sanitizing scrubbers that use HTML5lib's
-whitelist algorithm:
+safelist algorithm:
 
 ``` ruby
 doc.scrub!(:strip)       # replaces unknown/unsafe tags with their inner text
