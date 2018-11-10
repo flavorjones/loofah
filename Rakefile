@@ -70,9 +70,9 @@ task :doc_upload_to_rubyforge => :docs do
   end
 end
 
-desc "generate whitelists from W3C specifications"
-task :generate_whitelists do
-  load "tasks/generate-whitelists"
+desc "generate allowlists from W3C specifications"
+task :generate_allowlists do
+  load "tasks/generate-allowlists"
 end
 
 Concourse.new("loofah", fly_target: "ci") do |c|

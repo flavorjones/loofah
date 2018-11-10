@@ -44,17 +44,17 @@ class UnitTestHelpers < Loofah::TestCase
         end
       end
 
-      describe "WhiteListSanitizer#sanitize" do
+      describe "SafeListSanitizer#sanitize" do
         it "calls .sanitize" do
           mock(Loofah::Helpers).sanitize("foobar")
-          Loofah::Helpers::ActionView::WhiteListSanitizer.new.sanitize "foobar"
+          Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize "foobar"
         end
       end
 
-      describe "WhiteListSanitizer#sanitize_css" do
+      describe "SafeListSanitizer#sanitize_css" do
         it "calls .sanitize_css" do
           mock(Loofah::Helpers).sanitize_css("foobar")
-          Loofah::Helpers::ActionView::WhiteListSanitizer.new.sanitize_css "foobar"
+          Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css "foobar"
         end
       end
     end
