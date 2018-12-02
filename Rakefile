@@ -71,9 +71,9 @@ task :doc_upload_to_rubyforge => :docs do
   end
 end
 
-desc "generate allowlists from W3C specifications"
-task :generate_allowlists do
-  load "tasks/generate-allowlists"
+desc "generate safelists from W3C specifications"
+task :generate_safelists do
+  load "tasks/generate-safelists"
 end
 
 Concourse.new("loofah").create_tasks!
