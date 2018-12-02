@@ -787,7 +787,9 @@ module Loofah
     end
 
     WhiteList = SafeList
-    deprecate_constant :WhiteList
+    if Object.respond_to?(:deprecate_constant)
+      deprecate_constant :WhiteList
+    end
 
     ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::SafeList
   end

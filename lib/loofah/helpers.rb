@@ -95,7 +95,9 @@ module Loofah
       end
 
       WhiteListSanitizer = SafeListSanitizer
-      deprecate_constant :WhiteListSanitizer
+      if Object.respond_to?(:deprecate_constant)
+        deprecate_constant :WhiteListSanitizer
+      end
     end
   end
 end
