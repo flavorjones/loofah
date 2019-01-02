@@ -263,6 +263,12 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
+  def test_css_list_style
+    html = '<ul style="list-style: none"></ul>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/list-style/, sane.inner_html
+  end
+
   def test_css_negative_value_sanitization
     html = "<span style=\"letter-spacing:-0.03em;\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
