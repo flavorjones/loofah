@@ -1,62 +1,20 @@
-groups:
-  - name: master
-    jobs:
-      <% for ruby_version in RUBIES[:mri] %>
-      - "ruby-<%= ruby_version %>"
-      <% end %>
-      <% for rbx_version in RUBIES[:rbx] %>
-      - "rbx-<%= rbx_version %>"
-      <% end %>
-      <% for ruby_version in RUBIES[:windows] %>
-      - "win-ruby-<%= ruby_version %>-devkit"
-      <% end %>
-  - name: PRs
-    jobs:
-      - pr-pending
-      <% for ruby_version in RUBIES[:mri] %>
-      - ruby-<%= ruby_version %>-pr
-      <% end %>
-      - rbx-<%= RUBIES[:rbx].last %>-pr
-      - pr-success
-  - name: allow-failure
-    jobs:
-      <% for jruby_version in RUBIES[:jruby] %>
-      - "jruby-<%= jruby_version %>"
-      <% end %>
-      - "jruby-<%= RUBIES[:jruby].last %>-pr"
+% require "common_prelude.rb"
 
 resources:
-  - name: ci
-    type: git
-    source:
-      uri: https://github.com/flavorjones/loofah/
-      branch: master
-      disable_ci_skip: true # always get the latest pipeline configuration
+<%= erbify_file "common_resources.yml" -%>
   - name: loofah
     type: git
+    icon: "github-circle"
     source:
       uri: https://github.com/flavorjones/loofah/
       branch: master
-      ignore_paths:
-        - concourse/**
-  - name: loofah-pr
-    type: pull-request
-    source:
-      repo: flavorjones/loofah
-      access_token: {{github-repo-status-access-token}}
-      ignore_paths:
-        - concourse/**
-
-resource_types:
-- name: pull-request
-  type: docker-image
-  source:
-    repository: jtarchie/pr
+      ignore_paths: <%= $common_ignore_paths %>
 
 jobs:
-  <% for ruby_version in RUBIES[:mri] %>
+% RUBIES[:mri].each do |ruby_version|
   - name: ruby-<%= ruby_version %>
     public: true
+    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -74,11 +32,12 @@ jobs:
             NOKOGIRI_USE_SYSTEM_LIBRARIES: t
           run:
             path: ci/concourse/tasks/rake-test/run.sh
-  <% end %>
+% end
 
-  <% for jruby_version in RUBIES[:jruby] %>
+% RUBIES[:jruby].each do |jruby_version|
   - name: jruby-<%= jruby_version %>
     public: true
+    serial_groups: ["jruby"]
     plan:
       - get: ci
       - get: loofah
@@ -96,166 +55,4 @@ jobs:
             JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
           run:
             path: ci/concourse/tasks/rake-test/run.sh
-  <% end %>
-
-  <% for rbx_version in RUBIES[:rbx] %>
-  - name: rbx-<%= rbx_version %>
-    public: true
-    plan:
-      - get: ci
-      - get: loofah
-        trigger: true
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: rubinius/docker, tag: "<%= rbx_version %>"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah
-          params:
-            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
-            TMPDIR: /scratch
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
-  <% end %>
-
-  <% for ruby_version in RUBIES[:windows] %>
-  - name: win-ruby-<%= ruby_version %>-devkit
-    public: true
-    plan:
-      - get: ci
-      - get: loofah
-        trigger: true
-        passed: ["ruby-<%= ruby_version %>"]
-      - task: rake-test
-        config:
-          platform: windows
-          inputs:
-            - name: ci
-            - name: loofah
-          params:
-            WIN_RUBY_VERSION: "<%= ruby_version %>"
-          run:
-            path: powershell
-            args: ["-File", "ci/concourse/tasks/rake-test/run.ps1"]
-  <% end %>
-
-  - name: pr-pending
-    public: true
-    plan:
-      - get: loofah-pr
-        trigger: true
-        version: every
-      - put: loofah-pr
-        params:
-          path: loofah-pr
-          status: pending
-
-  - name: pr-success
-    public: true
-    disable_manual_trigger: true
-    plan:
-      - get: loofah-pr
-        trigger: true
-        version: every
-        passed:
-<% for ruby_version in RUBIES[:mri] %>
-          - ruby-<%= ruby_version %>-pr
-<% end %>
-          ## allow-failure
-          # - jruby-<%= RUBIES[:jruby].last %>-pr
-          - rbx-<%= RUBIES[:rbx].last %>-pr
-      - put: loofah-pr
-        params:
-          path: loofah-pr
-          status: success
-
-<% for ruby_version in RUBIES[:mri] %>
-  - name: ruby-<%= ruby_version %>-pr
-    public: true
-    plan:
-      - get: ci
-      - get: loofah-pr
-        trigger: true
-        version: every
-        passed: [pr-pending]
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: ruby, tag: "<%= ruby_version %>"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah-pr
-              path: loofah
-          params:
-            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
-        on_failure:
-          put: loofah-pr
-          params:
-            path: loofah-pr
-            status: failure
-<% end %>
-
-  - name: jruby-<%= RUBIES[:jruby].last %>-pr
-    public: true
-    plan:
-      - get: ci
-      - get: loofah-pr
-        trigger: true
-        version: every
-        passed: [pr-pending]
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: jruby, tag: "<%= jruby_version %>-jdk"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah-pr
-              path: loofah
-          params:
-            JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
-        ## allow-failure
-        # on_failure:
-        #   put: loofah-pr
-        #   params:
-        #     path: loofah-pr
-        #     status: failure
-
-  - name: rbx-<%= RUBIES[:rbx].last %>-pr
-    public: true
-    plan:
-      - get: ci
-      - get: loofah-pr
-        trigger: true
-        version: every
-        passed: [pr-pending]
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: rubinius/docker, tag: "<%= rbx_version %>"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah-pr
-              path: loofah
-          params:
-            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
-            TMPDIR: /scratch
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
-        on_failure:
-          put: loofah-pr
-          params:
-            path: loofah-pr
-            status: failure
+% end

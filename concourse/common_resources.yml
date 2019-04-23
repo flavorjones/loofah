@@ -1,0 +1,7 @@
+  - name: ci
+    type: git
+    icon: "settings"
+    source:
+      uri: https://github.com/flavorjones/loofah/
+      branch: master
+      disable_ci_skip: true # always get the latest pipeline configuration

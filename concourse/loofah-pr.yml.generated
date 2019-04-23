@@ -1,0 +1,164 @@
+
+resources:
+  - name: ci
+    type: git
+    icon: "settings"
+    source:
+      uri: https://github.com/flavorjones/loofah/
+      branch: master
+      disable_ci_skip: true # always get the latest pipeline configuration
+  - name: loofah-pr
+    type: pull-request
+    icon: "github-circle"
+    source:
+      repo: flavorjones/loofah
+      access_token: ((github-repo-status-access-token))
+      ignore_paths: ["CHANGELOG.md","README.md","concourse/**"]
+
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+jobs:
+  - name: pr-pending
+    public: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+      - put: loofah-pr
+        params:
+          path: loofah-pr
+          status: pending
+
+  - name: pr-success
+    public: true
+    disable_manual_trigger: true
+    plan:
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed:
+          - ruby-2.3-pr
+          - ruby-2.4-pr
+          - ruby-2.5-pr
+          - ruby-2.6-pr
+      - put: loofah-pr
+        params:
+          path: loofah-pr
+          status: success
+
+  - name: ruby-2.3-pr
+    public: true
+    serial_groups: ["ruby-pr"]
+    plan:
+      - get: ci
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "2.3"}
+          platform: linux
+          inputs:
+            - name: ci
+            - name: loofah-pr
+              path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+  - name: ruby-2.4-pr
+    public: true
+    serial_groups: ["ruby-pr"]
+    plan:
+      - get: ci
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "2.4"}
+          platform: linux
+          inputs:
+            - name: ci
+            - name: loofah-pr
+              path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+  - name: ruby-2.5-pr
+    public: true
+    serial_groups: ["ruby-pr"]
+    plan:
+      - get: ci
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "2.5"}
+          platform: linux
+          inputs:
+            - name: ci
+            - name: loofah-pr
+              path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+  - name: ruby-2.6-pr
+    public: true
+    serial_groups: ["ruby-pr"]
+    plan:
+      - get: ci
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "2.6"}
+          platform: linux
+          inputs:
+            - name: ci
+            - name: loofah-pr
+              path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure

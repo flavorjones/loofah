@@ -75,4 +75,7 @@ task :generate_whitelists do
   load "tasks/generate-whitelists"
 end
 
-Concourse.new("loofah").create_tasks!
+Concourse.new("loofah", fly_target: "ci") do |c|
+  c.add_pipeline "loofah", "loofah.yml"
+  c.add_pipeline "loofah-pr", "loofah-pr.yml"
+end
