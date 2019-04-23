@@ -574,6 +574,7 @@ module Loofah
                                             "height",
                                             "letter-spacing",
                                             "line-height",
+                                            "list-style",
                                             "list-style-type",
                                             "overflow",
                                             "pause",
