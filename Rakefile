@@ -1,7 +1,6 @@
-require 'rubygems'
-gem 'hoe', '>= 2.3.0'
-require 'hoe'
-require 'concourse'
+require "rubygems"
+require "hoe"
+require "concourse"
 
 Hoe.plugin :git
 Hoe.plugin :gemspec
@@ -13,12 +12,12 @@ Hoe.spec "loofah" do
   developer "Bryan Helmkamp", "bryan@brynary.com"
 
   self.extra_rdoc_files = FileList["*.md"]
-  self.history_file     = "CHANGELOG.md"
-  self.readme_file      = "README.md"
-  self.license          "MIT"
+  self.history_file = "CHANGELOG.md"
+  self.readme_file = "README.md"
+  self.license "MIT"
 
-  extra_deps     << ["nokogiri", ">=1.5.9"]
-  extra_deps     << ["crass", "~> 1.0.2"]
+  extra_deps << ["nokogiri", ">=1.5.9"]
+  extra_deps << ["crass", "~> 1.0.2"]
 
   extra_dev_deps << ["rake", ">=0.8"]
   extra_dev_deps << ["minitest", "~>2.2"]
@@ -28,7 +27,7 @@ Hoe.spec "loofah" do
   extra_dev_deps << ["hoe-debugging", ">=0"]
   extra_dev_deps << ["hoe-bundler", ">=0"]
   extra_dev_deps << ["hoe-git", ">=0"]
-  extra_dev_deps << ["concourse", ">=0.15.0"]
+  extra_dev_deps << ["concourse", ">=0.26.0"]
 end
 
 task :gemspec do
