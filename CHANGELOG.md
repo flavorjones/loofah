@@ -2,11 +2,16 @@
 
 ## 2.3.0 / unreleased
 
-Features:
+### Features
 
 * Expand set of allowed protocols to include `tel:` and `line:`. [#104, #147]
 * Expand set of allowed CSS functions. [related to #122]
 * Allow greater precision in shorthand CSS values. [#149] (Thanks, @danfstucky!)
+
+
+### Bug fixes
+
+* CSS hex values are no longer limited to lowercase hex. Previously uppercase hex were scrubbed. [#165] (Thanks, @asok!)
 
 
 ## 2.2.3 / 2018-10-30
