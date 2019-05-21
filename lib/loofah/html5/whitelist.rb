@@ -243,6 +243,7 @@ module Loofah
                                         "cols",
                                         "colspan",
                                         "compact",
+                                        "contenteditable",
                                         "coords",
                                         "datetime",
                                         "dir",
