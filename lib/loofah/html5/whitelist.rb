@@ -635,6 +635,8 @@ module Loofah
                                           "silver",
                                           "solid",
                                           "teal",
+                                          "thin",
+                                          "thick",
                                           "top",
                                           "transparent",
                                           "underline",
