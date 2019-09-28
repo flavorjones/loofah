@@ -17,13 +17,15 @@
 * CSS hex values are no longer limited to lowercase hex. Previously uppercase hex were scrubbed. [#165] (Thanks, @asok!)
 
 
-* Update terminology
-  - Deprecate `Loofah::Helpers::ActionView.white_list_sanitizer`,
-    please use `Loofah::Helpers::ActionView.safe_list_sanitizer` instead.
-  - Deprecate `Loofah::Helpers::ActionView::WhiteListSanitizer`,
-    please use `Loofah::Helpers::ActionView::SafeListSanitizer` instead.
-  - Deprecate `Loofah::HTML5::WhiteList`,
-    please use `Loofah::HTML5::SafeList` instead.
+### Deprecations / Name Changes
+
+The following method and constants are hereby deprecated, and will be completely removed in a future release:
+
+* Deprecate `Loofah::Helpers::ActionView.white_list_sanitizer`, please use `Loofah::Helpers::ActionView.safe_list_sanitizer` instead.
+* Deprecate `Loofah::Helpers::ActionView::WhiteListSanitizer`, please use `Loofah::Helpers::ActionView::SafeListSanitizer` instead.
+* Deprecate `Loofah::HTML5::WhiteList`, please use `Loofah::HTML5::SafeList` instead.
+
+Thanks to @JuanitoFatas for submitting these changes in #164 and for making the language used in Loofah more inclusive.
 
 
 ## 2.2.3 / 2018-10-30
