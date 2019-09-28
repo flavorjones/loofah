@@ -19,14 +19,14 @@ Hoe.spec "loofah" do
   extra_deps << ["nokogiri", ">=1.5.9"]
   extra_deps << ["crass", "~> 1.0.2"]
 
-  extra_dev_deps << ["rake", ">=0.8"]
+  extra_dev_deps << ["rake", "~> 12.3"]
   extra_dev_deps << ["minitest", "~>2.2"]
   extra_dev_deps << ["rr", "~>1.2.0"]
-  extra_dev_deps << ["json", ">=0"]
-  extra_dev_deps << ["hoe-gemspec", ">=0"]
-  extra_dev_deps << ["hoe-debugging", ">=0"]
-  extra_dev_deps << ["hoe-bundler", ">=0"]
-  extra_dev_deps << ["hoe-git", ">=0"]
+  extra_dev_deps << ["json", "~> 2.2.0"]
+  extra_dev_deps << ["hoe-gemspec", "~> 1.0"]
+  extra_dev_deps << ["hoe-debugging", "~> 2.0"]
+  extra_dev_deps << ["hoe-bundler", "~> 1.5"]
+  extra_dev_deps << ["hoe-git", "~> 1.6"]
   extra_dev_deps << ["concourse", ">=0.26.0"]
 end
 
