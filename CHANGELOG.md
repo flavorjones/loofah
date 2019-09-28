@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.3.0 / unreleased
+## 2.3.0 / 2019-09-28
 
 ### Features
 
