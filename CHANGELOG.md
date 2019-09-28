@@ -8,6 +8,7 @@
 * Expand set of allowed CSS functions. [related to #122]
 * Allow greater precision in shorthand CSS values. [#149] (Thanks, @danfstucky!)
 * Allow CSS property `list-style` [#162] (Thanks, @jaredbeck!)
+* Allow HTML property `contenteditable`
 
 
 ### Bug fixes

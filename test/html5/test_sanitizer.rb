@@ -110,6 +110,13 @@ class Html5TestSanitizer < Loofah::TestCase
     check_sanitization(input, htmloutput, output, output)
   end
 
+  def test_should_allow_contenteditable
+    input = '<p contenteditable="false">Hi!</p>'
+    output = '<p contenteditable="false">Hi!</p>'
+
+    check_sanitization(input, output, output, output)
+  end
+
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##
