@@ -3,7 +3,7 @@ require 'set'
 module Loofah
   module HTML5 # :nodoc:
     #
-    #  HTML whitelist lifted from HTML5lib sanitizer code:
+    #  HTML safelist lifted from HTML5lib sanitizer code:
     #
     #    http://code.google.com/p/html5lib/
     #
@@ -44,7 +44,7 @@ module Loofah
     #   DEALINGS IN THE SOFTWARE.
     #
     # </html5_license>
-    module WhiteList
+    module SafeList
 
       ACCEPTABLE_ELEMENTS = Set.new([
                                       "a",
@@ -790,6 +790,11 @@ module Loofah
       ALLOWED_ELEMENTS_WITH_LIBXML2 = ALLOWED_ELEMENTS + TAGS_SAFE_WITH_LIBXML2
     end
 
-    ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::WhiteList
+    WhiteList = SafeList
+    if Object.respond_to?(:deprecate_constant)
+      deprecate_constant :WhiteList
+    end
+
+    ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::HTML5::SafeList
   end
 end

@@ -12,7 +12,7 @@ module Loofah
       class << self
 
         def allowed_element? element_name
-          ::Loofah::HTML5::WhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2.include? element_name
+          ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include? element_name
         end
 
         #  alternative implementation of the html5lib attribute scrubbing algorithm
@@ -28,31 +28,31 @@ module Loofah
               next
             end
 
-            unless WhiteList::ALLOWED_ATTRIBUTES.include?(attr_name)
+            unless SafeList::ALLOWED_ATTRIBUTES.include?(attr_name)
               attr_node.remove
               next
             end
 
-            if WhiteList::ATTR_VAL_IS_URI.include?(attr_name)
+            if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
               # this block lifted nearly verbatim from HTML5 sanitization
               val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS,'').downcase
-              if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! WhiteList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[0])
+              if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
                 attr_node.remove
                 next
-              elsif val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[0] == 'data'
+              elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == 'data'
                 # permit only allowed data mediatypes
-                mediatype = val_unescaped.split(WhiteList::PROTOCOL_SEPARATOR)[1]
+                mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
                 mediatype, _ = mediatype.split(';')[0..1] if mediatype
-                if mediatype && !WhiteList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
+                if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
                   attr_node.remove
                   next
                 end
               end
             end
-            if WhiteList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
+            if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
               attr_node.value = attr_node.value.gsub(/url\s*\(\s*[^#\s][^)]+?\)/m, ' ') if attr_node.value
             end
-            if WhiteList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
+            if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == 'xlink:href' && attr_node.value =~ /^\s*[^#\s].*/m
               attr_node.remove
               next
             end
@@ -79,14 +79,14 @@ module Loofah
           style_tree.each do |node|
             next unless node[:node] == :property
             next if node[:children].any? do |child|
-              [:url, :bad_url].include?(child[:node]) || (child[:node] == :function && !WhiteList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase))
+              [:url, :bad_url].include?(child[:node]) || (child[:node] == :function && !SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase))
             end
             name = node[:name].downcase
-            if WhiteList::ALLOWED_CSS_PROPERTIES.include?(name) || WhiteList::ALLOWED_SVG_PROPERTIES.include?(name)
+            if SafeList::ALLOWED_CSS_PROPERTIES.include?(name) || SafeList::ALLOWED_SVG_PROPERTIES.include?(name)
               sanitized_tree << node << CRASS_SEMICOLON
-            elsif WhiteList::SHORTHAND_CSS_PROPERTIES.include?(name.split('-').first)
+            elsif SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split('-').first)
               value = node[:value].split.map do |keyword|
-                if WhiteList::ALLOWED_CSS_KEYWORDS.include?(keyword) || keyword =~ CSS_KEYWORDISH
+                if SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) || keyword =~ CSS_KEYWORDISH
                   keyword
                 end
               end.compact

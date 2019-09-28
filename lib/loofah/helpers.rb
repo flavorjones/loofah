@@ -46,8 +46,13 @@ module Loofah
           @full_sanitizer ||= ::Loofah::Helpers::ActionView::FullSanitizer.new
         end
 
+        def safe_list_sanitizer
+          @safe_list_sanitizer ||= ::Loofah::Helpers::ActionView::SafeListSanitizer.new
+        end
+
         def white_list_sanitizer
-          @white_list_sanitizer ||= ::Loofah::Helpers::ActionView::WhiteListSanitizer.new
+          warn "warning: white_list_sanitizer is deprecated, please use safe_list_sanitizer instead."
+          safe_list_sanitizer
         end
       end
 
@@ -73,13 +78,13 @@ module Loofah
       #
       #  To use by default, call this in an application initializer:
       #
-      #    ActionView::Helpers::SanitizeHelper.white_list_sanitizer = ::Loofah::Helpers::ActionView::WhiteListSanitizer.new
+      #    ActionView::Helpers::SanitizeHelper.safe_list_sanitizer = ::Loofah::Helpers::ActionView::SafeListSanitizer.new
       #
       #  Or, to generally opt-in to Loofah's view sanitizers:
       #
       #    Loofah::Helpers::ActionView.set_as_default_sanitizer
       #
-      class WhiteListSanitizer
+      class SafeListSanitizer
         def sanitize html, *args
           Loofah::Helpers.sanitize html
         end
@@ -87,6 +92,11 @@ module Loofah
         def sanitize_css style_string, *args
           Loofah::Helpers.sanitize_css style_string
         end
+      end
+
+      WhiteListSanitizer = SafeListSanitizer
+      if Object.respond_to?(:deprecate_constant)
+        deprecate_constant :WhiteListSanitizer
       end
     end
   end

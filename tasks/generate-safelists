@@ -28,12 +28,12 @@ dompurify_metadata.each { |k, v| puts "#{k}: #{v.keys}" }
 require "loofah"
 
 pairs = {
-  "html:tags" => [Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS, dompurify_metadata["tags"]["html"]],
-  "mathml:tags" => [Loofah::HTML5::WhiteList::MATHML_ELEMENTS, dompurify_metadata["tags"]["mathMl"]],
-  "svg:tags" => [Loofah::HTML5::WhiteList::SVG_ELEMENTS, dompurify_metadata["tags"]["svg"]],
-  "html:attrs" => [Loofah::HTML5::WhiteList::ACCEPTABLE_ATTRIBUTES, dompurify_metadata["attrs"]["html"]],
-  "mathml:attrs" => [Loofah::HTML5::WhiteList::MATHML_ATTRIBUTES, dompurify_metadata["attrs"]["mathMl"]],
-  "svg:attrs" => [Loofah::HTML5::WhiteList::SVG_ATTRIBUTES, dompurify_metadata["attrs"]["svg"]],
+  "html:tags" => [Loofah::HTML5::SafeList::ACCEPTABLE_ELEMENTS, dompurify_metadata["tags"]["html"]],
+  "mathml:tags" => [Loofah::HTML5::SafeList::MATHML_ELEMENTS, dompurify_metadata["tags"]["mathMl"]],
+  "svg:tags" => [Loofah::HTML5::SafeList::SVG_ELEMENTS, dompurify_metadata["tags"]["svg"]],
+  "html:attrs" => [Loofah::HTML5::SafeList::ACCEPTABLE_ATTRIBUTES, dompurify_metadata["attrs"]["html"]],
+  "mathml:attrs" => [Loofah::HTML5::SafeList::MATHML_ATTRIBUTES, dompurify_metadata["attrs"]["mathMl"]],
+  "svg:attrs" => [Loofah::HTML5::SafeList::SVG_ATTRIBUTES, dompurify_metadata["attrs"]["svg"]],
 }
 
 pairs.each do |name, v|
@@ -53,4 +53,4 @@ pairs.each do |name, v|
   puts
 end
 
-# TODO actually generate whitelists
+# TODO actually generate safelists
