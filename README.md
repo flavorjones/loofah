@@ -14,17 +14,11 @@
 
 ## Description
 
-Loofah is a general library for manipulating and transforming HTML/XML
-documents and fragments. It's built on top of Nokogiri and libxml2, so
-it's fast and has a nice API.
+Loofah is a general library for manipulating and transforming HTML/XML documents and fragments, built on top of Nokogiri.
 
-Loofah excels at HTML sanitization (XSS prevention). It includes some
-nice HTML sanitizers, which are based on HTML5lib's safelist, so it
-most likely won't make your codes less secure. (These statements have
-not been evaluated by Netexperts.)
+Loofah excels at HTML sanitization (XSS prevention). It includes some nice HTML sanitizers, which are based on HTML5lib's safelist, so it most likely won't make your codes less secure. (These statements have not been evaluated by Netexperts.)
 
-ActiveRecord extensions for sanitization are available in the
-[`loofah-activerecord` gem](https://github.com/flavorjones/loofah-activerecord).
+ActiveRecord extensions for sanitization are available in the [`loofah-activerecord` gem](https://github.com/flavorjones/loofah-activerecord).
 
 
 ## Features
