@@ -1,6 +1,6 @@
 # Loofah
 
-* Homepage: https://github.com/flavorjones/loofah
+* https://github.com/flavorjones/loofah
 * Docs: http://rubydoc.info/github/flavorjones/loofah/master/frames
 * Mailing list: [loofah-talk@googlegroups.com](https://groups.google.com/forum/#!forum/loofah-talk)
 
