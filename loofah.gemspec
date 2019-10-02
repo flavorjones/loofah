@@ -19,6 +19,15 @@ Gem::Specification.new do |s|
   s.rubygems_version = "3.0.3".freeze
   s.summary = "Loofah is a general library for manipulating and transforming HTML/XML documents and fragments, built on top of Nokogiri".freeze
 
+  s.metadata = {
+    'bug_tracker_uri'   => 'https://github.com/flavorjones/loofah/issues',
+    'changelog_uri'     => "https://github.com/flavorjones/loofah/blob/v#{s.version}/CHANGELOG.md",
+    'documentation_uri' => "https://www.rubydoc.info/gems/loofah/#{s.version}",
+    'mailing_list_uri'  => 'http://librelist.com/browser/loofah/',
+    'source_code_uri'   => "https://github.com/flavorjones/loofah/tree/v#{s.version}",
+    'wiki_uri'          => 'https://github.com/flavorjones/loofah/wiki'
+  }
+
   if s.respond_to? :specification_version then
     s.specification_version = 4
 
