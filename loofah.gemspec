@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
     'bug_tracker_uri'   => 'https://github.com/flavorjones/loofah/issues',
     'changelog_uri'     => "https://github.com/flavorjones/loofah/blob/v#{s.version}/CHANGELOG.md",
     'documentation_uri' => "https://www.rubydoc.info/gems/loofah/#{s.version}",
-    'mailing_list_uri'  => 'http://librelist.com/browser/loofah/',
+    'mailing_list_uri'  => 'https://groups.google.com/forum/#!forum/loofah-talk',
     'source_code_uri'   => "https://github.com/flavorjones/loofah/tree/v#{s.version}",
     'wiki_uri'          => 'https://github.com/flavorjones/loofah/wiki'
   }
