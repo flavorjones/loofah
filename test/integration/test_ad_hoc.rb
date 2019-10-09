@@ -1,7 +1,6 @@
 require "helper"
 
 class IntegrationTestAdHoc < Loofah::TestCase
-
   context "blank input string" do
     context "fragment" do
       it "return a blank string" do
@@ -33,9 +32,9 @@ class IntegrationTestAdHoc < Loofah::TestCase
       html = "<p class=bar foo=bar abbr=bar />"
       sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
       node = sane.xpath("//p").first
-      assert node.attributes['class']
-      assert node.attributes['abbr']
-      assert_nil node.attributes['foo']
+      assert node.attributes["class"]
+      assert node.attributes["abbr"]
+      assert_nil node.attributes["foo"]
     end
 
     def test_removal_of_illegal_url_in_href
@@ -45,14 +44,14 @@ class IntegrationTestAdHoc < Loofah::TestCase
     HTML
       sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
       nodes = sane.xpath("//a")
-      assert_nil nodes.first.attributes['href']
-      assert nodes.last.attributes['href']
+      assert_nil nodes.first.attributes["href"]
+      assert nodes.last.attributes["href"]
     end
 
     def test_css_sanitization
       html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
       sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
-      assert_match %r/#000/,    sane.inner_html
+      assert_match %r/#000/, sane.inner_html
       refute_match %r/foo\.com/, sane.inner_html
     end
 
@@ -75,7 +74,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
     def test_whitewash_on_fragment
       html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
       whitewashed = Loofah.scrub_document(html, :whitewash).xpath("/html/body/*").to_s
-      assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n","")
+      assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n", "")
     end
 
     def test_fragment_whitewash_on_microsofty_markup
@@ -86,11 +85,11 @@ class IntegrationTestAdHoc < Loofah::TestCase
     def test_document_whitewash_on_microsofty_markup
       whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
       assert_match %r(<p>Foo <b>BOLD</b></p>), whitewashed.to_s
-      assert_equal "<p>Foo <b>BOLD</b></p>",   whitewashed.xpath("/html/body/*").to_s
+      assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
     end
 
     def test_return_empty_string_when_nothing_left
-      assert_equal "", Loofah.scrub_document('<script>test</script>', :prune).text
+      assert_equal "", Loofah.scrub_document("<script>test</script>", :prune).text
     end
 
     def test_nested_script_cdata_tags_should_be_scrubbed
@@ -145,21 +144,20 @@ class IntegrationTestAdHoc < Loofah::TestCase
       #
       #    https://git.gnome.org/browse/libxml2/tree/HTMLtree.c?h=v2.9.2#n714
       #
-      {tag: "a",   attr: "href"},
-      {tag: "div", attr: "href"},
-      {tag: "a",   attr: "action"},
-      {tag: "div", attr: "action"},
-      {tag: "a",   attr: "src"},
-      {tag: "div", attr: "src"},
-      {tag: "a",   attr: "name"},
+      { tag: "a", attr: "href" },
+      { tag: "div", attr: "href" },
+      { tag: "a", attr: "action" },
+      { tag: "div", attr: "action" },
+      { tag: "a", attr: "src" },
+      { tag: "div", attr: "src" },
+      { tag: "a", attr: "name" },
       #
       #  note that div+name is _not_ affected by the libxml2 issue.
       #  but we test it anyway to ensure our logic isn't modifying
       #  attributes that don't need modifying.
       #
-      {tag: "div", attr: "name", unescaped: true},
+      { tag: "div", attr: "name", unescaped: true },
     ].each do |config|
-
       define_method "test_uri_escaping_of_#{config[:attr]}_attr_in_#{config[:tag]}_tag" do
         html = %{<#{config[:tag]} #{config[:attr]}='examp<!--" unsafeattr=foo()>-->le.com'>test</#{config[:tag]}>}
 

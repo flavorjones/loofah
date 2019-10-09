@@ -1,4 +1,4 @@
-require 'set'
+require "set"
 
 module Loofah
   module HTML5 # :nodoc:
@@ -45,7 +45,6 @@ module Loofah
     #
     # </html5_license>
     module SafeList
-
       ACCEPTABLE_ELEMENTS = Set.new([
                                       "a",
                                       "abbr",
