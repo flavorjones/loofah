@@ -188,14 +188,32 @@ class IntegrationTestAdHoc < Loofah::TestCase
       end
     end
 
-    # see:
-    # - https://github.com/flavorjones/loofah/issues/154
-    # - https://hackerone.com/reports/429267
-    context "xss protection from svg xmlns:xlink animate attribute" do
-      it "sanitizes appropriate attributes" do
-        html = %Q{<svg><a xmlns:xlink=http://www.w3.org/1999/xlink xlink:href=?><circle r=400 /><animate attributeName=xlink:href begin=0 from=javascript:alert(1) to=%26>}
+    context "xss protection from svg animate attributes" do
+      # see recommendation from https://html5sec.org/#137
+      # to sanitize "to", "from", "values", and "by" attributes
+
+      it "sanitizes 'from', 'to', and 'by' attributes" do
+        # for CVE-2018-16468
+        # see:
+        # - https://github.com/flavorjones/loofah/issues/154
+        # - https://hackerone.com/reports/429267
+        html = %Q{<svg><a xmlns:xlink=http://www.w3.org/1999/xlink xlink:href=?><circle r=400 /><animate attributeName=xlink:href begin=0 from=javascript:alert(1) to=%26 by=5>}
+
         sanitized = Loofah.scrub_fragment(html, :escape)
         assert_nil sanitized.at_css("animate")["from"]
+        assert_nil sanitized.at_css("animate")["to"]
+        assert_nil sanitized.at_css("animate")["by"]
+      end
+
+      it "sanitizes 'values' attribute" do
+        # for CVE-2019-15587
+        # see:
+        # - https://github.com/flavorjones/loofah/issues/171
+        # - https://hackerone.com/reports/709009
+        html = %Q{<svg> <animate href="#foo" attributeName="href" values="javascript:alert('xss')"/> <a id="foo"> <circle r=400 /> </a> </svg>}
+
+        sanitized = Loofah.scrub_fragment(html, :escape)
+        assert_nil sanitized.at_css("animate")["values"]
       end
     end
   end
