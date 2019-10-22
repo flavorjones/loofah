@@ -1,4 +1,4 @@
-require 'set'
+require "set"
 
 module Loofah
   module HTML5 # :nodoc:
@@ -45,7 +45,6 @@ module Loofah
     #
     # </html5_license>
     module SafeList
-
       ACCEPTABLE_ELEMENTS = Set.new([
                                       "a",
                                       "abbr",
@@ -361,7 +360,6 @@ module Loofah
                                  "baseProfile",
                                  "bbox",
                                  "begin",
-                                 "by",
                                  "calcMode",
                                  "cap-height",
                                  "class",
@@ -468,7 +466,6 @@ module Loofah
                                  "systemLanguage",
                                  "target",
                                  "text-anchor",
-                                 "to",
                                  "transform",
                                  "type",
                                  "u1",
@@ -478,7 +475,6 @@ module Loofah
                                  "unicode",
                                  "unicode-range",
                                  "units-per-em",
-                                 "values",
                                  "version",
                                  "viewBox",
                                  "visibility",

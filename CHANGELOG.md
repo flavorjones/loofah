@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.1 / 2019-10-22
+
+### Security
+
+Address CVE-2019-15587: Unsanitized JavaScript may occur in sanitized output when a crafted SVG element is republished.
+
+This CVE's public notice is at https://github.com/flavorjones/loofah/issues/171
+
+
 ## 2.3.0 / 2019-09-28
 
 ### Features
