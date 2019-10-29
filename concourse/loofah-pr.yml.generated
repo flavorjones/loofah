@@ -45,6 +45,7 @@ jobs:
           - ruby-2.4-pr
           - ruby-2.5-pr
           - ruby-2.6-pr
+          - ruby-2.7-rc-pr
       - put: loofah-pr
         params:
           path: loofah-pr
@@ -148,6 +149,34 @@ jobs:
           image_resource:
             type: docker-image
             source: {repository: ruby, tag: "2.6"}
+          platform: linux
+          inputs:
+            - name: ci
+            - name: loofah-pr
+              path: loofah
+          params:
+            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
+          run:
+            path: ci/concourse/tasks/rake-test/run.sh
+        on_failure:
+          put: loofah-pr
+          params:
+            path: loofah-pr
+            status: failure
+  - name: ruby-2.7-rc-pr
+    public: true
+    serial_groups: ["ruby-pr"]
+    plan:
+      - get: ci
+      - get: loofah-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          image_resource:
+            type: docker-image
+            source: {repository: ruby, tag: "2.7-rc"}
           platform: linux
           inputs:
             - name: ci
