@@ -573,6 +573,7 @@ module Loofah
                                             "line-height",
                                             "list-style",
                                             "list-style-type",
+                                            "max-width",
                                             "overflow",
                                             "pause",
                                             "pause-after",
