@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Loofah
   #
   #  Mixes +scrub!+ into Document, DocumentFragment, Node and NodeSet.

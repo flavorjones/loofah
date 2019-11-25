@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Loofah
   #
   #  Loofah provides some built-in scrubbers for sanitizing with

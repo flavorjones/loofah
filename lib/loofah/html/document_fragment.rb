@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Loofah
   module HTML # :nodoc:
     #

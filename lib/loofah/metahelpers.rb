@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Loofah
   module MetaHelpers # :nodoc:
     def self.add_downcased_set_members_to_all_set_constants mojule

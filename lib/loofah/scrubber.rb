@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Loofah
   #
   #  A RuntimeError raised when Loofah could not find an appropriate scrubber.
