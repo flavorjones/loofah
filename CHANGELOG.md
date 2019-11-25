@@ -1,5 +1,14 @@
 # Changelog
 
+## next / unreleased
+
+### Features
+
+* Allow CSS property `max-width` [#175] (Thanks, @bchaney!)
+* Allow CSS sizes expressed in `rem` [#176, #177]
+* Add `frozen_string_literal: true` magic comment to all `lib` files. [#118]
+
+
 ## 2.3.1 / 2019-10-22
 
 ### Security
