@@ -305,6 +305,12 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/60ch/, sane.inner_html
   end
 
+  def test_css_vw_value
+    html = "<div style=\"font-size: calc(16px + 1vw);\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/1vw/, sane.inner_html
+  end
+
   def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
