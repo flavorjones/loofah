@@ -332,6 +332,13 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/<span><\/span>/, sane.inner_html
   end
 
+  def test_css_max_width
+    html = '<div style="max-width: 100%;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/max-width/, sane.inner_html
+  end
+
+
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")
 
