@@ -28,6 +28,7 @@ Hoe.spec "loofah" do
   extra_dev_deps << ["hoe-bundler", "~> 1.5"]
   extra_dev_deps << ["hoe-git", "~> 1.6"]
   extra_dev_deps << ["concourse", ">=0.26.0"]
+  extra_dev_deps << ["rubocop", ">=0.76.0"]
 end
 
 task :gemspec do
@@ -74,6 +75,15 @@ desc "generate safelists from W3C specifications"
 task :generate_safelists do
   load "tasks/generate-safelists"
 end
+
+task :rubocop => [:rubocop_security, :rubocop_frozen_string_literals]
+task :rubocop_security do
+  sh "rubocop lib --only Security"
+end
+task :rubocop_frozen_string_literals do
+  sh "rubocop lib --auto-correct --only Style/FrozenStringLiteralComment"
+end
+Rake::Task[:test].prerequisites << :rubocop
 
 Concourse.new("loofah", fly_target: "ci") do |c|
   c.add_pipeline "loofah", "loofah.yml"

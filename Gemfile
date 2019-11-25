@@ -7,16 +7,17 @@ source "https://rubygems.org/"
 gem "nokogiri", ">=1.5.9"
 gem "crass", "~>1.0.2"
 
-gem "rake", ">=0.8", :group => [:development, :test]
+gem "rake", "~>12.3", :group => [:development, :test]
 gem "minitest", "~>2.2", :group => [:development, :test]
 gem "rr", "~>1.2.0", :group => [:development, :test]
-gem "json", ">=0", :group => [:development, :test]
-gem "hoe-gemspec", ">=0", :group => [:development, :test]
-gem "hoe-debugging", ">=0", :group => [:development, :test]
-gem "hoe-bundler", ">=0", :group => [:development, :test]
-gem "hoe-git", ">=0", :group => [:development, :test]
+gem "json", "~>2.2.0", :group => [:development, :test]
+gem "hoe-gemspec", "~>1.0", :group => [:development, :test]
+gem "hoe-debugging", "~>2.0", :group => [:development, :test]
+gem "hoe-bundler", "~>1.5", :group => [:development, :test]
+gem "hoe-git", "~>1.6", :group => [:development, :test]
 gem "concourse", ">=0.26.0", :group => [:development, :test]
+gem "rubocop", ">=0.76.0", :group => [:development, :test]
 gem "rdoc", ">=4.0", "<7", :group => [:development, :test]
-gem "hoe", "~>3.17", :group => [:development, :test]
+gem "hoe", "~>3.20", :group => [:development, :test]
 
 # vim: syntax=ruby
