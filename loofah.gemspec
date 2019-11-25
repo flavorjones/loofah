@@ -1,14 +1,15 @@
 # -*- encoding: utf-8 -*-
-# stub: loofah 2.3.0.20190928134624 ruby lib
+# stub: loofah 2.4.0.20191125135329 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "loofah".freeze
-  s.version = "2.3.0.20190928134624"
+  s.version = "2.4.0.20191125135329"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
+  s.metadata = { "homepage_uri" => "https://github.com/flavorjones/loofah" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Mike Dalessio".freeze, "Bryan Helmkamp".freeze]
-  s.date = "2019-09-28"
+  s.date = "2019-11-25"
   s.description = "Loofah is a general library for manipulating and transforming HTML/XML documents and fragments, built on top of Nokogiri.\n\nLoofah excels at HTML sanitization (XSS prevention). It includes some nice HTML sanitizers, which are based on HTML5lib's safelist, so it most likely won't make your codes less secure. (These statements have not been evaluated by Netexperts.)\n\nActiveRecord extensions for sanitization are available in the [`loofah-activerecord` gem](https://github.com/flavorjones/loofah-activerecord).".freeze
   s.email = ["mike.dalessio@gmail.com".freeze, "bryan@brynary.com".freeze]
   s.extra_rdoc_files = ["CHANGELOG.md".freeze, "MIT-LICENSE.txt".freeze, "Manifest.txt".freeze, "README.md".freeze, "SECURITY.md".freeze, "CHANGELOG.md".freeze, "README.md".freeze, "SECURITY.md".freeze]
@@ -34,8 +35,9 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<hoe-bundler>.freeze, ["~> 1.5"])
       s.add_development_dependency(%q<hoe-git>.freeze, ["~> 1.6"])
       s.add_development_dependency(%q<concourse>.freeze, [">= 0.26.0"])
+      s.add_development_dependency(%q<rubocop>.freeze, [">= 0.76.0"])
       s.add_development_dependency(%q<rdoc>.freeze, [">= 4.0", "< 7"])
-      s.add_development_dependency(%q<hoe>.freeze, ["~> 3.18"])
+      s.add_development_dependency(%q<hoe>.freeze, ["~> 3.20"])
     else
       s.add_dependency(%q<nokogiri>.freeze, [">= 1.5.9"])
       s.add_dependency(%q<crass>.freeze, ["~> 1.0.2"])
@@ -48,8 +50,9 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<hoe-bundler>.freeze, ["~> 1.5"])
       s.add_dependency(%q<hoe-git>.freeze, ["~> 1.6"])
       s.add_dependency(%q<concourse>.freeze, [">= 0.26.0"])
+      s.add_dependency(%q<rubocop>.freeze, [">= 0.76.0"])
       s.add_dependency(%q<rdoc>.freeze, [">= 4.0", "< 7"])
-      s.add_dependency(%q<hoe>.freeze, ["~> 3.18"])
+      s.add_dependency(%q<hoe>.freeze, ["~> 3.20"])
     end
   else
     s.add_dependency(%q<nokogiri>.freeze, [">= 1.5.9"])
@@ -63,7 +66,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<hoe-bundler>.freeze, ["~> 1.5"])
     s.add_dependency(%q<hoe-git>.freeze, ["~> 1.6"])
     s.add_dependency(%q<concourse>.freeze, [">= 0.26.0"])
+    s.add_dependency(%q<rubocop>.freeze, [">= 0.76.0"])
     s.add_dependency(%q<rdoc>.freeze, [">= 4.0", "< 7"])
-    s.add_dependency(%q<hoe>.freeze, ["~> 3.18"])
+    s.add_dependency(%q<hoe>.freeze, ["~> 3.20"])
   end
 end
