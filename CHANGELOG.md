@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.4.0 / 2019-11-25
 
 ### Features
 
