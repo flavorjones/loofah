@@ -1,12 +1,11 @@
 require "helper"
 
 class UnitTestScrubber < Loofah::TestCase
-
   FRAGMENT = "<span>hello</span><span>goodbye</span>"
-  FRAGMENT_NODE_COUNT         = 4 # span, text, span, text
+  FRAGMENT_NODE_COUNT = 4 # span, text, span, text
   FRAGMENT_NODE_STOP_TOP_DOWN = 2 # span, span
   DOCUMENT = "<html><head><link></link></head><body><span>hello</span><span>goodbye</span></body></html>"
-  DOCUMENT_NODE_COUNT         = 8 # html, head, link, body, span, text, span, text
+  DOCUMENT_NODE_COUNT = 8 # html, head, link, body, span, text, span, text
   DOCUMENT_NODE_STOP_TOP_DOWN = 1 # html
 
   context "receiving a block" do
@@ -148,7 +147,7 @@ class UnitTestScrubber < Loofah::TestCase
       @klass = Class.new(Loofah::Scrubber) do
         attr_accessor :count
 
-        def initialize(direction=nil)
+        def initialize(direction = nil)
           @direction = direction
           @count = 0
         end
@@ -215,7 +214,7 @@ class UnitTestScrubber < Loofah::TestCase
   context "creating a new Scrubber class with no scrub method" do
     before do
       @klass = Class.new(Loofah::Scrubber) do
-        def initialize ; end
+        def initialize; end
       end
       @scrubber = @klass.new
     end

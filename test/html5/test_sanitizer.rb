@@ -9,29 +9,29 @@ require "helper"
 class Html5TestSanitizer < Loofah::TestCase
   include Loofah
 
-  def sanitize_xhtml stream
+  def sanitize_xhtml(stream)
     Loofah.fragment(stream).scrub!(:escape).to_xhtml
   end
 
-  def sanitize_html stream
+  def sanitize_html(stream)
     Loofah.fragment(stream).scrub!(:escape).to_html
   end
 
   def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     ##  libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
-    sane = sanitize_html(input).gsub('"',"'")
-    htmloutput = htmloutput.gsub('"',"'")
-    xhtmloutput = xhtmloutput.gsub('"',"'")
-    rexmloutput = rexmloutput.gsub('"',"'")
+    sane = sanitize_html(input).gsub('"', "'")
+    htmloutput = htmloutput.gsub('"', "'")
+    xhtmloutput = xhtmloutput.gsub('"', "'")
+    rexmloutput = rexmloutput.gsub('"', "'")
 
     ##  HTML5's parsers are shit. there's so much inconsistency with what has closing tags, etc, that
     ##  it would require a lot of manual hacking to make the tests match libxml's output.
     ##  instead, I'm taking the shotgun approach, and trying to match any of the described outputs.
     assert((htmloutput == sane) || (rexmloutput == sane) || (xhtmloutput == sane),
-      %Q{given:    "#{input}"\nexpected: "#{htmloutput}"\ngot:      "#{sane}"})
+           %Q{given:    "#{input}"\nexpected: "#{htmloutput}"\ngot:      "#{sane}"})
   end
 
-  def assert_completes_in_reasonable_time &block
+  def assert_completes_in_reasonable_time(&block)
     t0 = Time.now
     block.call
     assert_in_delta t0, Time.now, 0.1 # arbitrary seconds
@@ -39,30 +39,30 @@ class Html5TestSanitizer < Loofah::TestCase
 
   (HTML5::SafeList::ALLOWED_ELEMENTS).each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
-      input       = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
-      htmloutput  = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
+      input = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
+      htmloutput = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
       xhtmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name}>"
       rexmloutput = xhtmloutput
 
       if %w[caption colgroup optgroup option tbody td tfoot th thead tr].include?(tag_name)
         htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
-      elsif tag_name == 'col'
+      elsif tag_name == "col"
         htmloutput = "<col title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         rexmloutput = "<col title='1' />"
-      elsif tag_name == 'table'
+      elsif tag_name == "table"
         htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt;baz<table title='1'> </table>"
         xhtmloutput = htmloutput
-      elsif tag_name == 'image'
+      elsif tag_name == "image"
         htmloutput = "<img title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
         rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
       elsif HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
         htmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
         xhtmloutput = htmloutput
-        htmloutput += '<br/>' if tag_name == 'br'
-        rexmloutput =  "<#{tag_name} title='1' />"
+        htmloutput += "<br/>" if tag_name == "br"
+        rexmloutput = "<#{tag_name} title='1' />"
       end
       check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
     end
@@ -80,9 +80,9 @@ class Html5TestSanitizer < Loofah::TestCase
   # end
 
   HTML5::SafeList::ALLOWED_ATTRIBUTES.each do |attribute_name|
-    next if attribute_name == 'style'
+    next if attribute_name == "style"
     define_method "test_should_allow_#{attribute_name}_attribute" do
-        input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
+      input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
       if %w[checked compact disabled ismap multiple nohref noshade nowrap readonly selected].include?(attribute_name)
         output = "<p #{attribute_name}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         htmloutput = "<p #{attribute_name.downcase}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
@@ -178,7 +178,6 @@ class Html5TestSanitizer < Loofah::TestCase
     check_sanitization(input, output, output, output)
   end
 
-
   HTML5::SafeList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
     next unless HTML5::SafeList::ALLOWED_ELEMENTS.include?(tag_name)
     define_method "test_#{tag_name}_should_allow_local_href" do
@@ -228,12 +227,12 @@ class Html5TestSanitizer < Loofah::TestCase
   #   check_sanitization(input, output, output, output)
   # end
 
-# This affects only NS4. Is it worth fixing?
-#  def test_javascript_includes
-#    input = %(<div size="&{alert('XSS')}">foo</div>)
-#    output = "<div>foo</div>"
-#    check_sanitization(input, output, output, output)
-#  end
+  # This affects only NS4. Is it worth fixing?
+  #  def test_javascript_includes
+  #    input = %(<div size="&{alert('XSS')}">foo</div>)
+  #    output = "<div>foo</div>"
+  #    check_sanitization(input, output, output, output)
+  #  end
 
   ##
   ##  these tests primarily test the parser logic, not the sanitizer
@@ -241,15 +240,15 @@ class Html5TestSanitizer < Loofah::TestCase
   ##  libxml2 here, so let's rely on the unit tests above to take care
   ##  of our valid elements and attributes.
   ##
-  require 'json'
-  Dir[File.join(File.dirname(__FILE__), '..', 'assets', 'testdata_sanitizer_tests1.dat')].each do |filename|
+  require "json"
+  Dir[File.join(File.dirname(__FILE__), "..", "assets", "testdata_sanitizer_tests1.dat")].each do |filename|
     JSON::parse(open(filename).read).each do |test|
-      it "testdata sanitizer #{test['name']}" do
+      it "testdata sanitizer #{test["name"]}" do
         check_sanitization(
-          test['input'],
-          test['output'],
-          test['xhtml'] || test['output'],
-          test['rexml'] || test['output']
+          test["input"],
+          test["output"],
+          test["xhtml"] || test["output"],
+          test["rexml"] || test["output"]
         )
       end
     end
@@ -337,7 +336,6 @@ class Html5TestSanitizer < Loofah::TestCase
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/max-width/, sane.inner_html
   end
-
 
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")

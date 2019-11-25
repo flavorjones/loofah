@@ -1,34 +1,33 @@
 require "helper"
 
 class IntegrationTestScrubbers < Loofah::TestCase
-
   INVALID_FRAGMENT = "<invalid>foo<p>bar</p>bazz</invalid><div>quux</div>"
-  INVALID_ESCAPED  = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
-  INVALID_PRUNED   = "<div>quux</div>"
+  INVALID_ESCAPED = "&lt;invalid&gt;foo&lt;p&gt;bar&lt;/p&gt;bazz&lt;/invalid&gt;<div>quux</div>"
+  INVALID_PRUNED = "<div>quux</div>"
   INVALID_STRIPPED = "foo<p>bar</p>bazz<div>quux</div>"
 
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid><!--[if gts mso9]><div>microsofty stuff</div><![endif]-->"
-  WHITEWASH_RESULT   = "<div>foo</div>"
+  WHITEWASH_RESULT = "<div>foo</div>"
 
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
-  NOFOLLOW_RESULT   = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
+  NOFOLLOW_RESULT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
   NOFOLLOW_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
-  NOFOLLOW_WITH_REL_RESULT   = '<a href="http://www.example.com/" rel="noopener nofollow">Click here</a>'
+  NOFOLLOW_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="noopener nofollow">Click here</a>'
 
   NOOPENER_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
-  NOOPENER_RESULT   = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
+  NOOPENER_RESULT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
 
   NOOPENER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
-  NOOPENER_WITH_REL_RESULT   = '<a href="http://www.example.com/" rel="nofollow noopener">Click here</a>'
+  NOOPENER_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="nofollow noopener">Click here</a>'
 
   UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b><script>x\u2028y</script>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b><script>xy</script>"
 
-  ENTITY_FRAGMENT   = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
-  ENTITY_TEXT       = %Q(this is < that "&" the other > boo\'yaw00t)
+  ENTITY_FRAGMENT = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
+  ENTITY_TEXT = %Q(this is < that "&" the other > boo\'yaw00t)
 
-  ENTITY_HACK_ATTACK            = "<div><div>Hack attack!</div><div>&lt;script&gt;alert('evil')&lt;/script&gt;</div></div>"
+  ENTITY_HACK_ATTACK = "<div><div>Hack attack!</div><div>&lt;script&gt;alert('evil')&lt;/script&gt;</div></div>"
   ENTITY_HACK_ATTACK_TEXT_SCRUB = "Hack attack!&lt;script&gt;alert('evil')&lt;/script&gt;"
   ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC = "Hack attack!<script>alert('evil')</script>"
 
@@ -39,7 +38,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :escape
 
-          assert_equal INVALID_ESCAPED, doc.xpath('/html/body').inner_html
+          assert_equal INVALID_ESCAPED, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -49,7 +48,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :prune
 
-          assert_equal INVALID_PRUNED, doc.xpath('/html/body').inner_html
+          assert_equal INVALID_PRUNED, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -59,7 +58,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :strip
 
-          assert_equal INVALID_STRIPPED, doc.xpath('/html/body').inner_html
+          assert_equal INVALID_STRIPPED, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -69,7 +68,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
           result = doc.scrub! :whitewash
 
-          assert_equal WHITEWASH_RESULT, doc.xpath('/html/body').inner_html
+          assert_equal WHITEWASH_RESULT, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -79,7 +78,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
           result = doc.scrub! :nofollow
 
-          assert_equal NOFOLLOW_RESULT, doc.xpath('/html/body').inner_html
+          assert_equal NOFOLLOW_RESULT, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -177,7 +176,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           EOHTML
           node = xml.at_css "div.scrub"
           node.scrub!(:prune)
-          assert_match %r/I should remain/,     xml.to_s
+          assert_match %r/I should remain/, xml.to_s
           refute_match %r/I should be removed/, xml.to_s
         end
       end
@@ -202,8 +201,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
           node_set = xml.css "div.scrub"
           assert_equal 2, node_set.length
           node_set.scrub!(:prune)
-          assert_match %r/I should remain/,          xml.to_s
-          refute_match %r/I should be removed/,      xml.to_s
+          assert_match %r/I should remain/, xml.to_s
+          refute_match %r/I should be removed/, xml.to_s
           refute_match %r/I should also be removed/, xml.to_s
         end
       end
@@ -253,7 +252,6 @@ class IntegrationTestScrubbers < Loofah::TestCase
       end
 
       context ":nofollow" do
-
         context "for a hyperlink that does not have a rel attribute" do
           it "add a 'nofollow' attribute to hyperlinks" do
             doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
@@ -266,15 +264,13 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "for a hyperlink that does have a rel attribute" do
           it "appends nofollow to rel attribute" do
-              doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
-              result = doc.scrub! :nofollow
+            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
+            result = doc.scrub! :nofollow
 
-              assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
-              assert_equal doc, result
+            assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
+            assert_equal doc, result
           end
         end
-
-
       end
 
       context ":noopener" do
@@ -367,7 +363,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           EOHTML
           node = xml.at_css "div.scrub"
           node.scrub!(:prune)
-          assert_match %r(I should remain),     xml.to_s
+          assert_match %r(I should remain), xml.to_s
           refute_match %r(I should be removed), xml.to_s
         end
       end
@@ -390,8 +386,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
           node_set = xml.css "div.scrub"
           assert_equal 2, node_set.length
           node_set.scrub!(:prune)
-          assert_match %r/I should remain/,          xml.to_s
-          refute_match %r/I should be removed/,      xml.to_s
+          assert_match %r/I should remain/, xml.to_s
+          refute_match %r/I should be removed/, xml.to_s
           refute_match %r/I should also be removed/, xml.to_s
         end
       end

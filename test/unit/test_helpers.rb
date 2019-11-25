@@ -1,7 +1,6 @@
 require "helper"
 
 class UnitTestHelpers < Loofah::TestCase
-
   HTML_STRING = "<div>omgwtfbbq</div>"
 
   describe "Helpers" do

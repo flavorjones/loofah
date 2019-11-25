@@ -23,7 +23,7 @@ def compare_scrub_methods
 end
 
 module TestSet
-  def test_set options={}
+  def test_set(options = {})
     scale = options[:rehearse] ? 10 : 1
     puts self.class.name
 
@@ -49,6 +49,7 @@ end
 
 class HeadToHeadRailsSanitize < Measure
   include TestSet
+
   def bench(content, ntimes, fragment_p)
     clear_measure
 
@@ -65,6 +66,7 @@ end
 
 class HeadToHeadRailsStripTags < Measure
   include TestSet
+
   def bench(content, ntimes, fragment_p)
     clear_measure
 
@@ -81,6 +83,7 @@ end
 
 class HeadToHeadSanitizerSanitize < Measure
   include TestSet
+
   def bench(content, ntimes, fragment_p)
     clear_measure
 
@@ -100,6 +103,7 @@ end
 
 class HeadToHeadHtml5LibSanitize < Measure
   include TestSet
+
   def bench(content, ntimes, fragment_p)
     clear_measure
 
@@ -120,6 +124,7 @@ end
 
 class HeadToHeadHTMLFilter < Measure
   include TestSet
+
   def bench(content, ntimes, fragment_p)
     clear_measure
 

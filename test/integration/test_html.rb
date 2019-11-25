@@ -35,10 +35,10 @@ class IntegrationTestHtml < Loofah::TestCase
       end
     end
 
-    context 'with an `encoding` arg' do
+    context "with an `encoding` arg" do
       it "sets the parent document's encoding to accordingly" do
-        html = Loofah.fragment "<style>foo</style><div>bar</div>", 'US-ASCII'
-        assert_equal 'US-ASCII', html.document.encoding
+        html = Loofah.fragment "<style>foo</style><div>bar</div>", "US-ASCII"
+        assert_equal "US-ASCII", html.document.encoding
       end
     end
   end
@@ -69,4 +69,3 @@ class IntegrationTestHtml < Loofah::TestCase
     end
   end
 end
-

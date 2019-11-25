@@ -18,7 +18,7 @@ class IntegrationTestXml < Loofah::TestCase
             end
           end
           assert_equal 2, xml.css("employee").length
-          
+
           xml.scrub!(bring_out_your_dead)
 
           employees = xml.css "employee"
@@ -42,7 +42,7 @@ class IntegrationTestXml < Loofah::TestCase
             end
           end
           assert_equal 2, xml.css("employee").length
-          
+
           xml.scrub!(bring_out_your_dead)
 
           employees = xml.css "employee"

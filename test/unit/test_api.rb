@@ -1,10 +1,9 @@
 require "helper"
 
 class UnitTestApi < Loofah::TestCase
-
-  HTML          = "<div>a</div>\n<div>b</div>"
-  XML_FRAGMENT  = "<div>a</div>\n<div>b</div>"
-  XML           = "<root>#{XML_FRAGMENT}</root>"
+  HTML = "<div>a</div>\n<div>b</div>"
+  XML_FRAGMENT = "<div>a</div>\n<div>b</div>"
+  XML = "<root>#{XML_FRAGMENT}</root>"
 
   describe "HTML" do
     it "creates documents" do
@@ -117,26 +116,25 @@ class UnitTestApi < Loofah::TestCase
 
   def assert_html_documentish(doc)
     assert_kind_of Nokogiri::HTML::Document, doc
-    assert_kind_of Loofah::HTML::Document,   doc
+    assert_kind_of Loofah::HTML::Document, doc
     assert_equal HTML, doc.xpath("/html/body").inner_html
   end
 
   def assert_html_fragmentish(doc)
     assert_kind_of Nokogiri::HTML::DocumentFragment, doc
-    assert_kind_of Loofah::HTML::DocumentFragment,   doc
+    assert_kind_of Loofah::HTML::DocumentFragment, doc
     assert_equal HTML, doc.inner_html
   end
 
   def assert_xml_documentish(doc)
     assert_kind_of Nokogiri::XML::Document, doc
-    assert_kind_of Loofah::XML::Document,   doc
+    assert_kind_of Loofah::XML::Document, doc
     assert_equal XML, doc.root.to_xml
   end
 
   def assert_xml_fragmentish(doc)
     assert_kind_of Nokogiri::XML::DocumentFragment, doc
-    assert_kind_of Loofah::XML::DocumentFragment,   doc
+    assert_kind_of Loofah::XML::DocumentFragment, doc
     assert_equal XML_FRAGMENT, doc.children.to_xml
   end
-
 end
