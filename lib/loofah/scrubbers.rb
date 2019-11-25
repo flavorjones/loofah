@@ -206,8 +206,8 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
-        append_attribute(node, 'rel', 'nofollow')
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+        append_attribute(node, "rel", "nofollow")
         return STOP
       end
     end
@@ -227,8 +227,8 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
-        append_attribute(node, 'rel', 'noopener')
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+        append_attribute(node, "rel", "noopener")
         return STOP
       end
     end
@@ -268,7 +268,7 @@ module Loofah
 
       def scrub(node)
         if node.type == Nokogiri::XML::Node::TEXT_NODE || node.type == Nokogiri::XML::Node::CDATA_SECTION_NODE
-          node.content = node.content.gsub(/\u2028|\u2029/, '')
+          node.content = node.content.gsub(/\u2028|\u2029/, "")
         end
         CONTINUE
       end
@@ -278,14 +278,14 @@ module Loofah
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
-      :escape    => Escape,
-      :prune     => Prune,
+      :escape => Escape,
+      :prune => Prune,
       :whitewash => Whitewash,
-      :strip     => Strip,
-      :nofollow  => NoFollow,
+      :strip => Strip,
+      :nofollow => NoFollow,
       :noopener => NoOpener,
       :newline_block_elements => NewlineBlockElements,
-      :unprintable => Unprintable
+      :unprintable => Unprintable,
     }
 
     #

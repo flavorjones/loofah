@@ -28,7 +28,7 @@ module Loofah
       #
       #    Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg)") # => "display: block;"
       #
-      def sanitize_css style_string
+      def sanitize_css(style_string)
         ::Loofah::HTML5::Scrub.scrub_css style_string
       end
 
@@ -69,7 +69,7 @@ module Loofah
       #    Loofah::Helpers::ActionView.set_as_default_sanitizer
       #
       class FullSanitizer
-        def sanitize html, *args
+        def sanitize(html, *args)
           Loofah::Helpers.strip_tags html
         end
       end
@@ -86,11 +86,11 @@ module Loofah
       #    Loofah::Helpers::ActionView.set_as_default_sanitizer
       #
       class SafeListSanitizer
-        def sanitize html, *args
+        def sanitize(html, *args)
           Loofah::Helpers.sanitize html
         end
 
-        def sanitize_css style_string, *args
+        def sanitize_css(style_string, *args)
           Loofah::Helpers.sanitize_css style_string
         end
       end

@@ -3,7 +3,7 @@ module Loofah
   #
   #  A RuntimeError raised when Loofah could not find an appropriate scrubber.
   #
-  class ScrubberNotFound < RuntimeError ; end
+  class ScrubberNotFound < RuntimeError; end
 
   #
   #  A Scrubber wraps up a block (or method) that is run on an HTML node (element):
@@ -37,7 +37,7 @@ module Loofah
     CONTINUE = Object.new.freeze
 
     # Top-down Scrubbers may return STOP to indicate that the subtree should not be traversed.
-    STOP     = Object.new.freeze
+    STOP = Object.new.freeze
 
     # When a scrubber is initialized, the :direction may be specified
     # as :top_down (the default) or :bottom_up.
@@ -65,7 +65,7 @@ module Loofah
     def initialize(options = {}, &block)
       direction = options[:direction] || :top_down
       unless [:top_down, :bottom_up].include?(direction)
-        raise ArgumentError, "direction #{direction} must be one of :top_down or :bottom_up" 
+        raise ArgumentError, "direction #{direction} must be one of :top_down or :bottom_up"
       end
       @direction, @block = direction, block
     end
@@ -92,10 +92,10 @@ module Loofah
     # If the attribute is set, don't overwrite the existing value
     #
     def append_attribute(node, attribute, value)
-      current_value = node.get_attribute(attribute) || ''
+      current_value = node.get_attribute(attribute) || ""
       current_values = current_value.split(/\s+/)
       updated_value = current_values | [value]
-      node.set_attribute(attribute, updated_value.join(' '))
+      node.set_attribute(attribute, updated_value.join(" "))
     end
 
     private
@@ -119,11 +119,11 @@ module Loofah
       else
         return if scrub(node) == STOP
       end
-      node.children.each {|j| traverse_conditionally_top_down(j)}
+      node.children.each { |j| traverse_conditionally_top_down(j) }
     end
 
     def traverse_conditionally_bottom_up(node)
-      node.children.each {|j| traverse_conditionally_bottom_up(j)}
+      node.children.each { |j| traverse_conditionally_bottom_up(j) }
       if block
         block.call(node)
       else

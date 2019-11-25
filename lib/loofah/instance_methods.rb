@@ -92,7 +92,7 @@ module Loofah
     #    # decidedly not ok for browser:
     #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
     #
-    def text(options={})
+    def text(options = {})
       result = serialize_root.children.inner_text rescue ""
       if options[:encode_special_chars] == false
         result # possibly dangerous if rendered in a browser
@@ -100,8 +100,9 @@ module Loofah
         encode_special_chars result
       end
     end
+
     alias :inner_text :text
-    alias :to_str     :text
+    alias :to_str :text
 
     #
     #  Returns a plain-text version of the markup contained by the
@@ -113,7 +114,7 @@ module Loofah
     #    Loofah.document("<h1>Title</h1><div>Content</div>").to_text
     #    # => "\nTitle\n\nContent\n"
     #
-    def to_text(options={})
+    def to_text(options = {})
       Loofah.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
     end
   end
