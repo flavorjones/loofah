@@ -6,7 +6,7 @@ module Loofah
   module HTML5 # :nodoc:
     module Scrub
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
-      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmin|vw|vh|%|,|\))?)\z/
+      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
       CRASS_SEMICOLON = { :node => :semicolon, :raw => ";" }
 
       class << self
