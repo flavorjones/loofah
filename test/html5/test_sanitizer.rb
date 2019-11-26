@@ -317,6 +317,12 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/100vh/, sane.inner_html
   end
 
+  def test_css_Q_value
+    html = "<div style=\"height: 10Q;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/10Q/, sane.inner_html
+  end
+
   def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
