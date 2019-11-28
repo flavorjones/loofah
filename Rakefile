@@ -15,6 +15,13 @@ Hoe.spec "loofah" do
   self.history_file = "CHANGELOG.md"
   self.readme_file = "README.md"
   self.license "MIT"
+  self.urls = {
+    "home" => "https://github.com/flavorjones/loofah",
+    "bugs" => "https://github.com/flavorjones/loofah/issues",
+    "doco" => "https://www.rubydoc.info/gems/loofah/",
+    "clog" => "https://github.com/flavorjones/loofah/master/CHANGELOG.md",
+    "code" => "https://github.com/flavorjones/loofah",
+  }
 
   extra_deps << ["nokogiri", ">=1.5.9"]
   extra_deps << ["crass", "~> 1.0.2"]
