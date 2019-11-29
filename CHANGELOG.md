@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.5.0 / unreleased
+
+### Features
+
+* Allow more CSS length units: "ch", "vw", "vh", "Q", "lh", "vmin", "vmax". [#178] (Thanks, @JuanitoFatas!)
+
+
+### Other changes
+
+* Gem metadata being set [#181] (Thanks, @JuanitoFatas!)
+* Test files removed from gem file [#180,#166,#159] (Thanks, @JuanitoFatas and @greysteil!)
+
+
 ## 2.4.0 / 2019-11-25
 
 ### Features
