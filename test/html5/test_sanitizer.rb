@@ -299,6 +299,48 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/10rem/, sane.inner_html
   end
 
+  def test_css_ch_value
+    html = "<div style=\"width:60ch;\">"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/60ch/, sane.inner_html
+  end
+
+  def test_css_vw_value
+    html = "<div style=\"font-size: calc(16px + 1vw);\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/1vw/, sane.inner_html
+  end
+
+  def test_css_vh_value
+    html = "<div style=\"height: 100vh;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/100vh/, sane.inner_html
+  end
+
+  def test_css_Q_value
+    html = "<div style=\"height: 10Q;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/10Q/, sane.inner_html
+  end
+
+  def test_css_lh_value
+    html = "<p style=\"line-height: 2lh;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/2lh/, sane.inner_html
+  end
+
+  def test_css_vmin_value
+    html = "<div style=\"width: 42vmin;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/42vmin/, sane.inner_html
+  end
+
+  def test_css_vmax_value
+    html = "<div style=\"width: 42vmax;\"></body>"
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/42vmax/, sane.inner_html
+  end
+
   def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
