@@ -11,7 +11,6 @@ Hoe.spec "loofah" do
   developer "Mike Dalessio", "mike.dalessio@gmail.com"
   developer "Bryan Helmkamp", "bryan@brynary.com"
 
-  self.extra_rdoc_files = FileList["*.md"]
   self.history_file = "CHANGELOG.md"
   self.readme_file = "README.md"
   self.license "MIT"
