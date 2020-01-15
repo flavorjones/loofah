@@ -44,6 +44,11 @@ module Loofah
       Loofah::HTML::DocumentFragment.parse(*args, &block)
     end
 
+    # Shortcut for Loofah::MetaHelpers.redefine_allowed_safelist_constant(constant_name, values)
+    def redefine_allowed_safelist_constant(constant_name, values)
+      Loofah::HTML5::SafeList.redefine_allowed_safelist_constant(constant_name, values) 
+    end
+
     # Shortcut for Loofah.fragment(string_or_io).scrub!(method)
     def scrub_fragment(string_or_io, method)
       Loofah.fragment(string_or_io).scrub!(method)

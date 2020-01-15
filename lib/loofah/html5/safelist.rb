@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require "set"
+require "loofah/html5/safelist/redefinable_constants"
 
 module Loofah
   module HTML5 # :nodoc:
@@ -46,6 +47,8 @@ module Loofah
     #
     # </html5_license>
     module SafeList
+      include RedefinableConstants
+
       ACCEPTABLE_ELEMENTS = Set.new([
                                       "a",
                                       "abbr",
