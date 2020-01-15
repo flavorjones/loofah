@@ -275,6 +275,19 @@ Loofah::Helpers.strip_tags, both of which are drop-in replacements for
 the Rails ActionView helpers of the same name.
 These are no longer required automatically. You must require `loofah/helpers`. 
 
+### Redefining Safelist
+The class method Loofah.redefine_allowed_safelist_constant can be used 
+for redefining safelist values, that can be found in Safelist.rb
+
+``` ruby
+Loofah.redefine_allowed_safelist_constant(constant_name, values)
+
+Loofah.redefine_allowed_safelist_constant(:ALLOWED_CSS_PROPERTIES, %w(color)) 
+# => #<Set: {"b"}>
+Loofah::HTML5::SafeList::ALLOWED_CSS_PROPERTIES 
+# => #<Set: {"b"}>
+```
+
 
 ## Requirements
 
