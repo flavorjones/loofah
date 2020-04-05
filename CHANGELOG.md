@@ -7,6 +7,11 @@
 * Allow more CSS length units: "ch", "vw", "vh", "Q", "lh", "vmin", "vmax". [#178] (Thanks, @JuanitoFatas!)
 
 
+### Fixes
+
+* Remove comments from `Loofah::HTML::Document`s that exist outside the `html` element. [#80]
+
+
 ### Other changes
 
 * Gem metadata being set [#181] (Thanks, @JuanitoFatas!)

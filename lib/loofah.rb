@@ -35,7 +35,7 @@ module Loofah
     # Shortcut for Loofah::HTML::Document.parse
     # This method accepts the same parameters as Nokogiri::HTML::Document.parse
     def document(*args, &block)
-      Loofah::HTML::Document.parse(*args, &block)
+      remove_comments_before_html_element Loofah::HTML::Document.parse(*args, &block)
     end
 
     # Shortcut for Loofah::HTML::DocumentFragment.parse
@@ -79,6 +79,24 @@ module Loofah
     # A helper to remove extraneous whitespace from text-ified HTML
     def remove_extraneous_whitespace(string)
       string.gsub(/\n\s*\n\s*\n/, "\n\n")
+    end
+
+    private
+
+    # remove comments that exist outside of the HTML element.
+    #
+    # these comments are allowed by the HTML spec:
+    #
+    #    https://www.w3.org/TR/html401/struct/global.html#h-7.1
+    #
+    # but are not scrubbed by Loofah because these nodes don't meet
+    # the contract that scrubbers expect of a node (e.g., it can be
+    # replaced, sibling and children nodes can be created).
+    def remove_comments_before_html_element(doc)
+      doc.children.each do |child|
+        child.unlink if child.comment?
+      end
+      doc
     end
   end
 end
