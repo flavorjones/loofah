@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.5.0 / unreleased
+## 2.5.0 / 2020-04-05
 
 ### Features
 
