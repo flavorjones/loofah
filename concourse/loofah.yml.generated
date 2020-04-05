@@ -16,26 +16,6 @@ resources:
       ignore_paths: ["CHANGELOG.md","README.md","concourse/**"]
 
 jobs:
-  - name: ruby-2.3
-    public: true
-    serial_groups: ["ruby"]
-    plan:
-      - get: ci
-      - get: loofah
-        trigger: true
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: ruby, tag: "2.3"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah
-          params:
-            NOKOGIRI_USE_SYSTEM_LIBRARIES: t
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
   - name: ruby-2.4
     public: true
     serial_groups: ["ruby"]
@@ -96,7 +76,7 @@ jobs:
             NOKOGIRI_USE_SYSTEM_LIBRARIES: t
           run:
             path: ci/concourse/tasks/rake-test/run.sh
-  - name: ruby-2.7-rc
+  - name: ruby-2.7
     public: true
     serial_groups: ["ruby"]
     plan:
@@ -107,7 +87,7 @@ jobs:
         config:
           image_resource:
             type: docker-image
-            source: {repository: ruby, tag: "2.7-rc"}
+            source: {repository: ruby, tag: "2.7"}
           platform: linux
           inputs:
             - name: ci
@@ -117,26 +97,6 @@ jobs:
           run:
             path: ci/concourse/tasks/rake-test/run.sh
 
-  - name: jruby-9.1
-    public: true
-    serial_groups: ["jruby"]
-    plan:
-      - get: ci
-      - get: loofah
-        trigger: true
-      - task: rake-test
-        config:
-          image_resource:
-            type: docker-image
-            source: {repository: jruby, tag: "9.1-jdk"}
-          platform: linux
-          inputs:
-            - name: ci
-            - name: loofah
-          params:
-            JAVA_OPTS: "-Dfile.encoding=UTF8" # https://github.com/docker-library/openjdk/issues/32
-          run:
-            path: ci/concourse/tasks/rake-test/run.sh
   - name: jruby-9.2
     public: true
     serial_groups: ["jruby"]
