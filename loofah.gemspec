@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 # stub: loofah 2.5.0.20200405164942 ruby lib
 
+require_relative "lib/loofah"
+
 Gem::Specification.new do |s|
   s.name = "loofah".freeze
   s.version = "2.5.0.20200405164942"
@@ -8,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.metadata = {
     "bug_tracker_uri" => "https://github.com/flavorjones/loofah/issues",
-    "changelog_uri" => "https://github.com/flavorjones/loofah/blob/master/CHANGELOG.md",
+    "changelog_uri" => "https://github.com/flavorjones/loofah/blob/v#{Loofah::VERSION}/CHANGELOG.md",
     "documentation_uri" => "https://www.rubydoc.info/gems/loofah/",
     "homepage_uri" => "https://github.com/flavorjones/loofah",
     "source_code_uri" => "https://github.com/flavorjones/loofah"
