@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri" => "https://github.com/flavorjones/loofah/issues",
     "changelog_uri" => "https://github.com/flavorjones/loofah/blob/v#{Loofah::VERSION}/CHANGELOG.md",
-    "documentation_uri" => "https://www.rubydoc.info/gems/loofah/",
+    "documentation_uri" => "https://www.rubydoc.info/gems/loofah/#{Loofah::VERSION}",
     "homepage_uri" => "https://github.com/flavorjones/loofah",
     "source_code_uri" => "https://github.com/flavorjones/loofah"
   } if s.respond_to? :metadata=
