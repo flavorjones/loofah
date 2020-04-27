@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  Loofah provides some built-in scrubbers for sanitizing with
@@ -8,29 +9,31 @@ module Loofah
   #
   #  === Loofah::Scrubbers::Strip / scrub!(:strip)
   #
-  #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
+  #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine
+  #  contents:
   #
-  #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:strip)
-  #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
+  #  unsafe_html = "ohai! <div>div is safe</div><foo>but foo is <b>not</b></foo>"
+  #  Loofah.fragment(unsafe_html).scrub!(:strip)
+  #  => "ohai! <div>div is safe</div> but foo is <b>not</b>"
   #
   #
   #  === Loofah::Scrubbers::Prune / scrub!(:prune)
   #
-  #  +:prune+ removes unknown/unsafe tags and their contents (including their subtrees):
+  #  +:prune+ removes unknown/unsafe tags and their contents
+  #  (including their subtrees):
   #
-  #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:prune)
-  #     => "ohai! <div>div is safe</div> "
+  #  unsafe_html = "ohai! <div>div is safe</div><foo>but foo is <b>not</b></foo>"
+  #  Loofah.fragment(unsafe_html).scrub!(:prune)
+  #  => "ohai! <div>div is safe</div> "
   #
   #
   #  === Loofah::Scrubbers::Escape / scrub!(:escape)
   #
   #  +:escape+ performs HTML entity escaping on the unknown/unsafe tags:
   #
-  #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:escape)
-  #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
+  #  unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
+  #  Loofah.fragment(unsafe_html).scrub!(:escape)
+  #  => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
   #
   #
   #  === Loofah::Scrubbers::Whitewash / scrub!(:whitewash)
@@ -40,9 +43,9 @@ module Loofah
   #  like to call this "whitewashing", since it's like putting a new
   #  layer of paint on top of the HTML input to make it look nice.
   #
-  #     messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
-  #     Loofah.fragment(messy_markup).scrub!(:whitewash)
-  #     => "ohai! <div>div with attributes</div>"
+  #  messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
+  #  Loofah.fragment(messy_markup).scrub!(:whitewash)
+  #  => "ohai! <div>div with attributes</div>"
   #
   #  One use case for this scrubber is to clean up HTML that was
   #  cut-and-pasted from Microsoft Word into a WYSIWYG editor or a
@@ -77,9 +80,10 @@ module Loofah
   #     Loofah.fragment(markup).scrub!(:unprintable)
   #     => "<p>Some text with an unprintable character at the end</p>"
   #
-  #  You may not be able to see the unprintable character in the above example, but there is a
-  #  U+2028 character right before the closing </p> tag. These characters can cause issues if
-  #  the content is ever parsed by JavaScript - more information here:
+  #  You may not be able to see the unprintable character in the above example,
+  #  but there is a U+2028 character right before the closing </p> tag. These
+  #  characters can cause issues if the content is ever parsed by JavaScript -
+  #  more information here:
   #
   #     http://timelessrepo.com/json-isnt-a-javascript-subset
   #
@@ -87,11 +91,12 @@ module Loofah
     #
     #  === scrub!(:strip)
     #
-    #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
+    #  +:strip+ removes unknown/unsafe tags, but leaves behind the
+    #  pristine contents:
     #
-    #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:strip)
-    #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
+    #  unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
+    #  Loofah.fragment(unsafe_html).scrub!(:strip)
+    #  => "ohai! <div>div is safe</div> but foo is <b>not</b>"
     #
     class Strip < Scrubber
       def initialize
@@ -100,6 +105,7 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
+
         if node.children.length == 1 && node.children.first.cdata?
           sanitized_text = Loofah.fragment(node.children.first.to_html).scrub!(:strip).to_html
           node.before Nokogiri::XML::Text.new(sanitized_text, node.document)
@@ -126,8 +132,9 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
+
         node.remove
-        return STOP
+        STOP
       end
     end
 
@@ -147,9 +154,10 @@ module Loofah
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
+
         node.add_next_sibling Nokogiri::XML::Text.new(node.to_s, node.document)
         node.remove
-        return STOP
+        STOP
       end
     end
 
@@ -206,9 +214,10 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
-        append_attribute(node, "rel", "nofollow")
-        return STOP
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
+
+        append_attribute(node, 'rel', 'nofollow')
+        STOP
       end
     end
 
@@ -227,9 +236,10 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
-        append_attribute(node, "rel", "noopener")
-        return STOP
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == 'a')
+
+        append_attribute(node, 'rel', 'noopener')
+        STOP
       end
     end
 
@@ -241,7 +251,10 @@ module Loofah
 
       def scrub(node)
         return CONTINUE unless Loofah::Elements::BLOCK_LEVEL.include?(node.name)
-        node.add_next_sibling Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
+
+        node.add_next_sibling Nokogiri::XML::Text.new(
+          "\n#{node.content}\n", node.document
+        )
         node.remove
       end
     end
@@ -255,9 +268,10 @@ module Loofah
     #     Loofah.fragment(markup).scrub!(:unprintable)
     #     => "<p>Some text with an unprintable character at the end</p>"
     #
-    #  You may not be able to see the unprintable character in the above example, but there is a
-    #  U+2028 character right before the closing </p> tag. These characters can cause issues if
-    #  the content is ever parsed by JavaScript - more information here:
+    #  You may not be able to see the unprintable character in the above
+    #  example, but there is a U+2028 character right before the closing </p>
+    #  tag. These characters can cause issues if the content is ever parsed by
+    #  JavaScript - more information here:
     #
     #     http://timelessrepo.com/json-isnt-a-javascript-subset
     #
@@ -268,25 +282,26 @@ module Loofah
 
       def scrub(node)
         if node.type == Nokogiri::XML::Node::TEXT_NODE || node.type == Nokogiri::XML::Node::CDATA_SECTION_NODE
-          node.content = node.content.gsub(/\u2028|\u2029/, "")
+          node.content = node.content.gsub(/\u2028|\u2029/, '')
         end
         CONTINUE
       end
     end
 
     #
-    #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
+    #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber
+    #  (Loofah::Scrubbers::Prune).
     #
     MAP = {
-      :escape => Escape,
-      :prune => Prune,
-      :whitewash => Whitewash,
-      :strip => Strip,
-      :nofollow => NoFollow,
-      :noopener => NoOpener,
-      :newline_block_elements => NewlineBlockElements,
-      :unprintable => Unprintable,
-    }
+      escape: Escape,
+      prune: Prune,
+      whitewash: Whitewash,
+      strip: Strip,
+      nofollow: NoFollow,
+      noopener: NoOpener,
+      newline_block_elements: NewlineBlockElements,
+      unprintable: Unprintable
+    }.freeze
 
     #
     #  Returns an array of symbols representing the built-in scrubbers

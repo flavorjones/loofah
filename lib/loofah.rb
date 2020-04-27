@@ -1,23 +1,24 @@
 # frozen_string_literal: true
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
-require "nokogiri"
+$LOAD_PATH.unshift(__dir__) unless $LOAD_PATH.include?(__dir__)
 
-require "loofah/metahelpers"
-require "loofah/elements"
+require 'nokogiri'
 
-require "loofah/html5/safelist"
-require "loofah/html5/libxml2_workarounds"
-require "loofah/html5/scrub"
+require 'loofah/metahelpers'
+require 'loofah/elements'
 
-require "loofah/scrubber"
-require "loofah/scrubbers"
+require 'loofah/html5/safelist'
+require 'loofah/html5/libxml2_workarounds'
+require 'loofah/html5/scrub'
 
-require "loofah/instance_methods"
-require "loofah/xml/document"
-require "loofah/xml/document_fragment"
-require "loofah/html/document"
-require "loofah/html/document_fragment"
+require 'loofah/scrubber'
+require 'loofah/scrubbers'
+
+require 'loofah/instance_methods'
+require 'loofah/xml/document'
+require 'loofah/xml/document_fragment'
+require 'loofah/html/document'
+require 'loofah/html/document_fragment'
 
 # == Strings and IO Objects as Input
 #
@@ -29,17 +30,20 @@ require "loofah/html/document_fragment"
 #
 module Loofah
   # The version of Loofah you are using
-  VERSION = "2.5.0"
+  VERSION = '2.5.0'
 
   class << self
     # Shortcut for Loofah::HTML::Document.parse
     # This method accepts the same parameters as Nokogiri::HTML::Document.parse
     def document(*args, &block)
-      remove_comments_before_html_element Loofah::HTML::Document.parse(*args, &block)
+      remove_comments_before_html_element Loofah::HTML::Document.parse(
+        *args, &block
+      )
     end
 
     # Shortcut for Loofah::HTML::DocumentFragment.parse
-    # This method accepts the same parameters as Nokogiri::HTML::DocumentFragment.parse
+    # This method accepts the same parameters as
+    # Nokogiri::HTML::DocumentFragment.parse
     def fragment(*args, &block)
       Loofah::HTML::DocumentFragment.parse(*args, &block)
     end
@@ -61,7 +65,8 @@ module Loofah
     end
 
     # Shortcut for Loofah::XML::DocumentFragment.parse
-    # This method accepts the same parameters as Nokogiri::XML::DocumentFragment.parse
+    # This method accepts the same parameters as
+    # Nokogiri::XML::DocumentFragment.parse
     def xml_fragment(*args, &block)
       Loofah::XML::DocumentFragment.parse(*args, &block)
     end

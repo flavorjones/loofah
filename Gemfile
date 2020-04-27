@@ -18,6 +18,6 @@ gem "hoe-git", "~>1.6", :group => [:development, :test]
 gem "concourse", ">=0.26.0", :group => [:development, :test]
 gem "rubocop", ">=0.76.0", :group => [:development, :test]
 gem "rdoc", ">=4.0", "<7", :group => [:development, :test]
-gem "hoe", "~>3.20", :group => [:development, :test]
+gem "hoe", "~>3.22", :group => [:development, :test]
 
 # vim: syntax=ruby

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  Mixes +scrub!+ into Document, DocumentFragment, Node and NodeSet.
@@ -31,7 +32,7 @@ module Loofah
     module Node # :nodoc:
       def scrub!(scrubber)
         #
-        #  yes. this should be three separate methods. but nokogiri
+        #  yes. this should be three separate methods. but Nokogiri
         #  decorates (or not) based on whether the module name has
         #  already been included. and since documents get decorated
         #  just like their constituent nodes, we need to jam all the
@@ -57,11 +58,12 @@ module Loofah
       end
     end
 
-    def ScrubBehavior.resolve_scrubber(scrubber) # :nodoc:
+    def self.resolve_scrubber(scrubber) # :nodoc:
       scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
       unless scrubber.is_a?(Loofah::Scrubber)
         raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}"
       end
+
       scrubber
     end
   end
@@ -93,7 +95,7 @@ module Loofah
     #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
     #
     def text(options = {})
-      result = serialize_root.children.inner_text rescue ""
+      result = serialize_root.children.inner_text rescue ''
       if options[:encode_special_chars] == false
         result # possibly dangerous if rendered in a browser
       else
@@ -101,8 +103,8 @@ module Loofah
       end
     end
 
-    alias :inner_text :text
-    alias :to_str :text
+    alias inner_text text
+    alias to_str text
 
     #
     #  Returns a plain-text version of the markup contained by the
@@ -115,15 +117,15 @@ module Loofah
     #    # => "\nTitle\n\nContent\n"
     #
     def to_text(options = {})
-      Loofah.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
+      Loofah.remove_extraneous_whitespace dup.scrub!(:newline_block_elements).text(options)
     end
   end
 
   module DocumentDecorator # :nodoc:
     def initialize(*args, &block)
       super
-      self.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
-      self.decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
+      decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
+      decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
     end
   end
 end

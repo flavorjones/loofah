@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   module XML # :nodoc:
     #
@@ -6,10 +7,10 @@ module Loofah
     #
     #  See Loofah::ScrubBehavior for additional methods.
     #
-    class DocumentFragment < Nokogiri::XML::DocumentFragment
+    class DocumentFragment < Nokogiri::XML::Document
       class << self
         #
-        #  Overridden Nokogiri::XML::DocumentFragment
+        #  Overridden Nokogiri::XML::Document
         #  constructor. Applications should use Loofah.fragment to
         #  parse a fragment.
         #

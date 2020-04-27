@@ -1,24 +1,26 @@
 # frozen_string_literal: true
+
 module Loofah
   module HTML # :nodoc:
     #
     #  Subclass of Nokogiri::HTML::DocumentFragment.
     #
-    #  See Loofah::ScrubBehavior and Loofah::TextBehavior for additional methods.
+    #  See Loofah::ScrubBehavior and Loofah::TextBehavior for
+    #  additional methods.
     #
-    class DocumentFragment < Nokogiri::HTML::DocumentFragment
+    class DocumentFragment < Nokogiri::XML::Document
       include Loofah::TextBehavior
 
       class << self
         #
-        #  Overridden Nokogiri::HTML::DocumentFragment
+        #  Overridden Nokogiri::XML::Document
         #  constructor. Applications should use Loofah.fragment to
         #  parse a fragment.
         #
         def parse(tags, encoding = nil)
           doc = Loofah::HTML::Document.new
 
-          encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : "UTF-8"
+          encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : 'UTF-8'
           doc.encoding = encoding
 
           new(doc, tags)
@@ -32,10 +34,10 @@ module Loofah
         serialize_root.children.to_s
       end
 
-      alias :serialize :to_s
+      alias serialize to_s
 
       def serialize_root
-        at_xpath("./body") || self
+        at_xpath('./body') || self
       end
     end
   end

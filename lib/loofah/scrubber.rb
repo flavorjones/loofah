@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  A RuntimeError raised when Loofah could not find an appropriate scrubber.
@@ -33,10 +34,12 @@ module Loofah
   #
   class Scrubber
 
-    # Top-down Scrubbers may return CONTINUE to indicate that the subtree should be traversed.
+    # Top-down Scrubbers may return CONTINUE to indicate that the subtree
+    # should be traversed.
     CONTINUE = Object.new.freeze
 
-    # Top-down Scrubbers may return STOP to indicate that the subtree should not be traversed.
+    # Top-down Scrubbers may return STOP to indicate that the subtree
+    # should not be traversed.
     STOP = Object.new.freeze
 
     # When a scrubber is initialized, the :direction may be specified
@@ -64,10 +67,12 @@ module Loofah
     #
     def initialize(options = {}, &block)
       direction = options[:direction] || :top_down
-      unless [:top_down, :bottom_up].include?(direction)
+      unless %i[top_down bottom_up].include?(direction)
         raise ArgumentError, "direction #{direction} must be one of :top_down or :bottom_up"
       end
-      @direction, @block = direction, block
+
+      @direction = direction
+      @block = block
     end
 
     #
@@ -83,8 +88,8 @@ module Loofah
     #  When +new+ is not passed a block, the class may implement
     #  +scrub+, which will be called for each document node.
     #
-    def scrub(node)
-      raise ScrubberNotFound, "No scrub method has been defined on #{self.class.to_s}"
+    def scrub(_node)
+      raise ScrubberNotFound, "No scrub method has been defined on #{self.class}"
     end
 
     #
@@ -92,10 +97,10 @@ module Loofah
     # If the attribute is set, don't overwrite the existing value
     #
     def append_attribute(node, attribute, value)
-      current_value = node.get_attribute(attribute) || ""
+      current_value = node.get_attribute(attribute) || ''
       current_values = current_value.split(/\s+/)
       updated_value = current_values | [value]
-      node.set_attribute(attribute, updated_value.join(" "))
+      node.set_attribute(attribute, updated_value.join(' '))
     end
 
     private
