@@ -10,6 +10,7 @@ module Loofah
     #
     class DocumentFragment < Nokogiri::XML::Document
       include Loofah::TextBehavior
+      include Loofah::ScrubBehavior::NodeSet
 
       class << self
         #
@@ -30,7 +31,7 @@ module Loofah
       #
       #  Returns the HTML markup contained by the fragment
       #
-      def to_s
+      def to_s(*)
         serialize_root.children.to_s
       end
 

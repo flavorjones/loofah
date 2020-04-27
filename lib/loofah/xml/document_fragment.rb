@@ -8,6 +8,9 @@ module Loofah
     #  See Loofah::ScrubBehavior for additional methods.
     #
     class DocumentFragment < Nokogiri::XML::Document
+      include Loofah::ScrubBehavior::Node
+      include Loofah::DocumentDecorator
+
       class << self
         #
         #  Overridden Nokogiri::XML::Document
@@ -17,7 +20,7 @@ module Loofah
         def parse(tags)
           doc = Loofah::XML::Document.new
           doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
-          self.new(doc, tags)
+          new(doc, tags)
         end
       end
     end

@@ -111,7 +111,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
     def test_removal_of_all_tags
       html = <<-HTML
       What's up <strong>doc</strong>?
-    HTML
+      HTML
       stripped = Loofah.scrub_document(html, :prune).text
       assert_equal %Q(What\'s up doc?).strip, stripped.strip
     end
@@ -224,38 +224,38 @@ class IntegrationTestAdHoc < Loofah::TestCase
     #
     context 'comments outside html' do
       context 'bare comments' do
-        HTML = '<!-- --!><script>alert(1)</script><!-- -->'.freeze
+        html = '<!-- --!><script>alert(1)</script><!-- -->'
 
         it 'Loofah.document removes the comment' do
-          sanitized = Loofah.document(HTML)
+          sanitized = Loofah.document(html)
           sanitized_html = sanitized.to_html
           refute_match(/--/, sanitized_html)
         end
 
         it 'Loofah.scrub_document removes the comment' do
-          sanitized = Loofah.scrub_document(HTML, :prune)
+          sanitized = Loofah.scrub_document(html, :prune)
           sanitized_html = sanitized.to_html
           refute_match(/--/, sanitized_html)
         end
       end
 
       context 'doc with comments outside HTML' do
-        HTML = <<~EOF
+        html = <<~HTML
           <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
               <!-- spaces ->
           		<!-- tabs -->
                    <!-- more spaces -->
           <html><body><div>hello
-        EOF
+        HTML
 
         it 'Loofah.document removes the comment' do
-          sanitized = Loofah.document(HTML)
+          sanitized = Loofah.document(html)
           sanitized_html = sanitized.to_html
           refute_match(/--/, sanitized_html)
         end
 
         it 'Loofah.scrub_document removes the comment' do
-          sanitized = Loofah.scrub_document(HTML, :prune)
+          sanitized = Loofah.scrub_document(html, :prune)
           sanitized_html = sanitized.to_html
           refute_match(/--/, sanitized_html)
         end

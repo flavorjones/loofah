@@ -50,12 +50,12 @@ module Loofah
 
     # Shortcut for Loofah.fragment(string_or_io).scrub!(method)
     def scrub_fragment(string_or_io, method)
-      Loofah.fragment(string_or_io).scrub!(method)
+      fragment(string_or_io).scrub!(method)
     end
 
     # Shortcut for Loofah.document(string_or_io).scrub!(method)
     def scrub_document(string_or_io, method)
-      Loofah.document(string_or_io).scrub!(method)
+      document(string_or_io).scrub!(method)
     end
 
     # Shortcut for Loofah::XML::Document.parse
@@ -73,12 +73,12 @@ module Loofah
 
     # Shortcut for Loofah.xml_fragment(string_or_io).scrub!(method)
     def scrub_xml_fragment(string_or_io, method)
-      Loofah.xml_fragment(string_or_io).scrub!(method)
+      xml_fragment(string_or_io).scrub!(method)
     end
 
     # Shortcut for Loofah.xml_document(string_or_io).scrub!(method)
     def scrub_xml_document(string_or_io, method)
-      Loofah.xml_document(string_or_io).scrub!(method)
+      xml_document(string_or_io).scrub!(method)
     end
 
     # A helper to remove extraneous whitespace from text-ified HTML
