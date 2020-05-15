@@ -641,6 +641,12 @@ module Loofah
                                           "underline",
                                           "white",
                                           "yellow",
+                                          "double",
+                                          "groove",
+                                          "ridge",
+                                          "inset",
+                                          "outset",
+                                          "hidden",
                                         ])
 
       # see https://www.quackit.com/css/functions/
