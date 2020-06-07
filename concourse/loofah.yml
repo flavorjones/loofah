@@ -4,7 +4,7 @@ resources:
 <%= erbify_file "common_resources.yml" -%>
   - name: loofah
     type: git
-    icon: "github-circle"
+    icon: "github"
     source:
       uri: https://github.com/flavorjones/loofah/
       branch: master

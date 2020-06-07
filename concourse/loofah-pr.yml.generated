@@ -9,7 +9,7 @@ resources:
       disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah-pr
     type: pull-request
-    icon: "github-circle"
+    icon: "github"
     source:
       repo: flavorjones/loofah
       access_token: ((github-repo-status-access-token))

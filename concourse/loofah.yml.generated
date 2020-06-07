@@ -9,7 +9,7 @@ resources:
       disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah
     type: git
-    icon: "github-circle"
+    icon: "github"
     source:
       uri: https://github.com/flavorjones/loofah/
       branch: master
