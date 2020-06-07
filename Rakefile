@@ -18,7 +18,7 @@ Hoe.spec "loofah" do
     "home" => "https://github.com/flavorjones/loofah",
     "bugs" => "https://github.com/flavorjones/loofah/issues",
     "doco" => "https://www.rubydoc.info/gems/loofah/",
-    "clog" => "https://github.com/flavorjones/loofah/master/CHANGELOG.md",
+    "clog" => "https://github.com/flavorjones/loofah/blob/master/CHANGELOG.md",
     "code" => "https://github.com/flavorjones/loofah",
   }
 
