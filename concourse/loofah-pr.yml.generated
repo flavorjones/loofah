@@ -52,7 +52,6 @@ jobs:
 
   - name: ruby-2.4-pr
     public: true
-    serial_groups: ["ruby-pr"]
     plan:
       - get: ci
       - get: loofah-pr
@@ -80,7 +79,6 @@ jobs:
             status: failure
   - name: ruby-2.5-pr
     public: true
-    serial_groups: ["ruby-pr"]
     plan:
       - get: ci
       - get: loofah-pr
@@ -108,7 +106,6 @@ jobs:
             status: failure
   - name: ruby-2.6-pr
     public: true
-    serial_groups: ["ruby-pr"]
     plan:
       - get: ci
       - get: loofah-pr
@@ -136,7 +133,6 @@ jobs:
             status: failure
   - name: ruby-2.7-pr
     public: true
-    serial_groups: ["ruby-pr"]
     plan:
       - get: ci
       - get: loofah-pr

@@ -47,7 +47,6 @@ jobs:
 % RUBIES[:mri].each do |ruby_version|
   - name: ruby-<%= ruby_version %>-pr
     public: true
-    serial_groups: ["ruby-pr"]
     plan:
       - get: ci
       - get: loofah-pr
