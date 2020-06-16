@@ -32,7 +32,7 @@ Hoe.spec "loofah" do
   extra_dev_deps << ["hoe-debugging", "~> 2.0"]
   extra_dev_deps << ["hoe-bundler", "~> 1.5"]
   extra_dev_deps << ["hoe-git", "~> 1.6"]
-  extra_dev_deps << ["hoe-markdown", "~> 1.1"]
+  extra_dev_deps << ["hoe-markdown", "~> 1.2"]
   extra_dev_deps << ["concourse", ">=0.26.0"]
   extra_dev_deps << ["rubocop", ">=0.76.0"]
 end
