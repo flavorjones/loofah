@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.6.0 / unreleased
+
+### Features
+
+* Allow CSS `border-style` keywords. [[#188](https://github.com/flavorjones/loofah/issues/188)] (Thanks, [@tarcisiozf](https://github.com/tarcisiozf)!)
+
+
 ## 2.5.0 / 2020-04-05
 
 ### Features
