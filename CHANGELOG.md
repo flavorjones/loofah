@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.6.0 / unreleased
+## 2.6.0 / 2020-06-16
 
 ### Features
 
