@@ -379,6 +379,25 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/max-width/, sane.inner_html
   end
 
+  def test_css_page_break_after
+    html = '<div style="page-break-after:always;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/page-break-after:always/, sane.inner_html
+  end
+
+  def test_css_page_break_before
+    html = '<div style="page-break-before:always;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/page-break-before:always/, sane.inner_html
+  end
+
+  def test_css_page_break_inside
+    html = '<div style="page-break-inside:auto;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/page-break-inside:auto/, sane.inner_html
+  end
+
+
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")
 
