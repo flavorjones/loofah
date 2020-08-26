@@ -2,6 +2,11 @@
 
 ## unreleased
 
+### Features
+
+* Allow CSS properties `page-break-before`, `page-break-inside`, and `page-break-after`. [[#190](https://github.com/flavorjones/loofah/issues/190)] (Thanks, [@ahorek](https://github.com/ahorek)!)
+
+
 ### Fixes
 
 * Don't drop the `!important` rule from some CSS properties. [[#191](https://github.com/flavorjones/loofah/issues/191)] (Thanks, [@b7kich](https://github.com/b7kich)!)
