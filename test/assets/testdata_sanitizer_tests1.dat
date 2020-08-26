@@ -487,6 +487,14 @@
   },
 
   {
+    "name": "style_attr_shorthand_important",
+    "input": "<div style=\"border: 2px dashed gray !important;\" />",
+    "output": "<div style='border:2px dashed gray !important;'/>",
+    "xhtml": "<div style='border:2px dashed gray !important;'></div>",
+    "rexml": "<div style='border:2px dashed gray !important;'></div>"
+  },
+
+  {
    "name": "attributes_with_embedded_quotes",
    "input": "<img src=doesntexist.jpg\"'onerror=\"alert(1) />",
    "output": "<img src='doesntexist.jpg%22'onerror=%22alert(1)'>",

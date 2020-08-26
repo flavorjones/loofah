@@ -8,6 +8,7 @@ module Loofah
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
       CRASS_SEMICOLON = { :node => :semicolon, :raw => ";" }
+      CSS_IMPORTANT = '!important'
 
       class << self
         def allowed_element?(element_name)
@@ -90,6 +91,7 @@ module Loofah
                 end
               end.compact
               unless value.empty?
+                value << CSS_IMPORTANT if node[:important]
                 propstring = sprintf "%s:%s", name, value.join(" ")
                 sanitized_node = Crass.parse_properties(propstring).first
                 sanitized_tree << sanitized_node << CRASS_SEMICOLON
