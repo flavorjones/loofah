@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## 2.7.0 / 2020-08-26
 
 ### Features
 
