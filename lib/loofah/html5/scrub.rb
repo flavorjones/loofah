@@ -91,7 +91,7 @@ module Loofah
                 end
               end.compact
               unless value.empty?
-                value += [CSS_IMPORTANT] if node[:important]
+                value << CSS_IMPORTANT if node[:important]
                 propstring = sprintf "%s:%s", name, value.join(" ")
                 sanitized_node = Crass.parse_properties(propstring).first
                 sanitized_tree << sanitized_node << CRASS_SEMICOLON

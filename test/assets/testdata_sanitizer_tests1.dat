@@ -486,10 +486,10 @@
     "rexml": "<div style='color: blue;'></div>"
   },
 
- {
-    "name": "style_attr_shorhand_important",
+  {
+    "name": "style_attr_shorthand_important",
     "input": "<div style=\"border: 2px dashed gray !important;\" />",
-    "output": "<div style='border:2px dashed gray !important;/>",
+    "output": "<div style='border:2px dashed gray !important;'/>",
     "xhtml": "<div style='border:2px dashed gray !important;'></div>",
     "rexml": "<div style='border:2px dashed gray !important;'></div>"
   },
