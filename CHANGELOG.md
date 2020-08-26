@@ -1,5 +1,12 @@
 # Changelog
 
+## unreleased
+
+### Fixes
+
+* Don't drop the `!important` rule from some CSS properties. [[#191](https://github.com/flavorjones/loofah/issues/191)] (Thanks, [@b7kich](https://github.com/b7kich)!)
+
+
 ## 2.6.0 / 2020-06-16
 
 ### Features
