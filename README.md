@@ -6,10 +6,9 @@
 
 ## Status
 
-|System|Status|
-|--|--|
-| Concourse CI | [![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master) |
-| Code Climate | [![Code Climate](https://codeclimate.com/github/flavorjones/loofah.svg)](https://codeclimate.com/github/flavorjones/loofah) |
+[![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master)
+[![Code Climate](https://codeclimate.com/github/flavorjones/loofah.svg)](https://codeclimate.com/github/flavorjones/loofah)
+[![Tidelift dependencies](https://tidelift.com/badges/package/rubygems/loofah)](https://tidelift.com/subscription/pkg/rubygems-loofah?utm_source=rubygems-loofah&utm_medium=referral&utm_campaign=readme)
 
 
 ## Description
