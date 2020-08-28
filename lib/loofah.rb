@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 
 require "nokogiri"
 
+require "loofah/version"
 require "loofah/metahelpers"
 require "loofah/elements"
 
@@ -28,9 +29,6 @@ require "loofah/html/document_fragment"
 # quantities of docs.
 #
 module Loofah
-  # The version of Loofah you are using
-  VERSION = "2.7.0"
-
   class << self
     # Shortcut for Loofah::HTML::Document.parse
     # This method accepts the same parameters as Nokogiri::HTML::Document.parse
