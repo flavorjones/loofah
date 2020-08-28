@@ -1,5 +1,3 @@
-require "rubygems"
-
 require "hoe/markdown"
 Hoe::Markdown::Standalone.new("loofah").define_markdown_tasks
 
@@ -8,6 +6,13 @@ Concourse.new("loofah", fly_target: "ci") do |c|
   c.add_pipeline "loofah", "loofah.yml"
   c.add_pipeline "loofah-pr", "loofah-pr.yml"
 end
+
+require "rake/testtask"
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.test_files = Dir["test/**/*.rb"]
+end
+task :default => :test
 
 desc "generate safelists from W3C specifications"
 task :generate_safelists do
@@ -27,5 +32,3 @@ task :debug_manifest do
   spec = eval(File.read("loofah.gemspec"))
   puts spec.files
 end
-
-task :default => :test
