@@ -1,20 +1,23 @@
 % require "common_prelude.rb"
 
-resources:
-<%= erbify_file "common_resources.yml" -%>
-  - name: loofah-pr
-    type: pull-request
-    icon: "github"
-    source:
-      repo: flavorjones/loofah
-      access_token: ((github-repo-status-access-token))
-      ignore_paths: <%= $common_ignore_paths %>
-
 resource_types:
 - name: pull-request
   type: registry-image
   source:
-    repository: jtarchie/pr
+    repository: teliaoss/github-pr-resource
+
+resources:
+<%= erbify_file "common_resources.yml" -%>
+  - name: loofah-pr
+    type: pull-request
+    icon: github
+    check_every: 15m
+    # https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah-pr/resources/loofah-pr/check/webhook?webhook_token=((webhook_token))
+    webhook_token: ((loofah-pr-webhook-token))
+    source:
+      repository: flavorjones/loofah
+      access_token: ((github-repo-status-access-token))
+      ignore_paths: <%= $common_ignore_paths %>
 
 jobs:
   - name: pr-pending
@@ -26,7 +29,7 @@ jobs:
       - put: loofah-pr
         params:
           path: loofah-pr
-          status: pending
+          status: PENDING
 
   - name: pr-success
     public: true
@@ -42,7 +45,7 @@ jobs:
       - put: loofah-pr
         params:
           path: loofah-pr
-          status: success
+          status: SUCCESS
 
 % RUBIES[:mri].each do |ruby_version|
   - name: ruby-<%= ruby_version %>-pr
@@ -71,5 +74,5 @@ jobs:
           put: loofah-pr
           params:
             path: loofah-pr
-            status: failure
+            status: FAILURE
 % end

@@ -1,4 +1,10 @@
 
+resource_types:
+- name: pull-request
+  type: registry-image
+  source:
+    repository: teliaoss/github-pr-resource
+
 resources:
   - name: ci
     type: git
@@ -9,17 +15,14 @@ resources:
       disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah-pr
     type: pull-request
-    icon: "github"
+    icon: github
+    check_every: 15m
+    # https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah-pr/resources/loofah-pr/check/webhook?webhook_token=((webhook_token))
+    webhook_token: ((loofah-pr-webhook-token))
     source:
-      repo: flavorjones/loofah
+      repository: flavorjones/loofah
       access_token: ((github-repo-status-access-token))
       ignore_paths: ["CHANGELOG.md","README.md","concourse/**"]
-
-resource_types:
-- name: pull-request
-  type: registry-image
-  source:
-    repository: jtarchie/pr
 
 jobs:
   - name: pr-pending
@@ -31,7 +34,7 @@ jobs:
       - put: loofah-pr
         params:
           path: loofah-pr
-          status: pending
+          status: PENDING
 
   - name: pr-success
     public: true
@@ -48,7 +51,7 @@ jobs:
       - put: loofah-pr
         params:
           path: loofah-pr
-          status: success
+          status: SUCCESS
 
   - name: ruby-2.4-pr
     public: true
@@ -76,7 +79,7 @@ jobs:
           put: loofah-pr
           params:
             path: loofah-pr
-            status: failure
+            status: FAILURE
   - name: ruby-2.5-pr
     public: true
     plan:
@@ -103,7 +106,7 @@ jobs:
           put: loofah-pr
           params:
             path: loofah-pr
-            status: failure
+            status: FAILURE
   - name: ruby-2.6-pr
     public: true
     plan:
@@ -130,7 +133,7 @@ jobs:
           put: loofah-pr
           params:
             path: loofah-pr
-            status: failure
+            status: FAILURE
   - name: ruby-2.7-pr
     public: true
     plan:
@@ -157,4 +160,4 @@ jobs:
           put: loofah-pr
           params:
             path: loofah-pr
-            status: failure
+            status: FAILURE
