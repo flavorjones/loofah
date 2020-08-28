@@ -22,7 +22,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: ruby, tag: "<%= ruby_version %>"}
           platform: linux
           inputs:
@@ -45,7 +45,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: jruby, tag: "<%= jruby_version %>-jdk"}
           platform: linux
           inputs:

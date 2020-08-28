@@ -26,7 +26,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: ruby, tag: "2.4"}
           platform: linux
           inputs:
@@ -46,7 +46,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: ruby, tag: "2.5"}
           platform: linux
           inputs:
@@ -66,7 +66,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: ruby, tag: "2.6"}
           platform: linux
           inputs:
@@ -86,7 +86,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: ruby, tag: "2.7"}
           platform: linux
           inputs:
@@ -107,7 +107,7 @@ jobs:
       - task: rake-test
         config:
           image_resource:
-            type: docker-image
+            type: registry-image
             source: {repository: jruby, tag: "9.2-jdk"}
           platform: linux
           inputs:
