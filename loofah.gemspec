@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency("rr", ["~> 1.2.0"])
   spec.add_development_dependency("json", ["~> 2.2"])
   spec.add_development_dependency("concourse", ["~> 0.33"])
-  spec.add_development_dependency("rubocop", ["~> 0.89"])
+  spec.add_development_dependency("rubocop", "~> 1.1")
   spec.add_development_dependency("rdoc", [">= 4.0", "< 7"])
   spec.add_development_dependency("hoe-markdown", ["~> 1.3"])
 end
