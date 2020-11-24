@@ -398,6 +398,78 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
 
+  def test_css_align_content
+    html = '<div style="align-content:flex-start;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/align-content:flex-start/, sane.inner_html
+  end
+
+  def test_css_align_items
+    html = '<div style="align-items:stretch;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/align-items:stretch/, sane.inner_html
+  end
+
+  def test_css_align_self
+    html = '<div style="align-self:auto;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/align-self:auto/, sane.inner_html
+  end
+
+  def test_css_flex
+    html = '<div style="flex:none;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex:none/, sane.inner_html
+ end
+
+  def test_css_flex_basis
+    html = '<div style="flex-basis:auto;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-basis:auto/, sane.inner_html
+  end
+
+  def test_css_flex_direction
+    html = '<div style="flex-direction:row;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-direction:row/, sane.inner_html
+  end
+
+  def test_css_flex_flow
+    html = '<div style="flex-flow:column wrap;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-flow:column wrap/, sane.inner_html
+  end
+
+  def test_css_flex_grow
+    html = '<div style="flex-grow:4;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-grow:4/, sane.inner_html
+  end
+
+  def test_css_flex_shrink
+    html = '<div style="flex-shrink:3;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-shrink:3/, sane.inner_html
+  end
+
+  def test_css_flex_wrap
+    html = '<div style="flex-wrap:wrap;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/flex-wrap:wrap/, sane.inner_html
+  end
+
+  def test_css_justify_content
+    html = '<div style="justify-content:flex-start;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/justify-content:flex-start/, sane.inner_html
+  end
+
+  def test_css_order
+    html = '<div style="order:5;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    assert_match %r/order:5/, sane.inner_html
+ end
+
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")
 

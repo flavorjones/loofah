@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* Allow CSS properties `order`, `flex-direction`, `flex-grow`, `flex-wrap`, `flex-shrink`, `flex-flow`, `flex-basis`, `flex`m `justify-content`, `align-self`, `align-items`, and `align-content`. [[#190](https://github.com/flavorjones/loofah/issues/197)] (Thanks, [@miguelperez](https://github.com/miguelperez)!)
+
 ## 2.7.0 / 2020-08-26
 
 ### Features
