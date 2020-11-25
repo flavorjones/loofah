@@ -3,22 +3,22 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 
 require "nokogiri"
 
-require "loofah/version"
-require "loofah/metahelpers"
-require "loofah/elements"
+require_relative "loofah/version"
+require_relative "loofah/metahelpers"
+require_relative "loofah/elements"
 
-require "loofah/html5/safelist"
-require "loofah/html5/libxml2_workarounds"
-require "loofah/html5/scrub"
+require_relative "loofah/html5/safelist"
+require_relative "loofah/html5/libxml2_workarounds"
+require_relative "loofah/html5/scrub"
 
-require "loofah/scrubber"
-require "loofah/scrubbers"
+require_relative "loofah/scrubber"
+require_relative "loofah/scrubbers"
 
-require "loofah/instance_methods"
-require "loofah/xml/document"
-require "loofah/xml/document_fragment"
-require "loofah/html/document"
-require "loofah/html/document_fragment"
+require_relative "loofah/instance_methods"
+require_relative "loofah/xml/document"
+require_relative "loofah/xml/document_fragment"
+require_relative "loofah/html/document"
+require_relative "loofah/html/document_fragment"
 
 # == Strings and IO Objects as Input
 #
