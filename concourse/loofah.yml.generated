@@ -18,7 +18,6 @@ resources:
 jobs:
   - name: ruby-2.4
     public: true
-    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -38,7 +37,6 @@ jobs:
             path: ci/concourse/tasks/rake-test/run.sh
   - name: ruby-2.5
     public: true
-    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -58,7 +56,6 @@ jobs:
             path: ci/concourse/tasks/rake-test/run.sh
   - name: ruby-2.6
     public: true
-    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -78,7 +75,6 @@ jobs:
             path: ci/concourse/tasks/rake-test/run.sh
   - name: ruby-2.7
     public: true
-    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -99,7 +95,6 @@ jobs:
 
   - name: jruby-9.2
     public: true
-    serial_groups: ["jruby"]
     plan:
       - get: ci
       - get: loofah

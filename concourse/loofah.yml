@@ -14,7 +14,6 @@ jobs:
 % RUBIES[:mri].each do |ruby_version|
   - name: ruby-<%= ruby_version %>
     public: true
-    serial_groups: ["ruby"]
     plan:
       - get: ci
       - get: loofah
@@ -37,7 +36,6 @@ jobs:
 % RUBIES[:jruby].each do |jruby_version|
   - name: jruby-<%= jruby_version %>
     public: true
-    serial_groups: ["jruby"]
     plan:
       - get: ci
       - get: loofah
