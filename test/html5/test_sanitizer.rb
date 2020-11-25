@@ -397,7 +397,6 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match %r/page-break-inside:auto/, sane.inner_html
   end
 
-
   def test_css_align_content
     html = '<div style="align-content:flex-start;"></div>'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
@@ -420,7 +419,7 @@ class Html5TestSanitizer < Loofah::TestCase
     html = '<div style="flex:none;"></div>'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/flex:none/, sane.inner_html
- end
+  end
 
   def test_css_flex_basis
     html = '<div style="flex-basis:auto;"></div>'
@@ -468,7 +467,7 @@ class Html5TestSanitizer < Loofah::TestCase
     html = '<div style="order:5;"></div>'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/order:5/, sane.inner_html
- end
+  end
 
   def test_issue_90_slow_regex
     skip("timing tests are hard to make pass and have little regression-testing value")
