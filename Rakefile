@@ -12,7 +12,6 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = Dir["test/**/*.rb"]
 end
-task :default => :test
 
 desc "generate safelists from W3C specifications"
 task :generate_safelists do
@@ -26,7 +25,8 @@ end
 task :rubocop_frozen_string_literals do
   sh "rubocop lib --auto-correct --only Style/FrozenStringLiteralComment"
 end
-Rake::Task[:test].prerequisites << :rubocop
+
+task :default => [:rubocop, :test]
 
 task :debug_manifest do
   spec = eval(File.read("loofah.gemspec"))
