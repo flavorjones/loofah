@@ -226,8 +226,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
         it "Loofah.document removes the comment" do
           sanitized = Loofah.document(html)
-          sanitized_html = sanitized.to_html
-          refute_match(/--/, sanitized_html)
+          refute(sanitized.children.any? { |node| node.comment? } )
         end
 
         it "Loofah.scrub_document removes the comment" do
