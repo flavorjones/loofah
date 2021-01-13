@@ -7,22 +7,22 @@ module Loofah
     module Scrub
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
-      CRASS_SEMICOLON = { :node => :semicolon, :raw => ";" }
+      CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
       CSS_IMPORTANT = '!important'
 
       class << self
         def allowed_element?(element_name)
-          ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include? element_name
+          ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include?(element_name)
         end
 
         #  alternative implementation of the html5lib attribute scrubbing algorithm
         def scrub_attributes(node)
           node.attribute_nodes.each do |attr_node|
             attr_name = if attr_node.namespace
-                          "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
-                        else
-                          attr_node.node_name
-                        end
+              "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
+            else
+              attr_node.node_name
+            end
 
             if attr_name =~ /\Adata-[\w-]+\z/
               next
@@ -58,13 +58,13 @@ module Loofah
             end
           end
 
-          scrub_css_attribute node
+          scrub_css_attribute(node)
 
           node.attribute_nodes.each do |attr_node|
             node.remove_attribute(attr_node.name) if attr_node.value !~ /[^[:space:]]/
           end
 
-          force_correct_attribute_escaping! node
+          force_correct_attribute_escaping!(node)
         end
 
         def scrub_css_attribute(node)
@@ -73,33 +73,50 @@ module Loofah
         end
 
         def scrub_css(style)
-          style_tree = Crass.parse_properties style
+          style_tree = Crass.parse_properties(style)
           sanitized_tree = []
 
           style_tree.each do |node|
             next unless node[:node] == :property
             next if node[:children].any? do |child|
-              [:url, :bad_url].include?(child[:node]) || (child[:node] == :function && !SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase))
+              [:url, :bad_url].include?(child[:node])
             end
+
             name = node[:name].downcase
-            if SafeList::ALLOWED_CSS_PROPERTIES.include?(name) || SafeList::ALLOWED_SVG_PROPERTIES.include?(name)
-              sanitized_tree << node << CRASS_SEMICOLON
-            elsif SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
-              value = node[:value].split.map do |keyword|
-                if SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) || keyword =~ CSS_KEYWORDISH
+            next unless SafeList::ALLOWED_CSS_PROPERTIES.include?(name) ||
+                SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
+                SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
+
+            value = node[:children].map do |child|
+              case child[:node]
+              when :whitespace
+                nil
+              when :string
+                nil
+              when :function
+                if SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase)
+                  Crass::Parser.stringify(child)
+                end
+              when :ident
+                keyword = child[:value]
+                if !SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first) ||
+                   SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
+                   (keyword =~ CSS_KEYWORDISH)
                   keyword
                 end
-              end.compact
-              unless value.empty?
-                value << CSS_IMPORTANT if node[:important]
-                propstring = sprintf "%s:%s", name, value.join(" ")
-                sanitized_node = Crass.parse_properties(propstring).first
-                sanitized_tree << sanitized_node << CRASS_SEMICOLON
+              else
+                child[:raw]
               end
-            end
+            end.compact
+
+            next if value.empty?
+            value << CSS_IMPORTANT if node[:important]
+            propstring = format("%s:%s", name, value.join(" "))
+            sanitized_node = Crass.parse_properties(propstring).first
+            sanitized_tree << sanitized_node << CRASS_SEMICOLON
           end
 
-          Crass::Parser.stringify sanitized_tree
+          Crass::Parser.stringify(sanitized_tree)
         end
 
         #
