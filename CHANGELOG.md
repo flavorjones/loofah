@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.9.0 / 2021-01-14
+
+* Handle CSS functions in a CSS shorthand property (like `background`). [[#199](https://github.com/flavorjones/loofah/issues/199), [#200](https://github.com/flavorjones/loofah/issues/200)]
+
+
 ### 2.8.0 / 2020-11-25
 
 * Allow CSS properties `order`, `flex-direction`, `flex-grow`, `flex-wrap`, `flex-shrink`, `flex-flow`, `flex-basis`, `flex`, `justify-content`, `align-self`, `align-items`, and `align-content`. [[#197](https://github.com/flavorjones/loofah/issues/197)] (Thanks, [@miguelperez](https://github.com/miguelperez)!)
