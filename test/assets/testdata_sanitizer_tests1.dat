@@ -458,7 +458,7 @@
     "name": "style_attr_end_with_nothing",
     "input": "<div style=\"color: blue\" />",
     "output": "<div style='color: blue;'/>",
-    "xhtml": "<div style='color: blue;'></div>",
+    "xhtml": "<div style='color:blue;'></div>",
     "rexml": "<div style='color: blue;'></div>"
   },
 
@@ -466,7 +466,7 @@
     "name": "style_attr_end_with_space",
     "input": "<div style=\"color: blue \" />",
     "output": "<div style='color: blue ;'/>",
-    "xhtml": "<div style='color: blue ;'></div>",
+    "xhtml": "<div style='color:blue;'></div>",
     "rexml": "<div style='color: blue ;'></div>"
   },
 
@@ -474,7 +474,7 @@
     "name": "style_attr_end_with_semicolon",
     "input": "<div style=\"color: blue;\" />",
     "output": "<div style='color: blue;'/>",
-    "xhtml": "<div style='color: blue;'></div>",
+    "xhtml": "<div style='color:blue;'></div>",
     "rexml": "<div style='color: blue;'></div>"
   },
 
@@ -482,7 +482,7 @@
     "name": "style_attr_end_with_semicolon_space",
     "input": "<div style=\"color: blue; \" />",
     "output": "<div style='color: blue;'/>",
-    "xhtml": "<div style='color: blue;'></div>",
+    "xhtml": "<div style='color:blue;'></div>",
     "rexml": "<div style='color: blue;'></div>"
   },
 
