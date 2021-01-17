@@ -7,7 +7,7 @@ resources:
     icon: "github"
     source:
       uri: https://github.com/flavorjones/loofah/
-      branch: master
+      branch: main
       ignore_paths: <%= $common_ignore_paths %>
 
 jobs:

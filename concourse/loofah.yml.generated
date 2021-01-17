@@ -5,14 +5,14 @@ resources:
     icon: "cog"
     source:
       uri: https://github.com/flavorjones/loofah/
-      branch: master
+      branch: main
       disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah
     type: git
     icon: "github"
     source:
       uri: https://github.com/flavorjones/loofah/
-      branch: master
+      branch: main
       ignore_paths: ["CHANGELOG.md","README.md","concourse/**"]
 
 jobs:

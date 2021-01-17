@@ -1,12 +1,12 @@
 # Loofah
 
 * https://github.com/flavorjones/loofah
-* Docs: http://rubydoc.info/github/flavorjones/loofah/master/frames
+* Docs: http://rubydoc.info/github/flavorjones/loofah/main/frames
 * Mailing list: [loofah-talk@googlegroups.com](https://groups.google.com/forum/#!forum/loofah-talk)
 
 ## Status
 
-[![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/ruby-2.5/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah?groups=master)
+[![Concourse CI](https://ci.nokogiri.org/api/v1/teams/nokogiri-core/pipelines/loofah/jobs/cruby-3.0/badge)](https://ci.nokogiri.org/teams/nokogiri-core/pipelines/loofah)
 [![Code Climate](https://codeclimate.com/github/flavorjones/loofah.svg)](https://codeclimate.com/github/flavorjones/loofah)
 [![Tidelift dependencies](https://tidelift.com/badges/package/rubygems/loofah)](https://tidelift.com/subscription/pkg/rubygems-loofah?utm_source=rubygems-loofah&utm_medium=referral&utm_campaign=readme)
 

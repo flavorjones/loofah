@@ -11,7 +11,7 @@ resources:
     icon: "cog"
     source:
       uri: https://github.com/flavorjones/loofah/
-      branch: master
+      branch: main
       disable_ci_skip: true # always get the latest pipeline configuration
   - name: loofah-pr
     type: pull-request
