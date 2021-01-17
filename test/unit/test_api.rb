@@ -55,6 +55,13 @@ class UnitTestApi < Loofah::TestCase
       node_set.scrub!(:strip)
     end
 
+    it "scrubs fragment nodesets" do
+      doc = Loofah.fragment(HTML)
+      assert(node_set = doc.css("div"))
+      assert_instance_of Nokogiri::XML::NodeSet, node_set
+      node_set.scrub!(:strip)
+    end
+
     it "exposes serialize_root on HTML::DocumentFragment" do
       doc = Loofah.fragment(HTML)
       assert_equal HTML, doc.serialize_root.to_html
@@ -109,6 +116,13 @@ class UnitTestApi < Loofah::TestCase
       doc = Loofah.xml_fragment(XML)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
+    end
+
+    it "scrubs document nodesets" do
+      doc = Loofah.xml_document(XML)
+      assert(node_set = doc.css("div"))
+      assert_instance_of Nokogiri::XML::NodeSet, node_set
+      node_set.scrub!(:strip)
     end
   end
 
