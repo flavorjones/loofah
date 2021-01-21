@@ -211,7 +211,7 @@ end
 Loofah.xml_document(File.read('plague.xml')).scrub!(bring_out_your_dead)
 ```
 
-=== Built-In HTML Scrubbers
+### Built-In HTML Scrubbers
 
 Loofah comes with a set of sanitizing scrubbers that use HTML5lib's
 safelist algorithm:
