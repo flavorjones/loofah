@@ -29,4 +29,33 @@ class UnitHTML5Scrub < Loofah::TestCase
                    Loofah::HTML5::Scrub.scrub_css("background: linear-gradient(transparent 50%, #ffff66 50%);")
     end
   end
+
+  describe "property string values" do
+    it "allows hypenated values" do
+      text = %q(font-family:'AvenirNext-Regular';)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+
+      text = %q(font-family:"AvenirNext-Regular";)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+    end
+
+    it "allows embedded spaces in values" do
+      text = %q(font-family:'Avenir Next';)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+
+      text = %q(font-family:"Avenir Next";)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+    end
+
+    it "does not allow values with embedded or irregular quotes" do
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:'AvenirNext"-Regular';)))
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:"AvenirNext'-Regular";)))
+
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:'AvenirNext-Regular;)))
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:'AvenirNext-Regular";)))
+
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:"AvenirNext-Regular;)))
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:"AvenirNext-Regular';)))
+    end
+  end
 end
