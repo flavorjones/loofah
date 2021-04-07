@@ -1,6 +1,6 @@
 # Changelog
 
-### next / unreleased
+## 2.9.1 / 2021-04-07
 
 ### Bug fixes
 
