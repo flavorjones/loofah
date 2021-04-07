@@ -260,5 +260,25 @@ class IntegrationTestAdHoc < Loofah::TestCase
         end
       end
     end
+
+    it "handles property string values" do
+      input = <<~EOF
+        <span style="font-size: 36px; font-family: 'AvenirNext-Regular';">variation 1a</span>
+        <span style="font-size: 36px; font-family: AvenirNext-Regular;">variation 1b</span>
+        <span style="font-size: 36px; font-family: 'Avenir Next';">variation 2a</span>
+        <span style="font-size: 36px; font-family: Avenir Next;">variation 2b</span>
+      EOF
+
+      expected = <<~EOF
+        <span style="font-size:36px;font-family:'AvenirNext-Regular';">variation 1a</span>
+        <span style="font-size:36px;font-family:AvenirNext-Regular;">variation 1b</span>
+        <span style="font-size:36px;font-family:'Avenir Next';">variation 2a</span>
+        <span style="font-size:36px;font-family:Avenir Next;">variation 2b</span>
+      EOF
+
+      actual = Loofah.scrub_fragment(input, :escape)
+
+      assert_equal(expected, actual.to_html)
+    end
   end
 end

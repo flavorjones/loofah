@@ -9,6 +9,7 @@ module Loofah
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
       CSS_IMPORTANT = '!important'
+      CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
 
       class << self
         def allowed_element?(element_name)
@@ -92,7 +93,11 @@ module Loofah
               when :whitespace
                 nil
               when :string
-                nil
+                if child[:raw] =~ CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES
+                  Crass::Parser.stringify(child)
+                else
+                  nil
+                end
               when :function
                 if SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase)
                   Crass::Parser.stringify(child)
