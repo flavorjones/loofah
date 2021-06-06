@@ -588,6 +588,8 @@ module Loofah
                                             "max-width",
                                             "order",
                                             "overflow",
+                                            "overflow-x",
+                                            "overflow-y",
                                             "page-break-after",
                                             "page-break-before",
                                             "page-break-inside",
