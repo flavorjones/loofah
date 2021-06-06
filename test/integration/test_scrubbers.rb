@@ -8,6 +8,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid><!--[if gts mso9]><div>microsofty stuff</div><![endif]-->"
   WHITEWASH_RESULT = "<div>foo</div>"
+  WHITEWASH_RESULT_LIBXML2911 = "<div>no</div>\n<div>foo</div>"
 
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
@@ -68,7 +69,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
           result = doc.scrub! :whitewash
 
-          assert_equal WHITEWASH_RESULT, doc.xpath("/html/body").inner_html
+          ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
+          assert_equal ww_result, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
       end
@@ -246,7 +248,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
-          assert_equal WHITEWASH_RESULT, doc.xpath("./div").inner_html
+          ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
+          assert_equal ww_result, doc.xpath("./div").inner_html
           assert_equal doc, result
         end
       end
