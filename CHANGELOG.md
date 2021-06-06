@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.10.0 / 2021-06-06
+
+### Features
+
+* Allow CSS properties `overflow-x` and `overflow-y`. [[#206](https://github.com/flavorjones/loofah/issues/206)] (Thanks, [@sampokuokkanen](https://github.com/sampokuokkanen)!)
+
+
 ## 2.9.1 / 2021-04-07
 
 ### Bug fixes
