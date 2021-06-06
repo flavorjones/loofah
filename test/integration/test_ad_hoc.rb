@@ -79,13 +79,20 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
     def test_fragment_whitewash_on_microsofty_markup
       whitewashed = Loofah.fragment(MSWORD_HTML).scrub!(:whitewash)
-      assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
+      if Nokogiri.uses_libxml?("<2.9.11")
+        assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
+      else
+        assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.to_s.strip
+      end
     end
 
     def test_document_whitewash_on_microsofty_markup
       whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
-      assert_match %r(<p>Foo <b>BOLD</b></p>), whitewashed.to_s
-      assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
+      if Nokogiri.uses_libxml?("<2.9.11")
+        assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
+      else
+        assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.xpath("/html/body/*").to_s
+      end
     end
 
     def test_return_empty_string_when_nothing_left
