@@ -4,4 +4,3 @@ pkg
 tmp
 Gemfile.lock
 .bundle
-concourse/private.yml

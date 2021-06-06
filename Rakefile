@@ -1,12 +1,6 @@
 require "hoe/markdown"
 Hoe::Markdown::Standalone.new("loofah").define_markdown_tasks
 
-require "concourse"
-Concourse.new("loofah", fly_target: "ci") do |c|
-  c.add_pipeline "loofah", "loofah.yml"
-  c.add_pipeline "loofah-pr", "loofah-pr.yml"
-end
-
 require "rake/testtask"
 Rake::TestTask.new do |t|
   t.libs << "test"
