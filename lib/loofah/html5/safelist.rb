@@ -800,6 +800,7 @@ module Loofah
                                 "link",
                                 "meta",
                                 "param",
+                                "wbr",
                               ])
 
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
