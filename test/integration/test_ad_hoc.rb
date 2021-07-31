@@ -287,5 +287,33 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
       assert_equal(expected, actual.to_html)
     end
+
+    it "allows border-collapse property values" do
+      # https://github.com/flavorjones/loofah/issues/201
+      # https://developer.mozilla.org/en-US/docs/Web/CSS/border-collapse
+      input = <<~EOF
+        <table style='border-collapse: collapse;'></table>
+        <table style='border-collapse: separate;'></table>
+        <table style='border-collapse: not-allowed;'></table>
+        <table style='border-collapse: inherit;'></table>
+        <table style='border-collapse: initial;'></table>
+        <table style='border-collapse: revert;'></table>
+        <table style='border-collapse: unset;'></table>
+      EOF
+
+      expected = <<~EOF
+        <table style=\"border-collapse:collapse;\"></table>
+        <table style=\"border-collapse:separate;\"></table>
+        <table></table>
+        <table style=\"border-collapse:inherit;\"></table>
+        <table style=\"border-collapse:initial;\"></table>
+        <table style=\"border-collapse:revert;\"></table>
+        <table style=\"border-collapse:unset;\"></table>
+      EOF
+
+      actual = Loofah.scrub_fragment(input, :escape)
+
+      assert_equal(expected, actual.to_html)
+    end
   end
 end

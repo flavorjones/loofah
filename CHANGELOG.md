@@ -5,6 +5,7 @@
 ### Features
 
 * Allow HTML5 element `wbr`.
+* Allow all CSS property values for `border-collapse`. [[#201](https://github.com/flavorjones/loofah/issues/201)]
 
 
 ### Changes
