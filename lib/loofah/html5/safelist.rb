@@ -140,6 +140,7 @@ module Loofah
                                       "ul",
                                       "var",
                                       "video",
+                                      "wbr",
                                     ])
 
       MATHML_ELEMENTS = Set.new([
@@ -788,18 +789,14 @@ module Loofah
       ALLOWED_PROTOCOLS = ACCEPTABLE_PROTOCOLS
       ALLOWED_URI_DATA_MEDIATYPES = ACCEPTABLE_URI_DATA_MEDIATYPES
 
+      # TODO: remove VOID_ELEMENTS in a future major release
+      # and put it in the tests (it is used only for testing, not for functional behavior)
       VOID_ELEMENTS = Set.new([
                                 "area",
-                                "base",
                                 "br",
-                                "col",
-                                "embed",
                                 "hr",
                                 "img",
                                 "input",
-                                "link",
-                                "meta",
-                                "param",
                               ])
 
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
