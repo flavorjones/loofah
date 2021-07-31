@@ -1,5 +1,13 @@
 # Changelog
 
+## next / unreleased
+
+### Changes
+
+* Deprecating `Loofah::HTML5::SafeList::VOID_ELEMENTS` which is not a canonical list of void HTML4 or HTML5 elements.
+* Removed some elements from `Loofah::HTML5::SafeList::VOID_ELEMENTS` that either are not acceptable elements or aren't considered "void" by libxml2.
+
+
 ## 2.10.0 / 2021-06-06
 
 ### Features

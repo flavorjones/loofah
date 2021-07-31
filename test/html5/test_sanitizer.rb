@@ -68,6 +68,12 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
+  HTML5::SafeList::VOID_ELEMENTS.each do |tag_name|
+    define_method "test_void_#{tag_name}_is_in_allowed_list" do
+      assert_includes(HTML5::SafeList::ALLOWED_ELEMENTS, tag_name)
+    end
+  end
+
   ##
   ##  libxml2 downcases elements, so this is moot.
   ##
