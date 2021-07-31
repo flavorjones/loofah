@@ -140,6 +140,7 @@ module Loofah
                                       "ul",
                                       "var",
                                       "video",
+                                      "wbr",
                                     ])
 
       MATHML_ELEMENTS = Set.new([

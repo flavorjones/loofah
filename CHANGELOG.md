@@ -2,6 +2,11 @@
 
 ## next / unreleased
 
+### Features
+
+* Allow HTML5 element `wbr`.
+
+
 ### Changes
 
 * Deprecating `Loofah::HTML5::SafeList::VOID_ELEMENTS` which is not a canonical list of void HTML4 or HTML5 elements.
