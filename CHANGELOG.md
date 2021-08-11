@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.12.0 / 2021-08-11
 
 ### Features
 
