@@ -10,6 +10,7 @@ module Loofah
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
       CSS_IMPORTANT = '!important'
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
+      DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
       class << self
         def allowed_element?(element_name)
@@ -25,7 +26,7 @@ module Loofah
               attr_node.node_name
             end
 
-            if attr_name =~ /\Adata-[\w-]+\z/
+            if attr_name =~ DATA_ATTRIBUTE_NAME
               next
             end
 
@@ -62,7 +63,9 @@ module Loofah
           scrub_css_attribute(node)
 
           node.attribute_nodes.each do |attr_node|
-            node.remove_attribute(attr_node.name) if attr_node.value !~ /[^[:space:]]/
+            if attr_node.value !~ /[^[:space:]]/ && attr_node.name !~ DATA_ATTRIBUTE_NAME
+              node.remove_attribute(attr_node.name)
+            end
           end
 
           force_correct_attribute_escaping!(node)
