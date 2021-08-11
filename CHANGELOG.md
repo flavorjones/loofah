@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Features
+
+* Support empty HTML5 data attributes. [[#215](https://github.com/flavorjones/loofah/issues/215)]
+
+
 ## 2.11.0 / 2021-07-31
 
 ### Features

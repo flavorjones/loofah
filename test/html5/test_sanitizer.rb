@@ -102,18 +102,23 @@ class Html5TestSanitizer < Loofah::TestCase
 
   def test_should_allow_data_attributes
     input = "<p data-foo='foo'>foo <bad>bar</bad> baz</p>"
-
     output = "<p data-foo='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
-    htmloutput = "<p data-foo='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, htmloutput, output, output)
+    check_sanitization(input, output, output, output)
   end
 
   def test_should_allow_multi_word_data_attributes
     input = "<p data-foo-bar-id='11'>foo <bad>bar</bad> baz</p>"
-    output = htmloutput = "<p data-foo-bar-id='11'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+    output = "<p data-foo-bar-id='11'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, htmloutput, output, output)
+    check_sanitization(input, output, output, output)
+  end
+
+  def test_should_allow_empty_data_attributes
+    input = "<p data-foo data-bar="">foo <bad>bar</bad> baz</p>"
+    output = "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+
+    check_sanitization(input, output, output, output)
   end
 
   def test_should_allow_contenteditable
