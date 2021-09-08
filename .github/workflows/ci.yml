@@ -30,7 +30,7 @@ jobs:
     needs: ["rubocop"]
     strategy:
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0", "head"]
+        ruby: ["2.5", "2.6", "2.7", "3.0", "head", truffleruby-head]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
