@@ -62,6 +62,20 @@
   },
 
   {
+    /* and put that version into a CSS hex-encoded string */
+    "name": "div_background_image_unicode_encoded5",
+    "input": "<DIV STYLE=\"background-image:\\0075\\0072\\006C\\0028\\0027\\006a\\0061\\0076\\0061\\0073\\0063\\0072\\0069\\0070\\0074\\003a\\0061\\006c\\0065\\0072\\0074\\0028\\0031\\0032\\0033\\0034\\0029\\0027\\0029\">foo</div>",
+    "output": "<div>foo</div>"
+  },
+
+  {
+    /* and again without encoding the parens */
+    "name": "div_background_image_unicode_encoded6",
+    "input": "<DIV STYLE=\"background-image:\\0075\\0072\\006C(\\0027\\006a\\0061\\0076\\0061\\0073\\0063\\0072\\0069\\0070\\0074\\003a\\0061\\006c\\0065\\0072\\0074\\0028\\0031\\0032\\0033\\0034\\0029\\0027)\">foo</div>",
+    "output": "<div>foo</div>"
+  },
+
+  {
     "name": "div_expression",
     "input": "<div style=\"width: expression(alert('XSS'));\">foo</div>",
     "output": "<div>foo</div>"
