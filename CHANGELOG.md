@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.13.0 / 2021-12-10
 
 ### Bug fixes
 
