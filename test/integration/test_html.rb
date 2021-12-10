@@ -3,18 +3,36 @@ require "helper"
 class IntegrationTestHtml < Loofah::TestCase
   context "html fragment" do
     context "#to_s" do
-      it "not include head tags (like style)" do
-        skip "depends on nokogiri version"
-        html = Loofah.fragment "<style>foo</style><div>bar</div>"
-        assert_equal "<div>bar</div>", html.to_s
+      it "includes header tags (like style)" do
+        html = "<style>foo</style><div>bar</div>"
+        expected = "<style>foo</style><div>bar</div>"
+        assert_equal(expected, Loofah.fragment(html).to_s)
+
+        # assumption check is that Nokogiri does the same
+        assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).to_s)
+        assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).to_s)
       end
     end
 
     context "#text" do
-      it "not include head tags (like style)" do
-        skip "depends on nokogiri version"
-        html = Loofah.fragment "<style>foo</style><div>bar</div>"
-        assert_equal "bar", html.text
+      it "includes header tags (like style)" do
+        html = "<style>foo</style><div>bar</div>"
+        expected = "foobar"
+        assert_equal(expected, Loofah.fragment(html).text)
+
+        # assumption check is that Nokogiri does the same
+        assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).text)
+        assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
+      end
+
+      it "does not include cdata tags (like comments)" do
+        html = "<div>bar<!-- comment1 --></div><!-- comment2 -->"
+        expected = "bar"
+        assert_equal(expected, Loofah.fragment(html).text)
+
+        # assumption check is that Nokogiri does the same
+        assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).text)
+        assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
       end
     end
 
