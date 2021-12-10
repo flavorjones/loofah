@@ -93,7 +93,11 @@ module Loofah
     #    frag.text(:encode_special_chars => false) # => "<script>alert('EVIL');</script>"
     #
     def text(options = {})
-      result = serialize_root.children.inner_text rescue ""
+      result = if serialize_root
+        serialize_root.children.reject(&:comment?).map(&:inner_text).join("")
+      else
+        ""
+      end
       if options[:encode_special_chars] == false
         result # possibly dangerous if rendered in a browser
       else

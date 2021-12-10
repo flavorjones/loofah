@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Bug fixes
+
+* Loofah::HTML::DocumentFragment#text no longer serializes top-level comment children. [[#221](https://github.com/flavorjones/loofah/issues/221)]
+
+
 ## 2.12.0 / 2021-08-11
 
 ### Features
