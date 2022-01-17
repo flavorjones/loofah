@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.0"
+          ruby-version: "3.1"
           bundler-cache: true
       - run: bundle exec rake rubocop
 
@@ -30,7 +30,7 @@ jobs:
     needs: ["rubocop"]
     strategy:
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0", "head", truffleruby-head]
+        ruby: ["2.5", "2.6", "2.7", "3.0", "3.1", "head", "truffleruby-head"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
