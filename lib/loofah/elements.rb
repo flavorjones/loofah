@@ -70,8 +70,6 @@ module Loofah
                                          video
                                        ]
 
-    STRICT_BLOCK_LEVEL = STRICT_BLOCK_LEVEL_HTML4 + STRICT_BLOCK_LEVEL_HTML5
-
     # The following elements may also be considered block-level
     # elements since they may contain block-level elements
     LOOSE_BLOCK_LEVEL = Set.new %w[dd
@@ -86,7 +84,12 @@ module Loofah
                                    tr
                                 ]
 
+    # Elements that aren't block but should generate a newline in #to_text
+    INLINE_LINE_BREAK = Set.new(["br"])
+
+    STRICT_BLOCK_LEVEL = STRICT_BLOCK_LEVEL_HTML4 + STRICT_BLOCK_LEVEL_HTML5
     BLOCK_LEVEL = STRICT_BLOCK_LEVEL + LOOSE_BLOCK_LEVEL
+    LINEBREAKERS = BLOCK_LEVEL + INLINE_LINE_BREAK
   end
 
   ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants ::Loofah::Elements

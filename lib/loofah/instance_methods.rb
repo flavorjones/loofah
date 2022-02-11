@@ -112,11 +112,11 @@ module Loofah
     #  Returns a plain-text version of the markup contained by the
     #  fragment, with HTML entities encoded.
     #
-    #  This method is slower than #to_text, but is clever about
-    #  whitespace around block elements.
+    #  This method is slower than #text, but is clever about
+    #  whitespace around block elements and line break elements.
     #
-    #    Loofah.document("<h1>Title</h1><div>Content</div>").to_text
-    #    # => "\nTitle\n\nContent\n"
+    #    Loofah.document("<h1>Title</h1><div>Content<br>Next line</div>").to_text
+    #    # => "\nTitle\n\nContent\nNext line\n"
     #
     def to_text(options = {})
       Loofah.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
