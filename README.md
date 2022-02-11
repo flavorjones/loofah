@@ -133,13 +133,12 @@ and `text` to return plain text:
 doc.text    # => "ohai! div is safe "
 ```
 
-Also, `to_text` is available, which does the right thing with
-whitespace around block-level elements.
+Also, `to_text` is available, which does the right thing with whitespace around block-level and line break elements.
 
 ``` ruby
-doc = Loofah.fragment("<h1>Title</h1><div>Content</div>")
-doc.text    # => "TitleContent"           # probably not what you want
-doc.to_text # => "\nTitle\n\nContent\n"   # better
+doc = Loofah.fragment("<h1>Title</h1><div>Content<br>Next line</div>")
+doc.text    # => "TitleContentNext line"            # probably not what you want
+doc.to_text # => "\nTitle\n\nContent\nNext line\n"  # better
 ```
 
 ### Loofah::XML::Document and Loofah::XML::DocumentFragment

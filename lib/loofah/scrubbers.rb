@@ -240,8 +240,13 @@ module Loofah
       end
 
       def scrub(node)
-        return CONTINUE unless Loofah::Elements::BLOCK_LEVEL.include?(node.name)
-        node.add_next_sibling Nokogiri::XML::Text.new("\n#{node.content}\n", node.document)
+        return CONTINUE unless Loofah::Elements::LINEBREAKERS.include?(node.name)
+        replacement = if Loofah::Elements::INLINE_LINE_BREAK.include?(node.name)
+          "\n"
+        else
+          "\n#{node.content}\n"
+        end
+        node.add_next_sibling Nokogiri::XML::Text.new(replacement, node.document)
         node.remove
       end
     end

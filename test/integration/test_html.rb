@@ -51,6 +51,11 @@ class IntegrationTestHtml < Loofah::TestCase
         html = Loofah.fragment "<div>tweedle\n\n\t\n\s\nbeetle</div>"
         assert_equal "\ntweedle\n\nbeetle\n", html.to_text
       end
+
+      it "replaces <br> with newlines" do
+        html = Loofah.fragment("hello<div>first line<br>second line</div>goodbye")
+        assert_equal("hello\nfirst line\nsecond line\ngoodbye", html.to_text)
+      end
     end
 
     context "with an `encoding` arg" do
@@ -83,6 +88,11 @@ class IntegrationTestHtml < Loofah::TestCase
       it "remove extraneous whitespace" do
         html = Loofah.document "<div>tweedle\n\n\t\n\s\nbeetle</div>"
         assert_equal "\ntweedle\n\nbeetle\n", html.to_text
+      end
+
+      it "replaces <br> with newlines" do
+        html = Loofah.document("<body>hello<div>first line<br>second line</div>goodbye</body>")
+        assert_equal("hello\nfirst line\nsecond line\ngoodbye", html.to_text)
       end
     end
   end

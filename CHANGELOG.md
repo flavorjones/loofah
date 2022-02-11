@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Features
+
+* The `#to_text` method on `Loofah::HTML::{Document,DocumentFragment}` replaces `<br>` linebreak elements with a newline. [[#225](https://github.com/flavorjones/loofah/issues/225)]
+
+
 ## 2.13.0 / 2021-12-10
 
 ### Bug fixes
