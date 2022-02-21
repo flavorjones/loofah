@@ -315,5 +315,49 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
       assert_equal(expected, actual.to_html)
     end
+
+    describe "entities" do
+      it "handles & character" do
+        input = %{<div> this & that </div>}
+        expected = %{<div> this &amp; that </div>}
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+
+      it "handles > character" do
+        input = %{<div> this > that </div>}
+        expected = %{<div> this &gt; that </div>}
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+
+      it "handles < character" do
+        input = %{<div> this < that </div>}
+        expected = %{<div> this &lt; that </div>}
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+
+      it "handles < character in an attribute" do
+        input = %{<div alt="this < that">wave</div>}
+        expected = %{<div alt="this &lt; that">wave</div>}
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+
+      it "handles multiple < characters" do
+        input = %{<div> this <<</div>}
+        expected = %{<div> this &lt;&lt;</div>}
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+
+      it "handles &lt; entity" do
+        input = %{<div> this &lt; that </div>}
+        expected = input
+        actual = Loofah.scrub_fragment(input, :escape)
+        assert_equal(expected, actual.to_html)
+      end
+    end
   end
 end
