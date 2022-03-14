@@ -766,6 +766,7 @@ module Loofah
                                        "rsync",
                                        "rtsp",
                                        "sftp",
+                                       "sms",
                                        "ssh",
                                        "tag",
                                        "tel",
