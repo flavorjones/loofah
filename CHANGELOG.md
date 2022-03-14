@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.15.0 / 2022-03-14
+
+### Features
+
+* Expand set of allowed protocols to include `sms:`. [[#228](https://github.com/flavorjones/loofah/issues/228)] (Thanks, [@brendon](https://github.com/brendon)!)
+
+
 ## 2.14.0 / 2022-02-11
 
 ### Features
