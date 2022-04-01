@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.0 / 2022-04-01
+
+### Features
+
+* Allow MathML elements `menclose` and `ms`, and MathML attributes `dir`, `href`, `lquote`, `mathsize`, `notation`, and `rquote`. [[#231](https://github.com/flavorjones/loofah/issues/231)] (Thanks, [@nick-desteffen](https://github.com/nick-desteffen)!)
+
+
 ## 2.15.0 / 2022-03-14
 
 ### Features
