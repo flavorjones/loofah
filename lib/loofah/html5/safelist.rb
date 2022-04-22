@@ -512,6 +512,59 @@ module Loofah
                                  "zoomAndPan",
                                ])
 
+      ARIA_ATTRIBUTES = Set.new([
+                                  "aria-activedescendant",
+                                  "aria-autocomplete",
+                                  "aria-atomic",
+                                  "aria-busy",
+                                  "aria-checked",
+                                  "aria-colcount",
+                                  "aria-colindex",
+                                  "aria-colspan",
+                                  "aria-controls",
+                                  "aria-current",
+                                  "aria-describedby",
+                                  "aria-description",
+                                  "aria-details",
+                                  "aria-disabled",
+                                  "aria-dropeffect",
+                                  "aria-errormessage",
+                                  "aria-expanded",
+                                  "aria-flowto",
+                                  "aria-grabbed",
+                                  "aria-haspopup",
+                                  "aria-hidden",
+                                  "aria-invalid",
+                                  "aria-keyshortcuts",
+                                  "aria-label",
+                                  "aria-labelledby",
+                                  "aria-level",
+                                  "aria-live",
+                                  "aria-modal",
+                                  "aria-multiline",
+                                  "aria-multiselectable",
+                                  "aria-orientation",
+                                  "aria-owns",
+                                  "aria-placeholder",
+                                  "aria-posinset",
+                                  "aria-pressed",
+                                  "aria-readonly",
+                                  "aria-relevant",
+                                  "aria-required",
+                                  "aria-roledescription",
+                                  "aria-rowcount",
+                                  "aria-rowindex",
+                                  "aria-rowspan",
+                                  "aria-selected",
+                                  "aria-setsize",
+                                  "aria-sort",
+                                  "aria-valuemax",
+                                  "aria-valuemin",
+                                  "aria-valuenow",
+                                  "aria-valuetext",
+                                  "role"
+                                ])
+
       ATTR_VAL_IS_URI = Set.new([
                                   "action",
                                   "cite",
@@ -795,7 +848,7 @@ module Loofah
 
       # subclasses may define their own versions of these constants
       ALLOWED_ELEMENTS = ACCEPTABLE_ELEMENTS + MATHML_ELEMENTS + SVG_ELEMENTS
-      ALLOWED_ATTRIBUTES = ACCEPTABLE_ATTRIBUTES + MATHML_ATTRIBUTES + SVG_ATTRIBUTES
+      ALLOWED_ATTRIBUTES = ACCEPTABLE_ATTRIBUTES + MATHML_ATTRIBUTES + SVG_ATTRIBUTES + ARIA_ATTRIBUTES
       ALLOWED_CSS_PROPERTIES = ACCEPTABLE_CSS_PROPERTIES
       ALLOWED_CSS_KEYWORDS = ACCEPTABLE_CSS_KEYWORDS
       ALLOWED_CSS_FUNCTIONS = ACCEPTABLE_CSS_FUNCTIONS
