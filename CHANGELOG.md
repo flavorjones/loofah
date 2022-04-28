@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.17.0 / 2022-04-28
+
+### Features
+
+* Allow ARIA attributes. [[#232](https://github.com/flavorjones/loofah/issues/232), [#233](https://github.com/flavorjones/loofah/issues/233)] (Thanks, [@nick-desteffen](https://github.com/nick-desteffen)!)
+
+
 ## 2.16.0 / 2022-04-01
 
 ### Features
