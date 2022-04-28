@@ -514,12 +514,15 @@ module Loofah
 
       ARIA_ATTRIBUTES = Set.new([
                                   "aria-activedescendant",
-                                  "aria-autocomplete",
                                   "aria-atomic",
+                                  "aria-autocomplete",
+                                  "aria-braillelabel",
+                                  "aria-brailleroledescription",
                                   "aria-busy",
                                   "aria-checked",
                                   "aria-colcount",
                                   "aria-colindex",
+                                  "aria-colindextext",
                                   "aria-colspan",
                                   "aria-controls",
                                   "aria-current",
@@ -540,7 +543,6 @@ module Loofah
                                   "aria-labelledby",
                                   "aria-level",
                                   "aria-live",
-                                  "aria-modal",
                                   "aria-multiline",
                                   "aria-multiselectable",
                                   "aria-orientation",
@@ -554,6 +556,7 @@ module Loofah
                                   "aria-roledescription",
                                   "aria-rowcount",
                                   "aria-rowindex",
+                                  "aria-rowindextext",
                                   "aria-rowspan",
                                   "aria-selected",
                                   "aria-setsize",
@@ -562,7 +565,7 @@ module Loofah
                                   "aria-valuemin",
                                   "aria-valuenow",
                                   "aria-valuetext",
-                                  "role"
+                                  "role",
                                 ])
 
       ATTR_VAL_IS_URI = Set.new([
