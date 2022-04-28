@@ -195,6 +195,21 @@ class IntegrationTestAdHoc < Loofah::TestCase
       end
     end
 
+    it "allows aria attributes" do
+      html = <<~HTML
+        <div role="application" aria-label="calendar"
+             aria-description="Game schedule for the Boston Red Sox 2021 Season">
+          <h1>Red Sox 2021</h1>
+        </div>
+      HTML
+
+      sanitized = Loofah.scrub_fragment(html, :escape)
+      attributes = sanitized.at_css("div").attributes
+      assert_includes(attributes.keys, "role")
+      assert_includes(attributes.keys, "aria-label")
+      assert_includes(attributes.keys, "aria-description")
+    end
+
     context "xss protection from svg animate attributes" do
       # see recommendation from https://html5sec.org/#137
       # to sanitize "to", "from", "values", and "by" attributes
