@@ -9,7 +9,8 @@
     "name": "IE_Comments_2",
     "input": "<![if !IE 5]><script>alert('XSS');</script><![endif]>",
     "output": "&lt;script&gt;alert('XSS');&lt;/script&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "xhtml": "&lt;![if !IE 5]&gt;&lt;script&gt;alert('XSS');&lt;/script&gt;&lt;![endif]&gt;",
+    "commentary": "output is libxml 2.9.13 and earlier, xhtml is libxml 2.9.14 and later, see libxml 148be64"
   },
 
   {
