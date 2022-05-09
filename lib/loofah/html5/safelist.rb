@@ -617,6 +617,7 @@ module Loofah
                                             "align-content",
                                             "align-items",
                                             "align-self",
+                                            "aspect-ratio",
                                             "background-color",
                                             "border-bottom-color",
                                             "border-collapse",
