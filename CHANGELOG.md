@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.18.0 / 2022-05-11
+
+### Features
+
+* Allow CSS property `aspect-ratio`. [[#236](https://github.com/flavorjones/loofah/issues/236)] (Thanks, [@louim](https://github.com/louim)!)
+
+
 ## 2.17.0 / 2022-04-28
 
 ### Features
