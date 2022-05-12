@@ -15,6 +15,9 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   rubocop:
     runs-on: ubuntu-latest
