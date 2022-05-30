@@ -17,18 +17,16 @@ class Html5TestSanitizer < Loofah::TestCase
     Loofah.fragment(stream).scrub!(:escape).to_html
   end
 
-  def check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
-    ##  libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
-    sane = sanitize_html(input).gsub('"', "'")
-    htmloutput = htmloutput.gsub('"', "'")
-    xhtmloutput = xhtmloutput.gsub('"', "'")
-    rexmloutput = rexmloutput.gsub('"', "'")
+  def check_sanitization(input, *possible_answers)
+    # shotgun approach - if any of the possible answers match, we win
 
-    ##  HTML5's parsers are shit. there's so much inconsistency with what has closing tags, etc, that
-    ##  it would require a lot of manual hacking to make the tests match libxml's output.
-    ##  instead, I'm taking the shotgun approach, and trying to match any of the described outputs.
-    assert((htmloutput == sane) || (rexmloutput == sane) || (xhtmloutput == sane),
-           %Q{given:    "#{input}"\nexpected: "#{htmloutput}"\ngot:      "#{sane}"})
+    # libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
+    sane = sanitize_html(input).gsub('"', "'")
+    possible_output = possible_answers.compact.map do |possible_answer|
+      possible_answer.gsub('"', "'")
+    end
+
+    assert_includes(possible_output, sane)
   end
 
   def assert_completes_in_reasonable_time(&block)
@@ -81,7 +79,7 @@ class Html5TestSanitizer < Loofah::TestCase
   #   define_method "test_should_forbid_#{tag_name.upcase}_tag" do
   #     input = "<#{tag_name.upcase} title='1'>foo <bad>bar</bad> baz</#{tag_name.upcase}>"
   #     output = "&lt;#{tag_name.upcase} title=\"1\"&gt;foo &lt;bad&gt;bar&lt;/bad&gt; baz&lt;/#{tag_name.upcase}&gt;"
-  #     check_sanitization(input, output, output, output)
+  #     check_sanitization(input, output)
   #   end
   # end
 
@@ -104,14 +102,14 @@ class Html5TestSanitizer < Loofah::TestCase
     input = "<p data-foo='foo'>foo <bad>bar</bad> baz</p>"
     output = "<p data-foo='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
   end
 
   def test_should_allow_multi_word_data_attributes
     input = "<p data-foo-bar-id='11'>foo <bad>bar</bad> baz</p>"
     output = "<p data-foo-bar-id='11'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
   end
 
   def test_should_allow_empty_data_attributes
@@ -125,7 +123,7 @@ class Html5TestSanitizer < Loofah::TestCase
     input = '<p contenteditable="false">Hi!</p>'
     output = '<p contenteditable="false">Hi!</p>'
 
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
   end
 
   ##
@@ -135,7 +133,7 @@ class Html5TestSanitizer < Loofah::TestCase
   #   define_method "test_should_forbid_#{attribute_name.upcase}_attribute" do
   #     input = "<p #{attribute_name.upcase}='display: none;'>foo <bad>bar</bad> baz</p>"
   #     output =  "<p>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
-  #     check_sanitization(input, output, output, output)
+  #     check_sanitization(input, output)
   #   end
   # end
 
@@ -143,7 +141,7 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_#{protocol}_uris" do
       input = %(<a href="#{protocol}">foo</a>)
       output = "<a href='#{protocol}'>foo</a>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
   end
 
@@ -151,7 +149,7 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_uppercase_#{protocol}_uris" do
       input = %(<a href="#{protocol.upcase}">foo</a>)
       output = "<a href='#{protocol.upcase}'>foo</a>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
   end
 
@@ -159,11 +157,11 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
       input = %(<a href="data:#{data_uri_type}">foo</a>)
       output = "<a href='data:#{data_uri_type}'>foo</a>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
 
       input = %(<a href="data:#{data_uri_type};base64,R0lGODlhAQABA">foo</a>)
       output = "<a href='data:#{data_uri_type};base64,R0lGODlhAQABA'>foo</a>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
   end
 
@@ -171,22 +169,22 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_uppercase_data_#{data_uri_type}_uris" do
       input = %(<a href="DATA:#{data_uri_type.upcase}">foo</a>)
       output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
   end
 
   def test_should_disallow_other_uri_mediatypes
     input = %(<a href="data:foo">foo</a>)
     output = "<a>foo</a>"
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
 
     input = %(<a href="data:image/xxx">foo</a>)
     output = "<a>foo</a>"
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
 
     input = %(<a href="data:image/xxx;base64,R0lGODlhAQABA">foo</a>)
     output = "<a>foo</a>"
-    check_sanitization(input, output, output, output)
+    check_sanitization(input, output)
   end
 
   HTML5::SafeList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
@@ -231,18 +229,18 @@ class Html5TestSanitizer < Loofah::TestCase
   # def test_should_handle_astral_plane_characters
   #   input = "<p>&#x1d4b5; &#x1d538;</p>"
   #   output = "<p>\360\235\222\265 \360\235\224\270</p>"
-  #   check_sanitization(input, output, output, output)
+  #   check_sanitization(input, output)
 
   #   input = "<p><tspan>\360\235\224\270</tspan> a</p>"
   #   output = "<p><tspan>\360\235\224\270</tspan> a</p>"
-  #   check_sanitization(input, output, output, output)
+  #   check_sanitization(input, output)
   # end
 
   # This affects only NS4. Is it worth fixing?
   #  def test_javascript_includes
   #    input = %(<div size="&{alert('XSS')}">foo</div>)
   #    output = "<div>foo</div>"
-  #    check_sanitization(input, output, output, output)
+  #    check_sanitization(input, output)
   #  end
 
   ##
@@ -255,12 +253,12 @@ class Html5TestSanitizer < Loofah::TestCase
   Dir[File.join(File.dirname(__FILE__), "..", "assets", "testdata_sanitizer_tests1.dat")].each do |filename|
     JSON::parse(open(filename).read).each do |test|
       it "testdata sanitizer #{test["name"]}" do
-        check_sanitization(
-          test["input"],
-          test["output"],
-          test["xhtml"] || test["output"],
-          test["rexml"] || test["output"]
-        )
+        test.delete("name")
+        test.delete("commentary")
+        check_args = []
+        check_args << test.delete("input")
+        check_args += test.keys.sort.map { |k| test[k] }
+        check_sanitization(*check_args)
       end
     end
   end
@@ -270,13 +268,13 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect fill='url(#foo)' />"
       output = "<rect fill='url(#foo)'></rect>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
 
     define_method "test_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect fill='url(http://bad.com/) #fff' />"
       output = "<rect fill='  #fff'></rect>"
-      check_sanitization(input, output, output, output)
+      check_sanitization(input, output)
     end
   end
 
