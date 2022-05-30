@@ -103,8 +103,8 @@ module Loofah
     def html5lib_sanitize(node)
       case node.type
       when Nokogiri::XML::Node::ELEMENT_NODE
+        HTML5::Scrub.scrub_attributes node
         if HTML5::Scrub.allowed_element? node.name
-          HTML5::Scrub.scrub_attributes node
           return Scrubber::CONTINUE
         end
       when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE

@@ -30,8 +30,7 @@
   {
     "name": "bgsound",
     "input": "<bgsound src=\"javascript:alert('XSS');\" />",
-    "output": "&lt;bgsound src=\"javascript:alert('XSS');\"/&gt;",
-    "rexml": "&lt;bgsound src=\"javascript:alert('XSS');\"&gt;&lt;/bgsound&gt;"
+    "output": "&lt;bgsound&gt;&lt;/bgsound&gt;"
   },
 
   {
@@ -127,8 +126,7 @@
   {
     "name": "link_stylesheets",
     "input": "<link rel=\"stylesheet\" href=\"javascript:alert('XSS');\" />",
-    "output": "&lt;link rel=\"stylesheet\" href=\"javascript:alert('XSS');\"&gt;",
-    "rexml": "&lt;link href=\"javascript:alert('XSS');\" rel=\"stylesheet\"/&gt;"
+    "output": "&lt;link rel=\"stylesheet\"&gt;"
   },
 
   {
