@@ -4,21 +4,6 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 require "nokogiri"
 
 require_relative "loofah/version"
-require_relative "loofah/metahelpers"
-require_relative "loofah/elements"
-
-require_relative "loofah/html5/safelist"
-require_relative "loofah/html5/libxml2_workarounds"
-require_relative "loofah/html5/scrub"
-
-require_relative "loofah/scrubber"
-require_relative "loofah/scrubbers"
-
-require_relative "loofah/instance_methods"
-require_relative "loofah/xml/document"
-require_relative "loofah/xml/document_fragment"
-require_relative "loofah/html/document"
-require_relative "loofah/html/document_fragment"
 
 # == Strings and IO Objects as Input
 #
@@ -31,13 +16,13 @@ require_relative "loofah/html/document_fragment"
 module Loofah
   class << self
     # Shortcut for Loofah::HTML::Document.parse
-    # This method accepts the same parameters as Nokogiri::HTML::Document.parse
+    # This method accepts the same parameters as Nokogiri::HTML5::Document.parse
     def document(*args, &block)
-      remove_comments_before_html_element Loofah::HTML::Document.parse(*args, &block)
+      remove_comments_before_html_element(Loofah::HTML::Document.parse(*args, &block))
     end
 
     # Shortcut for Loofah::HTML::DocumentFragment.parse
-    # This method accepts the same parameters as Nokogiri::HTML::DocumentFragment.parse
+    # This method accepts the same parameters as Nokogiri::HTML5::DocumentFragment.parse
     def fragment(*args, &block)
       Loofah::HTML::DocumentFragment.parse(*args, &block)
     end
@@ -79,6 +64,25 @@ module Loofah
       string.gsub(/\n\s*\n\s*\n/, "\n\n")
     end
 
+    def html5_mode?
+      defined?(::Nokogiri::HTML5) && (parser_module == ::Nokogiri::HTML5)
+    end
+
+    def parser_module(class_name=nil)
+      @parser_module ||= begin
+        if ENV["LOOFAH_HTML4_MODE"].nil? && defined?(::Nokogiri::HTML5)
+          ::Nokogiri::HTML5
+        else
+          ::Nokogiri::HTML4
+        end
+      end
+      if class_name
+        @parser_module.const_get(class_name)
+      else
+        @parser_module
+      end
+    end
+
     private
 
     # remove comments that exist outside of the HTML element.
@@ -98,3 +102,19 @@ module Loofah
     end
   end
 end
+
+require_relative "loofah/metahelpers"
+require_relative "loofah/elements"
+
+require_relative "loofah/html5/safelist"
+require_relative "loofah/html5/libxml2_workarounds"
+require_relative "loofah/html5/scrub"
+
+require_relative "loofah/scrubber"
+require_relative "loofah/scrubbers"
+
+require_relative "loofah/instance_methods"
+require_relative "loofah/xml/document"
+require_relative "loofah/xml/document_fragment"
+require_relative "loofah/html/document"
+require_relative "loofah/html/document_fragment"

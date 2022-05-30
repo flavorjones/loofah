@@ -8,9 +8,9 @@
   {
     "name": "IE_Comments_2",
     "input": "<![if !IE 5]><script>alert('XSS');</script><![endif]>",
-    "output": "&lt;script&gt;alert('XSS');&lt;/script&gt;",
-    "xhtml": "&lt;![if !IE 5]&gt;&lt;script&gt;alert('XSS');&lt;/script&gt;&lt;![endif]&gt;",
-    "commentary": "output is libxml 2.9.13 and earlier, xhtml is libxml 2.9.14 and later, see libxml 148be64"
+    "libxml_lte_2.9.13": "&lt;script&gt;alert('XSS');&lt;/script&gt;",
+    "libxml_gte_2.9.14": "&lt;![if !IE 5]&gt;&lt;script&gt;alert('XSS');&lt;/script&gt;&lt;![endif]&gt;",
+    "libgumbo": "&lt;!--[if !IE 5]--&gt;&lt;script&gt;alert('XSS');&lt;/script&gt;&lt;!--[endif]--&gt;"
   },
 
   {
@@ -30,7 +30,8 @@
   {
     "name": "bgsound",
     "input": "<bgsound src=\"javascript:alert('XSS');\" />",
-    "output": "&lt;bgsound&gt;&lt;/bgsound&gt;"
+    "libxml": "&lt;bgsound&gt;&lt;/bgsound&gt;",
+    "libgumbo": "&lt;bgsound&gt;"
   },
 
   {
@@ -84,15 +85,27 @@
   {
     "name": "double_open_angle_brackets",
     "input": "<img src=http://ha.ckers.org/scriptlet.html <",
-    "output": "<img src='http://ha.ckers.org/scriptlet.html'>",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "<img src='http://ha.ckers.org/scriptlet.html'>",
+    "libgumbo": "" /* it is indeed the empty result, see next test for a better test */
+  },
+
+  {
+    "name": "double_open_angle_brackets v2",
+    "input": "<div><img src=http://ha.ckers.org/scriptlet.html < </div>",
+    "output": "<div><img src='http://ha.ckers.org/scriptlet.html'></div>"
   },
 
   {
     "name": "double_open_angle_brackets_2",
     "input": "<script src=http://ha.ckers.org/scriptlet.html <",
-    "output": "&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;",
+    "libgumbo": "" /* it is indeed empty */
+  },
+
+  {
+    "name": "double_open_angle_brackets_2 v2",
+    "input": "<div><script src=http://ha.ckers.org/scriptlet.html < </div>",
+    "libxml": "<div>&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;</div>"
   },
 
   {
@@ -132,8 +145,7 @@
   {
     "name": "link_stylesheets_2",
     "input": "<link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\" />",
-    "output": "&lt;link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\"&gt;",
-    "rexml": "&lt;link href=\"http://ha.ckers.org/xss.css\" rel=\"stylesheet\"/&gt;"
+    "output": "&lt;link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\"&gt;"
   },
 
   {
@@ -145,8 +157,8 @@
   {
     "name": "no_closing_script_tags",
     "input": "<script src=http://ha.ckers.org/xss.js?<b>",
-    "output": "&lt;script src=\"http://ha.ckers.org/xss.js?&amp;lt;b\"&gt;&lt;/script&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js?&amp;lt;b\"&gt;&lt;/script&gt;",
+    "libgumbo": "&lt;script src='http://ha.ckers.org/xss.js?&lt;b'&gt;&lt;/script&gt;"
   },
 
   {
@@ -166,8 +178,8 @@
   {
     "name": "non_alpha_non_digit_3",
     "input": "<img/src=\"http://ha.ckers.org/xss.js\"/>",
-    "output": "<img>",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "<img>",
+    "libgumbo": "<img src='http://ha.ckers.org/xss.js'>" /* see "should_allow_image_src_attribute" test */
   },
 
   {
@@ -365,8 +377,14 @@
   {
     "name": "should_sanitize_half_open_scripts",
     "input": "<img src=\"javascript:alert('XSS')\"",
-    "output": "<img>",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "<img>",
+    "libgumbo": "" /* indeed it is empty */
+  },
+
+  {
+    "name": "should_sanitize_half_open_scripts 2",
+    "input": "<div><img src=\"javascript:alert('XSS')\" </div>",
+    "output": "<div><img></div>"
   },
 
   {
@@ -385,24 +403,30 @@
   },
 
   {
-    "name": "should_sanitize_script_tag_with_multiple_open_brackets_2",
+    "name": "should_sanitize_script_tag_with_multiple_open_brackets_2a",
     "input": "<iframe src=http://ha.ckers.org/scriptlet.html\n<",
-    "output": "&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;",
+    "libgumbo": "" /* it is indeed empty, see next test */
+  },
+
+  {
+    "name": "should_sanitize_script_tag_with_multiple_open_brackets_2b",
+    "input": "<div><iframe src=http://ha.ckers.org/scriptlet.html\n< </div>",
+    "libxml": "<div>&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;</div>"
   },
 
   {
     "name": "should_sanitize_tag_broken_up_by_null",
     "input": "<scr\u0000ipt>alert(\"XSS\")</scr\u0000ipt>",
-    "output": "&lt;scr&gt;&lt;/scr&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "&lt;scr&gt;&lt;/scr&gt;",
+    "libgumbo": "&lt;scr�ipt&gt;alert('XSS')&lt;/scr�ipt&gt;"
   },
 
   {
     "name": "should_sanitize_unclosed_script",
     "input": "<script src=http://ha.ckers.org/xss.js?<b>",
-    "output": "&lt;script src=\"http://ha.ckers.org/xss.js?&amp;lt;b\"&gt;&lt;/script&gt;",
-    "rexml": "Ill-formed XHTML!"
+    "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js?&amp;lt;b\"&gt;&lt;/script&gt;",
+    "libgumbo": "&lt;script src='http://ha.ckers.org/xss.js?&lt;b'&gt;&lt;/script&gt;"
   },
 
   {
@@ -446,8 +470,8 @@
   {
     "name": "quotes_in_attributes",
     "input": "<img src='foo' title='\"foo\" bar' />",
-    "rexml": "<img src='foo' title='\"foo\" bar' />",
-    "output": "<img src='foo' title='\"foo\" bar'>"
+    "libxml": "<img src='foo' title='\"foo\" bar'>",
+    "libgumbo": "<img src='foo' title='&quot;foo&quot; bar'>"
   },
 
   {
@@ -485,8 +509,8 @@
   {
     "name": "allow_html5_image_tag",
     "input": "<image src='foo' />",
-    "rexml": "&lt;image src=\"foo\"&gt;&lt;/image&gt;",
-    "output": "&lt;image src=\"foo\"/&gt;"
+    "libxml": "&lt;image src=\"foo\"&gt;&lt;/image&gt;",
+    "libgumbo": "<img src='foo'>"
   },
 
   {

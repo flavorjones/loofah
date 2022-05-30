@@ -26,12 +26,29 @@ jobs:
           bundler-cache: true
       - run: bundle exec rake rubocop
 
-  test:
+  test_html4:
+    env:
+      LOOFAH_HTML4_MODE: "t"
     needs: ["rubocop"]
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0", "3.1", "head", "truffleruby-head"]
+        ruby: ["2.6", "2.7", "3.0", "3.1", "head", "truffleruby-head"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{matrix.ruby}}
+          bundler-cache: true
+      - run: bundle exec rake test
+
+  test_html5:
+    needs: ["rubocop"]
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["2.6", "2.7", "3.0", "3.1", "head", "truffleruby-head"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

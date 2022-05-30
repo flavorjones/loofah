@@ -869,6 +869,9 @@ module Loofah
                                 "img",
                                 "input",
                               ])
+      if ::Loofah.html5_mode?
+        VOID_ELEMENTS.add("wbr")
+      end
 
       # additional tags we should consider safe since we have libxml2 fixing up our documents.
       TAGS_SAFE_WITH_LIBXML2 = Set.new([

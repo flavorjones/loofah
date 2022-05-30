@@ -69,7 +69,11 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
           result = doc.scrub! :whitewash
 
-          ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
+          ww_result = if Nokogiri.uses_libxml?("< 2.9.11") || html5_mode?
+            WHITEWASH_RESULT
+          else
+            WHITEWASH_RESULT_LIBXML2911
+          end
           assert_equal ww_result, doc.xpath("/html/body").inner_html
           assert_equal doc, result
         end
@@ -141,7 +145,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
         refute_nil doc.xpath("/html/body").first
 
         string = doc.to_s
-        assert_match %r/<!DOCTYPE/, string
+        assert_match(%r/<!DOCTYPE/, string) unless html5_mode?
         assert_match %r/<html>/, string
         assert_match %r/<head>/, string
         assert_match %r/<body>/, string
@@ -156,7 +160,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
         refute_nil doc.xpath("/html/body").first
 
         string = doc.serialize
-        assert_match %r/<!DOCTYPE/, string
+        assert_match(%r/<!DOCTYPE/, string) unless html5_mode?
         assert_match %r/<html>/, string
         assert_match %r/<head>/, string
         assert_match %r/<body>/, string
@@ -248,7 +252,11 @@ class IntegrationTestScrubbers < Loofah::TestCase
           doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
-          ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
+          ww_result = if Nokogiri.uses_libxml?("< 2.9.11") || html5_mode?
+            WHITEWASH_RESULT
+          else
+            WHITEWASH_RESULT_LIBXML2911
+          end
           assert_equal ww_result, doc.xpath("./div").inner_html
           assert_equal doc, result
         end

@@ -10,7 +10,8 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
     context "document" do
       it "return a blank string" do
-        assert_equal "", Loofah.scrub_document("", :prune).root.to_s
+        expected = html5_mode? ? "<html><head></head><body></body></html>" : ""
+        assert_equal expected, Loofah.scrub_document("", :prune).root.to_s
       end
     end
   end
@@ -72,14 +73,14 @@ class IntegrationTestAdHoc < Loofah::TestCase
     end
 
     def test_whitewash_on_fragment
-      html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
+      html = "<div>safe</div><frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
       whitewashed = Loofah.scrub_document(html, :whitewash).xpath("/html/body/*").to_s
-      assert_equal "<p>safe</p><b>description</b>", whitewashed.gsub("\n", "")
+      assert_equal "<div>safe</div><b>description</b>", whitewashed.gsub("\n", "")
     end
 
     def test_fragment_whitewash_on_microsofty_markup
       whitewashed = Loofah.fragment(MSWORD_HTML).scrub!(:whitewash)
-      if Nokogiri.uses_libxml?("<2.9.11")
+      if Nokogiri.uses_libxml?("< 2.9.11") || html5_mode?
         assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
       else
         assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.to_s.strip
@@ -88,7 +89,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
     def test_document_whitewash_on_microsofty_markup
       whitewashed = Loofah.document(MSWORD_HTML).scrub!(:whitewash)
-      if Nokogiri.uses_libxml?("<2.9.11")
+      if Nokogiri.uses_libxml?("< 2.9.11") || html5_mode?
         assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
       else
         assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.xpath("/html/body/*").to_s
@@ -355,7 +356,12 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
       it "handles < character in an attribute" do
         input = %{<div alt="this < that">wave</div>}
-        expected = %{<div alt="this &lt; that">wave</div>}
+        expected = if html5_mode?
+          # https://html.spec.whatwg.org/multipage/parsing.html#escapingString
+          %{<div alt="this < that">wave</div>} # libgumbo
+        else
+          %{<div alt="this &lt; that">wave</div>}
+        end
         actual = Loofah.scrub_fragment(input, :escape)
         assert_equal(expected, actual.to_html)
       end

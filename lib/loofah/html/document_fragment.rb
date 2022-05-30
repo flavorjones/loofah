@@ -2,16 +2,16 @@
 module Loofah
   module HTML # :nodoc:
     #
-    #  Subclass of Nokogiri::HTML::DocumentFragment.
+    #  Subclass of Nokogiri::HTML5::DocumentFragment.
     #
     #  See Loofah::ScrubBehavior and Loofah::TextBehavior for additional methods.
     #
-    class DocumentFragment < Nokogiri::HTML::DocumentFragment
+    class DocumentFragment < ::Loofah.parser_module(:DocumentFragment)
       include Loofah::TextBehavior
 
       class << self
         #
-        #  Overridden Nokogiri::HTML::DocumentFragment
+        #  Overridden Nokogiri::HTML5::DocumentFragment
         #  constructor. Applications should use Loofah.fragment to
         #  parse a fragment.
         #

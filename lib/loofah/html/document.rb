@@ -2,11 +2,11 @@
 module Loofah
   module HTML # :nodoc:
     #
-    #  Subclass of Nokogiri::HTML::Document.
+    #  Subclass of Nokogiri::HTML5::Document.
     #
     #  See Loofah::ScrubBehavior and Loofah::TextBehavior for additional methods.
     #
-    class Document < Nokogiri::HTML::Document
+    class Document < ::Loofah.parser_module(:Document)
       include Loofah::ScrubBehavior::Node
       include Loofah::DocumentDecorator
       include Loofah::TextBehavior
