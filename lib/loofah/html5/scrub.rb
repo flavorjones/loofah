@@ -18,7 +18,7 @@ module Loofah
         end
 
         #  alternative implementation of the html5lib attribute scrubbing algorithm
-        def scrub_attributes(node)
+        def scrub_attributes(node, allowed_attribute_names: SafeList::ALLOWED_ATTRIBUTES)
           node.attribute_nodes.each do |attr_node|
             attr_name = if attr_node.namespace
               "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
@@ -30,7 +30,7 @@ module Loofah
               next
             end
 
-            unless SafeList::ALLOWED_ATTRIBUTES.include?(attr_name)
+            unless allowed_attribute_names.include?(attr_name)
               attr_node.remove
               next
             end
