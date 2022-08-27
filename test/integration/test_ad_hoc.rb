@@ -100,17 +100,28 @@ class IntegrationTestAdHoc < Loofah::TestCase
     end
 
     def test_nested_script_cdata_tags_should_be_scrubbed
-      html = "<script><script src='malicious.js'></script>"
+      html = "<script><script src=\"malicious.js\">this & that</script>"
       stripped = Loofah.fragment(html).scrub!(:strip)
+
       assert_empty stripped.xpath("//script")
-      refute_match("<script", stripped.to_html)
+      assert_equal("&lt;script src=\"malicious.js\"&gt;this &amp; that", stripped.to_html)
     end
 
     def test_nested_script_cdata_tags_should_be_scrubbed_2
       html = "<script><script>alert('a');</script></script>"
       stripped = Loofah.fragment(html).scrub!(:strip)
+
       assert_empty stripped.xpath("//script")
-      refute_match("<script", stripped.to_html)
+      assert_equal("&lt;script&gt;alert('a');", stripped.to_html)
+    end
+
+    def test_nested_script_cdata_tags_should_be_scrubbed_max_recursion
+      n = 40
+      html = "<div>" + ("<script>" * n) + "alert(1);" + ("</script>" * n) + "</div>"
+      expected = "<div>" + ("&lt;script&gt;" * (n-1)) + "alert(1);</div>"
+      actual = Loofah.fragment(html).scrub!(:strip).to_html
+
+      assert_equal(expected, actual)
     end
 
     def test_removal_of_all_tags

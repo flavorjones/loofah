@@ -182,6 +182,46 @@ module Loofah
             end.force_encoding(encoding)
           end
         end
+
+        def cdata_needs_escaping?(node)
+          # Nokogiri's HTML4 parser on JRuby doesn't flag the child of a `style` or `script` tag as cdata, but it acts that way
+          node.cdata? || (Nokogiri.jruby? && node.text? && (node.parent.name == "style" || node.parent.name == "script"))
+        end
+
+        def cdata_escape(node)
+          escaped_text = escape_tags(node.text)
+          if Nokogiri.jruby?
+            node.document.create_text_node(escaped_text)
+          else
+            node.document.create_cdata(escaped_text)
+          end
+        end
+
+        TABLE_FOR_ESCAPE_HTML__ = {
+          '<' => '&lt;',
+          '>' => '&gt;',
+          '&' => '&amp;',
+        }
+
+        def escape_tags(string)
+          # modified version of CGI.escapeHTML from ruby 3.1
+          enc = string.encoding
+          unless enc.ascii_compatible?
+            if enc.dummy?
+              origenc = enc
+              enc = Encoding::Converter.asciicompat_encoding(enc)
+              string = enc ? string.encode(enc) : string.b
+            end
+            table = Hash[TABLE_FOR_ESCAPE_HTML__.map {|pair|pair.map {|s|s.encode(enc)}}]
+            string = string.gsub(/#{"[<>&]".encode(enc)}/, table)
+            string.encode!(origenc) if origenc
+            string
+          else
+            string = string.b
+            string.gsub!(/[<>&]/, TABLE_FOR_ESCAPE_HTML__)
+            string.force_encoding(enc)
+          end
+        end
       end
     end
   end
