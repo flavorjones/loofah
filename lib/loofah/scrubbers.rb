@@ -94,14 +94,24 @@ module Loofah
     #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
     #
     class Strip < Scrubber
+      MAX_RECURSION_DEPTH = 10 # arbitrary depth at which we declare this is probably an XSS attack
+
       def initialize
         @direction = :bottom_up
+        @recursion_depth = 0
       end
 
       def scrub(node)
+        if @recursion_depth > MAX_RECURSION_DEPTH
+          node.remove
+          return
+        end
+
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
         if node.children.length == 1 && node.children.first.cdata?
-          sanitized_text = Loofah.fragment(node.children.first.to_html).scrub!(:strip).to_html
+          @recursion_depth += 1
+          sanitized_text = Loofah.fragment(node.children.first.to_html).scrub!(self).to_html
+          @recursion_depth -= 1
           node.before Nokogiri::XML::Text.new(sanitized_text, node.document)
         else
           node.before node.children

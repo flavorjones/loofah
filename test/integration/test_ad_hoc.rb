@@ -113,6 +113,13 @@ class IntegrationTestAdHoc < Loofah::TestCase
       refute_match("<script", stripped.to_html)
     end
 
+    def test_nested_script_cdata_tags_should_be_scrubbed_max_recursion
+      n = 4_000
+      html = "<div>" + ("<script>" * n) + "alert(1);" + ("</script>" * n) + "</div>"
+      actual = Loofah.fragment(html).scrub!(:strip).to_html
+      assert_equal("<div></div>", actual)
+    end
+
     def test_removal_of_all_tags
       html = <<-HTML
       What's up <strong>doc</strong>?
