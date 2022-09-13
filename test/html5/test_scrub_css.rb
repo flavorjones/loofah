@@ -58,4 +58,22 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:"AvenirNext-Regular';)))
     end
   end
+
+  describe "colors" do
+    it "allows basic and extended colors" do
+      text = %q(background-color:blue;)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+
+      text = %q(background-color:brown;)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+
+      text = %q(background-color:lightblue;)
+      assert_equal(text, Loofah::HTML5::Scrub.scrub_css(text))
+    end
+
+    it "does not allow non-colors" do
+      text = %q(background-color:blurple;)
+      assert_empty(Loofah::HTML5::Scrub.scrub_css(text))
+    end
+  end
 end

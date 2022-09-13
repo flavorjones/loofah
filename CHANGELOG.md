@@ -1,5 +1,12 @@
 # Changelog
 
+## unreleased
+
+### Features
+
+* Allow SVG 1.0 color keyword names in CSS attributes. These colors are part of the [CSS Color Module Level 3](https://www.w3.org/TR/css-color-3/#svg-color) recommendation released 2022-01-18. [[#243](https://github.com/flavorjones/loofah/issues/243)]
+
+
 ## 2.18.0 / 2022-05-11
 
 ### Features
