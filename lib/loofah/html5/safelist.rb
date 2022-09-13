@@ -684,23 +684,16 @@ module Loofah
 
       ACCEPTABLE_CSS_KEYWORDS = Set.new([
                                           "!important",
-                                          "aqua",
                                           "auto",
-                                          "black",
                                           "block",
-                                          "blue",
                                           "bold",
                                           "both",
                                           "bottom",
-                                          "brown",
                                           "center",
                                           "collapse",
                                           "dashed",
                                           "dotted",
                                           "double",
-                                          "fuchsia",
-                                          "gray",
-                                          "green",
                                           "groove",
                                           "hidden",
                                           "inherit",
@@ -708,34 +701,49 @@ module Loofah
                                           "inset",
                                           "italic",
                                           "left",
-                                          "lime",
-                                          "maroon",
                                           "medium",
-                                          "navy",
                                           "none",
                                           "normal",
                                           "nowrap",
-                                          "olive",
                                           "outset",
                                           "pointer",
-                                          "purple",
-                                          "red",
                                           "revert",
                                           "ridge",
                                           "right",
                                           "separate",
-                                          "silver",
                                           "solid",
-                                          "teal",
                                           "thick",
                                           "thin",
                                           "top",
                                           "transparent",
                                           "underline",
                                           "unset",
-                                          "white",
-                                          "yellow",
                                         ])
+
+      # https://www.w3.org/TR/css-color-3/#html4
+      ACCEPTABLE_CSS_COLORS = Set.new([
+                                        "aqua",
+                                        "black",
+                                        "blue",
+                                        "fuchsia",
+                                        "gray",
+                                        "green",
+                                        "lime",
+                                        "maroon",
+                                        "navy",
+                                        "olive",
+                                        "purple",
+                                        "red",
+                                        "silver",
+                                        "teal",
+                                        "white",
+                                        "yellow",
+                                      ])
+
+      # https://www.w3.org/TR/css-color-3/#svg-color
+      ACCEPTABLE_CSS_EXTENDED_COLORS = Set.new([
+                                                 "brown",
+                                               ])
 
       # see https://www.quackit.com/css/functions/
       # omit `url` and `image` from that list
@@ -854,7 +862,7 @@ module Loofah
       ALLOWED_ELEMENTS = ACCEPTABLE_ELEMENTS + MATHML_ELEMENTS + SVG_ELEMENTS
       ALLOWED_ATTRIBUTES = ACCEPTABLE_ATTRIBUTES + MATHML_ATTRIBUTES + SVG_ATTRIBUTES + ARIA_ATTRIBUTES
       ALLOWED_CSS_PROPERTIES = ACCEPTABLE_CSS_PROPERTIES
-      ALLOWED_CSS_KEYWORDS = ACCEPTABLE_CSS_KEYWORDS
+      ALLOWED_CSS_KEYWORDS = ACCEPTABLE_CSS_KEYWORDS + ACCEPTABLE_CSS_COLORS + ACCEPTABLE_CSS_EXTENDED_COLORS
       ALLOWED_CSS_FUNCTIONS = ACCEPTABLE_CSS_FUNCTIONS
       ALLOWED_SVG_PROPERTIES = ACCEPTABLE_SVG_PROPERTIES
       ALLOWED_PROTOCOLS = ACCEPTABLE_PROTOCOLS
