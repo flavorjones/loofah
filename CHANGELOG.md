@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## 2.19.0 / 2022-09-14
 
 ### Features
 
