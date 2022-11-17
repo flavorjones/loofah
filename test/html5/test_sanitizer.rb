@@ -268,14 +268,14 @@ class Html5TestSanitizer < Loofah::TestCase
   ## added because we don't have any coverage above on SVG_ATTR_VAL_ALLOWS_REF
   HTML5::SafeList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|
     define_method "test_should_allow_uri_refs_in_svg_attribute_#{attr_name}" do
-      input = "<rect fill='url(#foo)' />"
-      output = "<rect fill='url(#foo)'></rect>"
+      input = "<rect #{attr_name}='url(#foo)' />"
+      output = "<rect #{attr_name}='url(#foo)'></rect>"
       check_sanitization(input, output, output, output)
     end
 
     define_method "test_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
-      input = "<rect fill='url(http://bad.com/) #fff' />"
-      output = "<rect fill='  #fff'></rect>"
+      input = "<rect #{attr_name}='url(http://bad.com/) #fff' />"
+      output = "<rect #{attr_name}='  #fff'></rect>"
       check_sanitization(input, output, output, output)
     end
   end

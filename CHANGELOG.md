@@ -1,5 +1,13 @@
 # Changelog
 
+## next / unreleased
+
+### Features
+
+* Allow SVG attributes `color-profile`, `cursor`, `filter`, `marker`, and `mask`.
+* Allow SVG elements `altGlyph`, `cursor`, `feImage`, `pattern`, and `tref`.
+
+
 ## 2.19.0 / 2022-09-14
 
 ### Features
