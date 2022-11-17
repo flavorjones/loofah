@@ -51,9 +51,11 @@ module Loofah
                 end
               end
             end
+
             if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
-              attr_node.value = attr_node.value.gsub(/url\s*\(\s*[^#\s][^)]+?\)/m, " ") if attr_node.value
+              scrub_attribute_that_allows_local_ref(attr_node)
             end
+
             if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == "xlink:href" && attr_node.value =~ /^\s*[^#\s].*/m
               attr_node.remove
               next
@@ -125,6 +127,29 @@ module Loofah
           end
 
           Crass::Parser.stringify(sanitized_tree)
+        end
+
+        def scrub_attribute_that_allows_local_ref(attr_node)
+          return unless attr_node.value
+
+          nodes = Crass::Parser.new(attr_node.value).parse_component_values
+
+          values = nodes.map do |node|
+            case node[:node]
+            when :url
+              if node[:value].start_with?("#")
+                node[:raw]
+              else
+                nil
+              end
+            when :hash, :ident, :string
+              node[:raw]
+            else
+              nil
+            end
+          end.compact
+
+          attr_node.value = values.join(" ")
         end
 
         #

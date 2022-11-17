@@ -267,15 +267,15 @@ class Html5TestSanitizer < Loofah::TestCase
 
   ## added because we don't have any coverage above on SVG_ATTR_VAL_ALLOWS_REF
   HTML5::SafeList::SVG_ATTR_VAL_ALLOWS_REF.each do |attr_name|
-    define_method "test_should_allow_uri_refs_in_svg_attribute_#{attr_name}" do
+    define_method "test_allow_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect fill='url(#foo)' />"
       output = "<rect fill='url(#foo)'></rect>"
       check_sanitization(input, output, output, output)
     end
 
-    define_method "test_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
-      input = "<rect fill='url(http://bad.com/) #fff' />"
-      output = "<rect fill='  #fff'></rect>"
+    define_method "test_disallow_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
+      input = "<rect fill='yellow url(http://bad.com/) #fff \"blue\"' />"
+      output = "<rect fill='yellow #fff \"blue\"'></rect>"
       check_sanitization(input, output, output, output)
     end
   end
@@ -478,16 +478,6 @@ class Html5TestSanitizer < Loofah::TestCase
     html = '<div style="order:5;"></div>'
     sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
     assert_match %r/order:5/, sane.inner_html
-  end
-
-  def test_issue_90_slow_regex
-    skip("timing tests are hard to make pass and have little regression-testing value")
-
-    html = %q{<span style="background: url('data:image/svg&#43;xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23D4C8AE%22%20d%3D%22M0%200h32v32h-32z%22%2F%3E%3Cpath%20fill%3D%22%2383604B%22%20d%3D%22M0%200h31.99v11.75h-31.99z%22%2F%3E%3Cpath%20fill%3D%22%233D2319%22%20d%3D%22M0%2011.5h32v.5h-32z%22%2F%3E%3Cpath%20fill%3D%22%23F83651%22%20d%3D%22M5%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%23FCD050%22%20d%3D%22M6%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%2371C797%22%20d%3D%22M7%200h1v10.5h-1z%22%2F%3E%3Cpath%20fill%3D%22%23509CF9%22%20d%3D%22M8%200h1v10.5h-1z%22%2F%3E%3ClinearGradient%20id%3D%22a%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2224.996%22%20y1%3D%2210.5%22%20x2%3D%2224.996%22%20y2%3D%224.5%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23796055%22%2F%3E%3Cstop%20offset%3D%22.434%22%20stop-color%3D%22%23614C43%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233D2D28%22%2F%3E%3C%2FlinearGradient%3E%3Cpath%20fill%3D%22url(%23a)%22%20d%3D%22M28%208.5c0%201.1-.9%202-2%202h-2c-1.1%200-2-.9-2-2v-2c0-1.1.9-2%202-2h2c1.1%200%202%20.9%202%202v2z%22%2F%3E%3Cpath%20fill%3D%22%235F402E%22%20d%3D%22M28%208c0%201.1-.9%202-2%202h-2c-1.1%200-2-.9-2-2v-2c0-1.1.9-2%202-2h2c1.1%200%202%20.9%202%202v2z%22%2F%3E%3C');"></span>}
-
-    assert_completes_in_reasonable_time {
-      Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
-    }
   end
 
   def test_upper_case_css_property
