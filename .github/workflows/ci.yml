@@ -41,3 +41,29 @@ jobs:
           bundler-cache: true
           rubygems: latest
       - run: bundle exec rake test
+
+  # borrowed from nokogiri/.github/workflows/downstream.yml
+  downstream:
+    needs: ["rubocop"]
+    name: downstream-${{matrix.name}}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - url: https://github.com/rails/rails-html-sanitizer
+            name: rails-html-sanitizer
+            command: "bundle exec rake test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+          rubygems: latest
+      - run: |
+          git clone --depth=1 ${{matrix.url}} ${{matrix.name}}
+          cd ${{matrix.name}}
+          bundle add loofah --path ".."
+          bundle install --local || bundle install
+          ${{matrix.command}}
