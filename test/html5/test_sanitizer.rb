@@ -155,7 +155,7 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
-  HTML5::SafeList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
+  ["image/gif", "image/jpeg", "image/png", "text/css", "text/plain"].each do |data_uri_type|
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
       input = %(<a href="data:#{data_uri_type}">foo</a>)
       output = "<a href='data:#{data_uri_type}'>foo</a>"
@@ -165,9 +165,7 @@ class Html5TestSanitizer < Loofah::TestCase
       output = "<a href='data:#{data_uri_type};base64,R0lGODlhAQABA'>foo</a>"
       check_sanitization(input, output, output, output)
     end
-  end
 
-  HTML5::SafeList::ALLOWED_URI_DATA_MEDIATYPES.each do |data_uri_type|
     define_method "test_should_allow_uppercase_data_#{data_uri_type}_uris" do
       input = %(<a href="DATA:#{data_uri_type.upcase}">foo</a>)
       output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
@@ -186,6 +184,16 @@ class Html5TestSanitizer < Loofah::TestCase
 
     input = %(<a href="data:image/xxx;base64,R0lGODlhAQABA">foo</a>)
     output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    input = %(<a href="data:text/html;base64,R0lGODlhAQABA">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output, output, output)
+
+    # https://hackerone.com/bugs?report_id=1694173
+    # https://github.com/w3c/svgwg/issues/266
+    input = %(<svg><use href="data:image/svg+xml;base64,PHN2ZyBpZD0neCcgeG1s"/></svg>)
+    output = "<svg><use></use></svg>"
     check_sanitization(input, output, output, output)
   end
 
