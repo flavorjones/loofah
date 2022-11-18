@@ -36,20 +36,7 @@ module Loofah
             end
 
             if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
-              # this block lifted nearly verbatim from HTML5 sanitization
-              val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS, "").downcase
-              if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
-                attr_node.remove
-                next
-              elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == "data"
-                # permit only allowed data mediatypes
-                mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
-                mediatype, _ = mediatype.split(";")[0..1] if mediatype
-                if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
-                  attr_node.remove
-                  next
-                end
-              end
+              next if scrub_uri_attribute(attr_node)
             end
 
             if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
@@ -150,6 +137,24 @@ module Loofah
           end.compact
 
           attr_node.value = values.join(" ")
+        end
+
+        def scrub_uri_attribute(attr_node)
+          # this block lifted nearly verbatim from HTML5 sanitization
+          val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS, "").downcase
+          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
+            attr_node.remove
+            return true
+          elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == "data"
+            # permit only allowed data mediatypes
+            mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
+            mediatype, _ = mediatype.split(";")[0..1] if mediatype
+            if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
+              attr_node.remove
+              return true
+            end
+          end
+          false
         end
 
         #
