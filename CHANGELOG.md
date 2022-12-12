@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.19.1 / 2022-12-13
+
+### Security
+
+* Address CVE-2022-23514, inefficient regular expression complexity. See [GHSA-486f-hjj9-9vhh](https://github.com/flavorjones/loofah/security/advisories/GHSA-486f-hjj9-9vhh) for more information.
+* Address CVE-2022-23515, improper neutralization of data URIs. See [GHSA-228g-948r-83gx](https://github.com/flavorjones/loofah/security/advisories/GHSA-228g-948r-83gx) for more information.
+* Address CVE-2022-23516, uncontrolled recursion. See [GHSA-3x8r-x6xp-q4vm](https://github.com/flavorjones/loofah/security/advisories/GHSA-3x8r-x6xp-q4vm) for more information.
+
+
 ## 2.19.0 / 2022-09-14
 
 ### Features
