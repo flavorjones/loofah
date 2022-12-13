@@ -108,6 +108,10 @@ module Loofah
           return Scrubber::CONTINUE
         end
       when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
+        if HTML5::Scrub.cdata_needs_escaping?(node)
+          node.before(HTML5::Scrub.cdata_escape(node))
+          return Scrubber::STOP
+        end
         return Scrubber::CONTINUE
       end
       Scrubber::STOP

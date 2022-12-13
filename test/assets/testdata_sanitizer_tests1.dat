@@ -463,9 +463,9 @@
   {
     "name": "absolute_uri_refs_in_svg_attributes",
     "input": "<rect fill='url(http://bad.com/) #fff' />",
-    "rexml": "<rect fill='  #fff'></rect>",
-    "xhtml": "<rect fill='  #fff'></rect>",
-    "output": "<rect fill='  #fff'/>"
+    "rexml": "<rect fill='#fff'></rect>",
+    "xhtml": "<rect fill='#fff'></rect>",
+    "output": "<rect fill='#fff'/>"
   },
 
   {
