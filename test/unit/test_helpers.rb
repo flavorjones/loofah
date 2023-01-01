@@ -6,54 +6,73 @@ class UnitTestHelpers < Loofah::TestCase
   describe "Helpers" do
     context ".strip_tags" do
       it "invoke Loofah.fragment.text" do
-        mock_doc = Object.new
-        mock(Loofah).fragment(HTML_STRING) { mock_doc }
-        mock(mock_doc).text
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:text, "string_value", [])
+        Loofah.stub(:fragment, mock_doc) do
+          Loofah::Helpers.strip_tags(HTML_STRING)
+        end
 
-        Loofah::Helpers.strip_tags HTML_STRING
+        mock_doc.verify
       end
     end
 
     context ".sanitize" do
       it "invoke Loofah.scrub_fragment(:strip).to_s" do
-        mock_doc = Object.new
-        mock_node = Object.new
-        mock(Loofah).fragment(HTML_STRING) { mock_doc }
-        mock(mock_doc).scrub!(:strip) { mock_doc }
-        mock(mock_doc).xpath("./form") { [mock_node] }
-        mock(mock_node).remove
-        mock(mock_doc).to_s
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:scrub!, mock_doc, [:strip])
+        mock_doc.expect(:xpath, [], ["./form"])
+        mock_doc.expect(:to_s, "string_value", [])
 
-        Loofah::Helpers.sanitize HTML_STRING
+        Loofah.stub(:fragment, mock_doc) do
+          Loofah::Helpers.sanitize(HTML_STRING)
+        end
+
+        mock_doc.verify
       end
     end
 
     context ".sanitize_css" do
       it "invokes HTML5lib's css scrubber" do
-        mock(Loofah::HTML5::Scrub).scrub_css("foobar")
-        Loofah::Helpers.sanitize_css("foobar")
+        actual = nil
+        Loofah::HTML5::Scrub.stub(:scrub_css, "scrubbed", ["foobar"]) do
+          actual = Loofah::Helpers.sanitize_css("foobar")
+        end
+
+        assert_equal("scrubbed", actual)
       end
     end
 
     describe "ActionView" do
       describe "FullSanitizer#sanitize" do
         it "calls .strip_tags" do
-          mock(Loofah::Helpers).strip_tags("foobar")
-          Loofah::Helpers::ActionView::FullSanitizer.new.sanitize "foobar"
+          actual = nil
+          Loofah::Helpers.stub(:strip_tags, "stripped", ["foobar"]) do
+            actual = Loofah::Helpers::ActionView::FullSanitizer.new.sanitize("foobar")
+          end
+
+          assert_equal("stripped", actual)
         end
       end
 
       describe "SafeListSanitizer#sanitize" do
         it "calls .sanitize" do
-          mock(Loofah::Helpers).sanitize("foobar")
-          Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize "foobar"
+          actual = nil
+          Loofah::Helpers.stub(:sanitize, "sanitized", ["foobar"]) do
+            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize("foobar")
+          end
+
+          assert_equal("sanitized", actual)
         end
       end
 
       describe "SafeListSanitizer#sanitize_css" do
         it "calls .sanitize_css" do
-          mock(Loofah::Helpers).sanitize_css("foobar")
-          Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css "foobar"
+          actual = nil
+          Loofah::Helpers.stub(:sanitize_css, "sanitized", ["foobar"]) do
+            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css "foobar"
+          end
+
+          assert_equal("sanitized", actual)
         end
       end
     end
