@@ -97,12 +97,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
     end
 
     context "#scrub_document" do
-      it "be a shortcut for parse-and-scrub" do
-        mock_doc = Object.new
-        mock(Loofah).document(:string_or_io) { mock_doc }
-        mock(mock_doc).scrub!(:method)
+      it "is a shortcut for parse-and-scrub" do
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:scrub!, "sanitized_string", [:method])
+        Loofah.stub(:document, mock_doc) do
+          Loofah.scrub_document("string", :method)
+        end
 
-        Loofah.scrub_document(:string_or_io, :method)
+        mock_doc.verify
       end
     end
 
@@ -310,12 +312,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
     end
 
     context "#scrub_fragment" do
-      it "be a shortcut for parse-and-scrub" do
-        mock_doc = Object.new
-        mock(Loofah).fragment(:string_or_io) { mock_doc }
-        mock(mock_doc).scrub!(:method)
+      it "is a shortcut for parse-and-scrub" do
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:scrub!, "sanitized_string", [:method])
+        Loofah.stub(:fragment, mock_doc) do
+          Loofah.scrub_fragment("string", :method)
+        end
 
-        Loofah.scrub_fragment(:string_or_io, :method)
+        mock_doc.verify
       end
     end
 
