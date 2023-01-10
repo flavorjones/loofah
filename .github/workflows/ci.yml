@@ -39,6 +39,7 @@ jobs:
         with:
           ruby-version: ${{matrix.ruby}}
           bundler-cache: true
+          rubygems: 3.2.3 # for ruby 2.5
       - run: bundle exec rake test
 
   # borrowed from nokogiri/.github/workflows/downstream.yml
