@@ -1,125 +1,125 @@
 require "helper"
 
 class UnitTestApi < Loofah::TestCase
-  HTML = "<div>a</div>\n<div>b</div>"
-  XML_FRAGMENT = "<div>a</div>\n<div>b</div>"
-  XML = "<root>#{XML_FRAGMENT}</root>"
+  let(:html) { "<div>a</div>\n<div>b</div>" }
+  let(:xml_fragment) { "<div>a</div>\n<div>b</div>" }
+  let(:xml) { "<root>#{xml_fragment}</root>" }
 
-  describe "HTML" do
+  describe Loofah::HTML do
     it "creates documents" do
-      doc = Loofah.document(HTML)
+      doc = Loofah.document(html)
       assert_html_documentish doc
     end
 
     it "creates fragments" do
-      doc = Loofah.fragment(HTML)
+      doc = Loofah.fragment(html)
       assert_html_fragmentish doc
     end
 
     it "parses documents" do
-      doc = Loofah::HTML::Document.parse(HTML)
+      doc = Loofah::HTML::Document.parse(html)
       assert_html_documentish doc
     end
 
     it "parses document fragment" do
-      doc = Loofah::HTML::DocumentFragment.parse(HTML)
+      doc = Loofah::HTML::DocumentFragment.parse(html)
       assert_html_fragmentish doc
     end
 
     it "scrubs documents" do
-      doc = Loofah.document(HTML).scrub!(:strip)
+      doc = Loofah.document(html).scrub!(:strip)
       assert_html_documentish doc
     end
 
     it "scrubs fragments" do
-      doc = Loofah.fragment(HTML).scrub!(:strip)
+      doc = Loofah.fragment(html).scrub!(:strip)
       assert_html_fragmentish doc
     end
 
     it "scrubs document nodes" do
-      doc = Loofah.document(HTML)
+      doc = Loofah.document(html)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
     it "scrubs fragment nodes" do
-      doc = Loofah.fragment(HTML)
+      doc = Loofah.fragment(html)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
     it "scrubs document nodesets" do
-      doc = Loofah.document(HTML)
+      doc = Loofah.document(html)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)
     end
 
     it "scrubs fragment nodesets" do
-      doc = Loofah.fragment(HTML)
+      doc = Loofah.fragment(html)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)
     end
 
-    it "exposes serialize_root on HTML::DocumentFragment" do
-      doc = Loofah.fragment(HTML)
-      assert_equal HTML, doc.serialize_root.to_html
+    it "exposes serialize_root on Loofah::HTML::DocumentFragment" do
+      doc = Loofah.fragment(html)
+      assert_equal html, doc.serialize_root.to_html
     end
 
-    it "exposes serialize_root on HTML::Document" do
-      doc = Loofah.document(HTML)
-      assert_equal HTML, doc.serialize_root.children.to_html
+    it "exposes serialize_root on Loofah::HTML::Document" do
+      doc = Loofah.document(html)
+      assert_equal html, doc.serialize_root.children.to_html
     end
   end
 
-  describe "XML" do
+  describe Loofah::XML do
     it "creates documents" do
-      doc = Loofah.xml_document(XML)
+      doc = Loofah.xml_document(xml)
       assert_xml_documentish doc
     end
 
     it "creates fragments" do
-      doc = Loofah.xml_fragment(XML_FRAGMENT)
+      doc = Loofah.xml_fragment(xml_fragment)
       assert_xml_fragmentish doc
     end
 
     it "parses documents" do
-      doc = Loofah::XML::Document.parse(XML)
+      doc = Loofah::XML::Document.parse(xml)
       assert_xml_documentish doc
     end
 
     it "parses document fragments" do
-      doc = Loofah::XML::DocumentFragment.parse(XML_FRAGMENT)
+      doc = Loofah::XML::DocumentFragment.parse(xml_fragment)
       assert_xml_fragmentish doc
     end
 
     it "scrubs documents" do
       scrubber = Loofah::Scrubber.new { |node| }
-      doc = Loofah.xml_document(XML).scrub!(scrubber)
+      doc = Loofah.xml_document(xml).scrub!(scrubber)
       assert_xml_documentish doc
     end
 
     it "scrubs fragments" do
       scrubber = Loofah::Scrubber.new { |node| }
-      doc = Loofah.xml_fragment(XML_FRAGMENT).scrub!(scrubber)
+      doc = Loofah.xml_fragment(xml_fragment).scrub!(scrubber)
       assert_xml_fragmentish doc
     end
 
     it "scrubs document nodes" do
-      doc = Loofah.xml_document(XML)
+      doc = Loofah.xml_document(xml)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
     it "scrubs fragment nodes" do
-      doc = Loofah.xml_fragment(XML)
+      doc = Loofah.xml_fragment(xml)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
     it "scrubs document nodesets" do
-      doc = Loofah.xml_document(XML)
+      doc = Loofah.xml_document(xml)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)
@@ -129,26 +129,26 @@ class UnitTestApi < Loofah::TestCase
   private
 
   def assert_html_documentish(doc)
-    assert_kind_of Nokogiri::HTML::Document, doc
+    assert_kind_of Nokogiri::HTML4::Document, doc
     assert_kind_of Loofah::HTML::Document, doc
-    assert_equal HTML, doc.xpath("/html/body").inner_html
+    assert_equal html, doc.xpath("/html/body").inner_html
   end
 
   def assert_html_fragmentish(doc)
-    assert_kind_of Nokogiri::HTML::DocumentFragment, doc
+    assert_kind_of Nokogiri::HTML4::DocumentFragment, doc
     assert_kind_of Loofah::HTML::DocumentFragment, doc
-    assert_equal HTML, doc.inner_html
+    assert_equal html, doc.inner_html
   end
 
   def assert_xml_documentish(doc)
     assert_kind_of Nokogiri::XML::Document, doc
     assert_kind_of Loofah::XML::Document, doc
-    assert_equal XML, doc.root.to_xml
+    assert_equal xml, doc.root.to_xml
   end
 
   def assert_xml_fragmentish(doc)
     assert_kind_of Nokogiri::XML::DocumentFragment, doc
     assert_kind_of Loofah::XML::DocumentFragment, doc
-    assert_equal XML_FRAGMENT, doc.children.to_xml
+    assert_equal xml_fragment, doc.children.to_xml
   end
 end
