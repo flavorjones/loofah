@@ -4,10 +4,21 @@ class UnitTestApi < Loofah::TestCase
   let(:html) { "<div>a</div>\n<div>b</div>" }
   let(:xml_fragment) { "<div>a</div>\n<div>b</div>" }
   let(:xml) { "<root>#{xml_fragment}</root>" }
+  let(:xml_scrubber) do
+    Loofah::Scrubber.new do |node|
+      # no-op
+    end
+  end
 
   describe Loofah do
     it "creates html4 documents" do
       doc = Loofah.document(html)
+      assert_kind_of(Loofah::HTML4::Document, doc)
+      assert_equal html, doc.xpath("/html/body").inner_html
+    end
+
+    it "scrubs html4 documents" do
+      doc = Loofah.scrub_document(html, :strip)
       assert_kind_of(Loofah::HTML4::Document, doc)
       assert_equal html, doc.xpath("/html/body").inner_html
     end
@@ -18,14 +29,32 @@ class UnitTestApi < Loofah::TestCase
       assert_equal html, doc.inner_html
     end
 
+    it "scrubs html4 fragments" do
+      doc = Loofah.scrub_fragment(html, :strip)
+      assert_kind_of(Loofah::HTML4::DocumentFragment, doc)
+      assert_equal html, doc.inner_html
+    end
+
     it "creates xml documents" do
       doc = Loofah.xml_document(xml)
       assert_kind_of(Loofah::XML::Document, doc)
       assert_equal xml, doc.root.to_xml
     end
 
+    it "scrubs xml documents" do
+      doc = Loofah.scrub_xml_document(xml, xml_scrubber)
+      assert_kind_of(Loofah::XML::Document, doc)
+      assert_equal xml, doc.root.to_xml
+    end
+
     it "creates xml fragments" do
       doc = Loofah.xml_fragment(xml_fragment)
+      assert_kind_of(Loofah::XML::DocumentFragment, doc)
+      assert_equal xml_fragment, doc.children.to_xml
+    end
+
+    it "scrubs xml fragments" do
+      doc = Loofah.scrub_xml_fragment(xml_fragment, :strip)
       assert_kind_of(Loofah::XML::DocumentFragment, doc)
       assert_equal xml_fragment, doc.children.to_xml
     end
