@@ -36,7 +36,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "#scrub!" do
       context ":escape" do
         it "escape bad tags" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :escape
 
           assert_equal INVALID_ESCAPED, doc.xpath("/html/body").inner_html
@@ -46,7 +46,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":prune" do
         it "prune bad tags" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :prune
 
           assert_equal INVALID_PRUNED, doc.xpath("/html/body").inner_html
@@ -56,7 +56,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":strip" do
         it "strip bad tags" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
           result = doc.scrub! :strip
 
           assert_equal INVALID_STRIPPED, doc.xpath("/html/body").inner_html
@@ -66,7 +66,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":whitewash" do
         it "whitewash the markup" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
           result = doc.scrub! :whitewash
 
           ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
@@ -77,7 +77,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":nofollow" do
         it "add a 'nofollow' attribute to hyperlinks" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
           result = doc.scrub! :nofollow
 
           assert_equal NOFOLLOW_RESULT, doc.xpath("/html/body").inner_html
@@ -87,7 +87,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":unprintable" do
         it "removes unprintable unicode characters" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{UNPRINTABLE_FRAGMENT}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{UNPRINTABLE_FRAGMENT}</body></html>"
           result = doc.scrub! :unprintable
 
           assert_equal UNPRINTABLE_RESULT, doc.xpath("/html/body").inner_html
@@ -110,7 +110,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
     context "#text" do
       it "leave behind only inner text with html entities still escaped" do
-        doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+        doc = Loofah::HTML4::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
         result = doc.text
 
         assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
@@ -118,7 +118,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "with encode_special_chars => false" do
         it "leave behind only inner text with html entities unescaped" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
           result = doc.text(:encode_special_chars => false)
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
@@ -127,7 +127,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "with encode_special_chars => true" do
         it "leave behind only inner text with html entities still escaped" do
-          doc = Loofah::HTML::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+          doc = Loofah::HTML4::Document.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
           result = doc.text(:encode_special_chars => true)
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
@@ -217,7 +217,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "#scrub!" do
       context ":escape" do
         it "escape bad tags" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :escape
 
           assert_equal INVALID_ESCAPED, doc.xpath("./div").inner_html
@@ -227,7 +227,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":prune" do
         it "prune bad tags" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :prune
 
           assert_equal INVALID_PRUNED, doc.xpath("./div").inner_html
@@ -237,7 +237,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":strip" do
         it "strip bad tags" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{INVALID_FRAGMENT}</div>"
           result = doc.scrub! :strip
 
           assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
@@ -247,7 +247,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":whitewash" do
         it "whitewash the markup" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
           result = doc.scrub! :whitewash
 
           ww_result = Nokogiri.uses_libxml?("<2.9.11") ? WHITEWASH_RESULT : WHITEWASH_RESULT_LIBXML2911
@@ -259,7 +259,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
       context ":nofollow" do
         context "for a hyperlink that does not have a rel attribute" do
           it "add a 'nofollow' attribute to hyperlinks" do
-            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
+            doc = Loofah::HTML4::DocumentFragment.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
             result = doc.scrub! :nofollow
 
             assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
@@ -269,7 +269,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "for a hyperlink that does have a rel attribute" do
           it "appends nofollow to rel attribute" do
-            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
+            doc = Loofah::HTML4::DocumentFragment.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
             result = doc.scrub! :nofollow
 
             assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
@@ -281,7 +281,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
       context ":noopener" do
         context "for a hyperlink without a 'rel' attribute" do
           it "add a 'noopener' attribute to hyperlinks" do
-            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_FRAGMENT}</div>"
+            doc = Loofah::HTML4::DocumentFragment.parse "<div>#{NOOPENER_FRAGMENT}</div>"
             result = doc.scrub! :noopener
 
             assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
@@ -291,7 +291,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "for a hyperlink that does have a rel attribute" do
           it "appends 'noopener' to 'rel' attribute" do
-            doc = Loofah::HTML::DocumentFragment.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
+            doc = Loofah::HTML4::DocumentFragment.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
             result = doc.scrub! :noopener
 
             assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
@@ -302,7 +302,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context ":unprintable" do
         it "removes unprintable unicode characters" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{UNPRINTABLE_FRAGMENT}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{UNPRINTABLE_FRAGMENT}</div>"
           result = doc.scrub! :unprintable
 
           assert_equal UNPRINTABLE_RESULT, doc.xpath("./div").inner_html
@@ -325,7 +325,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
     context "#text" do
       it "leave behind only inner text with html entities still escaped" do
-        doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+        doc = Loofah::HTML4::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
         result = doc.text
 
         assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
@@ -333,7 +333,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "with encode_special_chars => false" do
         it "leave behind only inner text with html entities unescaped" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
           result = doc.text(:encode_special_chars => false)
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
@@ -342,7 +342,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "with encode_special_chars => true" do
         it "leave behind only inner text with html entities still escaped" do
-          doc = Loofah::HTML::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+          doc = Loofah::HTML4::DocumentFragment.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
           result = doc.text(:encode_special_chars => true)
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result

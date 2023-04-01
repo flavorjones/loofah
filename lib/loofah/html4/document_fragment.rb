@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 module Loofah
-  module HTML # :nodoc:
+  module HTML4 # :nodoc:
     #
-    #  Subclass of Nokogiri::HTML::DocumentFragment.
+    #  Subclass of Nokogiri::HTML4::DocumentFragment.
     #
     #  See Loofah::ScrubBehavior and Loofah::TextBehavior for additional methods.
     #
-    class DocumentFragment < Nokogiri::HTML::DocumentFragment
+    class DocumentFragment < Nokogiri::HTML4::DocumentFragment
       include Loofah::TextBehavior
 
       class << self
         #
-        #  Overridden Nokogiri::HTML::DocumentFragment
+        #  Overridden Nokogiri::HTML5::DocumentFragment
         #  constructor. Applications should use Loofah.fragment to
         #  parse a fragment.
         #
         def parse(tags, encoding = nil)
-          doc = Loofah::HTML::Document.new
+          doc = Loofah::HTML4::Document.new
 
           encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : "UTF-8"
           doc.encoding = encoding

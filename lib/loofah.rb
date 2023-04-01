@@ -17,8 +17,8 @@ require_relative "loofah/scrubbers"
 require_relative "loofah/instance_methods"
 require_relative "loofah/xml/document"
 require_relative "loofah/xml/document_fragment"
-require_relative "loofah/html/document"
-require_relative "loofah/html/document_fragment"
+require_relative "loofah/html4/document"
+require_relative "loofah/html4/document_fragment"
 
 # == Strings and IO Objects as Input
 #
@@ -29,17 +29,20 @@ require_relative "loofah/html/document_fragment"
 # quantities of docs.
 #
 module Loofah
+  # Alias for Loofah::HTML4
+  HTML = HTML4
+
   class << self
-    # Shortcut for Loofah::HTML::Document.parse
-    # This method accepts the same parameters as Nokogiri::HTML::Document.parse
+    # Shortcut for Loofah::HTML4::Document.parse
+    # This method accepts the same parameters as Nokogiri::HTML4::Document.parse
     def document(*args, &block)
-      remove_comments_before_html_element Loofah::HTML::Document.parse(*args, &block)
+      remove_comments_before_html_element(Loofah::HTML4::Document.parse(*args, &block))
     end
 
-    # Shortcut for Loofah::HTML::DocumentFragment.parse
-    # This method accepts the same parameters as Nokogiri::HTML::DocumentFragment.parse
+    # Shortcut for Loofah::HTML4::DocumentFragment.parse
+    # This method accepts the same parameters as Nokogiri::HTML4::DocumentFragment.parse
     def fragment(*args, &block)
-      Loofah::HTML::DocumentFragment.parse(*args, &block)
+      Loofah::HTML4::DocumentFragment.parse(*args, &block)
     end
 
     # Shortcut for Loofah.fragment(string_or_io).scrub!(method)

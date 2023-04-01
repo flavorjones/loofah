@@ -6,6 +6,20 @@ class UnitTestApi < Loofah::TestCase
   let(:xml) { "<root>#{xml_fragment}</root>" }
 
   describe Loofah::HTML do
+    it "is aliased to Loofah::HTML4" do
+      assert_equal(Loofah::HTML4, Loofah::HTML)
+      assert_equal(Loofah::HTML4::Document, Loofah::HTML::Document)
+      assert_equal(Loofah::HTML4::DocumentFragment, Loofah::HTML::DocumentFragment)
+    end
+
+    it "has an HTML4 name" do
+      assert_equal("Loofah::HTML4", Loofah::HTML.to_s)
+      assert_equal("Loofah::HTML4::Document", Loofah::HTML::Document.to_s)
+      assert_equal("Loofah::HTML4::DocumentFragment", Loofah::HTML::DocumentFragment.to_s)
+    end
+  end
+
+  describe Loofah::HTML4 do
     it "creates documents" do
       doc = Loofah.document(html)
       assert_html_documentish doc
@@ -17,12 +31,12 @@ class UnitTestApi < Loofah::TestCase
     end
 
     it "parses documents" do
-      doc = Loofah::HTML::Document.parse(html)
+      doc = Loofah::HTML4::Document.parse(html)
       assert_html_documentish doc
     end
 
     it "parses document fragment" do
-      doc = Loofah::HTML::DocumentFragment.parse(html)
+      doc = Loofah::HTML4::DocumentFragment.parse(html)
       assert_html_fragmentish doc
     end
 
@@ -62,12 +76,12 @@ class UnitTestApi < Loofah::TestCase
       node_set.scrub!(:strip)
     end
 
-    it "exposes serialize_root on Loofah::HTML::DocumentFragment" do
+    it "exposes serialize_root on Loofah::HTML4::DocumentFragment" do
       doc = Loofah.fragment(html)
       assert_equal html, doc.serialize_root.to_html
     end
 
-    it "exposes serialize_root on Loofah::HTML::Document" do
+    it "exposes serialize_root on Loofah::HTML4::Document" do
       doc = Loofah.document(html)
       assert_equal html, doc.serialize_root.children.to_html
     end
@@ -130,13 +144,13 @@ class UnitTestApi < Loofah::TestCase
 
   def assert_html_documentish(doc)
     assert_kind_of Nokogiri::HTML4::Document, doc
-    assert_kind_of Loofah::HTML::Document, doc
+    assert_kind_of Loofah::HTML4::Document, doc
     assert_equal html, doc.xpath("/html/body").inner_html
   end
 
   def assert_html_fragmentish(doc)
     assert_kind_of Nokogiri::HTML4::DocumentFragment, doc
-    assert_kind_of Loofah::HTML::DocumentFragment, doc
+    assert_kind_of Loofah::HTML4::DocumentFragment, doc
     assert_equal html, doc.inner_html
   end
 

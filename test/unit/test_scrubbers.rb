@@ -1,7 +1,7 @@
 require "helper"
 
 class UnitTestScrubbers < Loofah::TestCase
-  [Loofah::HTML::Document, Loofah::HTML::DocumentFragment].each do |klass|
+  [Loofah::HTML4::Document, Loofah::HTML4::DocumentFragment].each do |klass|
     context klass do
       context "bad scrub method" do
         it "raise a ScrubberNotFound exception" do

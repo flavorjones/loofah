@@ -67,7 +67,7 @@ module Loofah
   end
 
   #
-  #  Overrides +text+ in HTML::Document and HTML::DocumentFragment,
+  #  Overrides +text+ in HTML4::Document and HTML4::DocumentFragment,
   #  and mixes in +to_text+.
   #
   module TextBehavior

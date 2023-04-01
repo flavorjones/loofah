@@ -1,5 +1,16 @@
 # Changelog
 
+## next / unreleased
+
+### Notable Change: `Loofah::HTML4` module and namespace
+
+`Loofah::HTML` has been renamed to `Loofah::HTML4`, and `Loofah::HTML` is aliased to preserve backwards-compatibility. `Nokogiri::HTML` and `Nokogiri::HTML4` parse methods still use libxml2's (or NekoHTML's) HTML4 parser in the v1.12 release series.
+
+Take special note that if you rely on the class name of an object in your code, objects will now report a class of `Loofah::HTML4::Foo` where they previously reported `Loofah::HTML::Foo`. Instead of relying on the string returned by `Object#class`, prefer `Class#===` or `Object#is_a?` or `Object#instance_of?`.
+
+Future releases of Nokogiri may deprecate `HTML` methods or otherwise change this behavior, so please start using `HTML4` in place of `HTML`.
+
+
 ## 2.20.0 / 2023-04-01
 
 ### Features
