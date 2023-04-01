@@ -264,7 +264,6 @@ class Html5TestSanitizer < Loofah::TestCase
     JSON::parse(open(filename).read).each do |test|
       it "testdata sanitizer #{test["name"]}" do
         test.delete("name")
-        test.delete("commentary")
         input = test.delete("input")
         outputs = test.keys.sort.map { |k| test[k] }
         check_sanitization(input, *outputs)
