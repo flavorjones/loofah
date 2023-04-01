@@ -1,12 +1,12 @@
 # Changelog
 
-## next / unreleased
+## 2.20.0 / 2023-04-01
 
 ### Features
 
 * Allow SVG attributes `color-profile`, `cursor`, `filter`, `marker`, and `mask`. [[#246](https://github.com/flavorjones/loofah/issues/246)]
 * Allow SVG elements `altGlyph`, `cursor`, `feImage`, `pattern`, and `tref`. [[#246](https://github.com/flavorjones/loofah/issues/246)]
-* Allow protovols `fax` and `modem`. [[#255](https://github.com/flavorjones/loofah/issues/255)] (Thanks, [@cjba7](https://github.com/cjba7)!)
+* Allow protocols `fax` and `modem`. [[#255](https://github.com/flavorjones/loofah/issues/255)] (Thanks, [@cjba7](https://github.com/cjba7)!)
 
 
 ## 2.19.1 / 2022-12-13
