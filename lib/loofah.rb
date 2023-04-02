@@ -14,7 +14,7 @@ require_relative "loofah/html5/scrub"
 require_relative "loofah/scrubber"
 require_relative "loofah/scrubbers"
 
-require_relative "loofah/instance_methods"
+require_relative "loofah/concerns"
 require_relative "loofah/xml/document"
 require_relative "loofah/xml/document_fragment"
 require_relative "loofah/html4/document"

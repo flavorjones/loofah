@@ -125,4 +125,76 @@ module Loofah
       self.decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
     end
   end
+
+  module HtmlDocumentBehavior # :nodoc:
+    module ClassMethods
+      def parse(*args, &block)
+        remove_comments_before_html_element(super)
+      end
+
+      private
+
+      # remove comments that exist outside of the HTML element.
+      #
+      # these comments are allowed by the HTML spec:
+      #
+      #    https://www.w3.org/TR/html401/struct/global.html#h-7.1
+      #
+      # but are not scrubbed by Loofah because these nodes don't meet
+      # the contract that scrubbers expect of a node (e.g., it can be
+      # replaced, sibling and children nodes can be created).
+      def remove_comments_before_html_element(doc)
+        doc.children.each do |child|
+          child.unlink if child.comment?
+        end
+        doc
+      end
+    end
+
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+
+    def serialize_root
+      at_xpath("/html/body")
+    end
+  end
+
+  module HtmlFragmentBehavior # :nodoc:
+    module ClassMethods
+      def parse(tags, encoding = nil)
+        doc = document_klass.new
+
+        encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : "UTF-8"
+        doc.encoding = encoding
+
+        new(doc, tags)
+      end
+
+      def document_klass
+        @document_klass ||= if (self == Loofah::HTML5::DocumentFragment)
+          Loofah::HTML5::Document
+        elsif (self == Loofah::HTML4::DocumentFragment)
+          Loofah::HTML4::Document
+        else
+          raise ArgumentError, "unexpected class: #{self}"
+        end
+      end
+    end
+
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+
+    def to_s
+      serialize_root.children.to_s
+    end
+
+    alias :serialize :to_s
+
+    def serialize_root
+      at_xpath("./body") || self
+    end
+  end
 end
+
