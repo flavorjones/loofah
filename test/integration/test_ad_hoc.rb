@@ -1,6 +1,8 @@
 require "helper"
 
 class IntegrationTestAdHoc < Loofah::TestCase
+  MSWORD_HTML = File.read(File.join(File.dirname(__FILE__), "..", "assets", "msword.html")).freeze
+
   LOOFAH_HTML_VERSIONS.each do |html_version|
     describe "ad hoc #{html_version}" do
       let(:html_version) { html_version }
@@ -45,8 +47,6 @@ class IntegrationTestAdHoc < Loofah::TestCase
       end
 
       context "tests" do
-        MSWORD_HTML = File.read(File.join(File.dirname(__FILE__), "..", "assets", "msword.html")).freeze
-
         def test_removal_of_illegal_tag
           html = <<~HTML
             following this there should be no jim tag
