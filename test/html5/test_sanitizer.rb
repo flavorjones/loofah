@@ -9,24 +9,33 @@ require "helper"
 class Html5TestSanitizer < Loofah::TestCase
   include Loofah
 
-  def sanitize_xhtml(stream)
-    Loofah.fragment(stream).scrub!(:escape).to_xhtml
+  def sanitize_html4(stream)
+    Loofah.html4_fragment(stream).scrub!(:escape).to_html
   end
 
-  def sanitize_html(stream)
-    Loofah.fragment(stream).scrub!(:escape).to_html
+  def sanitize_html5(stream)
+    Loofah.html5_fragment(stream).scrub!(:escape).to_html
   end
 
+  # shotgun approach - if any of the possible answers match, we win
   def check_sanitization(input, *possible_answers)
-    # shotgun approach - if any of the possible answers match, we win
-
     # libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
-    sane = sanitize_html(input).gsub('"', "'")
+    sane = sanitize_html4(input).gsub('"', "'")
     possible_output = possible_answers.compact.map do |possible_answer|
       possible_answer.gsub('"', "'")
     end
 
-    assert_includes(possible_output, sane)
+    assert_includes(possible_output, sane, caller(1..1).first)
+
+    if Loofah.html5_support?
+      # now do libgumbo
+      sane = sanitize_html5(input).gsub('"', "'")
+      possible_output = possible_answers.compact.map do |possible_answer|
+        possible_answer.gsub('"', "'")
+      end
+
+      assert_includes(possible_output, sane, caller(1..1).first)
+    end
   end
 
   def assert_completes_in_reasonable_time(&block)
@@ -35,34 +44,80 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_in_delta t0, Time.now, 0.1 # arbitrary seconds
   end
 
+  ALLOWED_ELEMENTS_PARENT = {
+    "caption" => "table",
+    "col" => "table",
+    "colgroup" => "table",
+    "li" => "ul",
+    "tbody" => "table",
+    "td" => "table",
+    "tfoot" => "table",
+    "th" => "table",
+    "thead" => "table",
+    "tr" => "table",
+  }
   (HTML5::SafeList::ALLOWED_ELEMENTS).each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
-      input = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
-      htmloutput = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
-      xhtmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name}>"
-      rexmloutput = xhtmloutput
-
-      if %w[caption colgroup optgroup option tbody td tfoot th thead tr].include?(tag_name)
-        htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-      elsif tag_name == "col"
-        htmloutput = "<col title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        rexmloutput = "<col title='1' />"
-      elsif tag_name == "table"
-        htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt;baz<table title='1'> </table>"
-        xhtmloutput = htmloutput
-      elsif tag_name == "image"
-        htmloutput = "<img title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
-      elsif HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
-        htmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        htmloutput += "<br/>" if tag_name == "br"
-        rexmloutput = "<#{tag_name} title='1' />"
+      parent = ALLOWED_ELEMENTS_PARENT[tag_name]
+      if parent
+        input = "<#{parent}><#{tag_name} title='1'>foo</#{tag_name}></#{parent}>"
+        naive_output = "<#{parent}><#{tag_name.downcase} title='1'>foo</#{tag_name.downcase}></#{parent}>"
+      else
+        input = "<#{tag_name} title='1'>foo</#{tag_name}>"
+        naive_output = "<#{tag_name.downcase} title='1'>foo</#{tag_name.downcase}>"
       end
-      check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
+
+      outputs = []
+
+      # libgumbo
+      case tag_name
+      when "col"
+        outputs << "foo<table><colgroup><col title='1'></colgroup></table>" # libgumbo
+      when "table"
+        outputs << "foo<table title='1'></table>" # libgumbo
+      when "tr"
+        outputs << "foo<table><tbody><tr title='1'></tr></tbody></table>" # libgumbo
+      when "th", "td"
+        outputs << "<table><tbody><tr><#{tag_name} title='1'>foo</#{tag_name}></tr></tbody></table>" # libgumbo
+      when "colgroup", "tbody", "tfoot", "thead"
+        outputs << "foo<table><#{tag_name} title='1'></#{tag_name}></table>" # libgumbo
+      when "br"
+        outputs << "<br title='1'>foo<br>"
+      end
+
+      # libxml
+      case tag_name
+      when "col"
+        outputs << "<table>\n<col title='1'>foo</table>" # libxml
+      end
+
+      # nekohtml
+      case tag_name
+      when "col"
+        outputs << "<table><colgroup><col title='1'>foo</colgroup></table>"
+      when "table"
+        outputs << "<table title='1'>foo</table>"
+      when "tr"
+        outputs << "<table><tbody><tr title='1'>foo</tr></tbody></table>"
+      when "th", "td"
+        outputs << "<table><tbody><tr><#{tag_name} title='1'>foo</#{tag_name}></tr></tbody></table>"
+      when "colgroup", "tbody", "tfoot", "thead"
+        outputs << "<table><#{tag_name} title='1'>foo</#{tag_name}></table>"
+      when "br"
+        outputs << "<br title='1'>foo<br>"
+      end
+
+      # common
+      if outputs.length < 3
+        if HTML5::SafeList::VOID_ELEMENTS.include?(tag_name) || tag_name == "wbr"
+          outputs << "<#{tag_name} title='1'>foo"
+        end
+        if !HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
+          outputs << naive_output
+        end
+      end
+
+      check_sanitization(input, *outputs)
     end
   end
 
@@ -88,13 +143,13 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_#{attribute_name}_attribute" do
       input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
       if %w[checked compact disabled ismap multiple nohref noshade nowrap readonly selected].include?(attribute_name)
-        output = "<p #{attribute_name}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         htmloutput = "<p #{attribute_name.downcase}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+        html5output = "<p #{attribute_name.downcase}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
       else
-        output = "<p #{attribute_name}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         htmloutput = "<p #{attribute_name.downcase}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+        html5output = nil
       end
-      check_sanitization(input, htmloutput, output)
+      check_sanitization(input, htmloutput, html5output)
     end
   end
 
@@ -114,9 +169,13 @@ class Html5TestSanitizer < Loofah::TestCase
 
   def test_should_allow_empty_data_attributes
     input = "<p data-foo data-bar="">foo <bad>bar</bad> baz</p>"
-    output = "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, output)
+    check_sanitization(
+      input,
+      "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>",
+      "<p data-foo='' data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>",
+      "<p data-bar='' data-foo=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>", # nekohtml
+    )
   end
 
   def test_should_allow_contenteditable
@@ -199,37 +258,43 @@ class Html5TestSanitizer < Loofah::TestCase
 
   HTML5::SafeList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
     next unless HTML5::SafeList::ALLOWED_ELEMENTS.include?(tag_name)
+
+    tag_name_dc = tag_name.downcase
+
     define_method "test_#{tag_name}_should_allow_local_href" do
       input = %(<#{tag_name} xlink:href="#foo"/>)
-      output = "<#{tag_name.downcase} xlink:href='#foo'></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc} xlink:href='#foo'></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name} xlink:href='#foo'></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
 
     define_method "test_#{tag_name}_should_allow_local_href_with_newline" do
       input = %(<#{tag_name} xlink:href="\n#foo"/>)
-      output = "<#{tag_name.downcase} xlink:href='\n#foo'></#{tag_name.downcase}>"
-      xhtmloutput = "<#{tag_name} xlink:href='\n#foo'></#{tag_name}>"
-      check_sanitization(input, output, xhtmloutput, xhtmloutput)
+
+      check_sanitization(
+        input,
+        "<#{tag_name_dc} xlink:href='\n#foo'></#{tag_name_dc}>",
+        "<#{tag_name_dc} xlink:href='&#10;#foo'></#{tag_name_dc}>", # nekohtml
+      )
     end
 
     define_method "test_#{tag_name}_should_forbid_nonlocal_href" do
       input = %(<#{tag_name} xlink:href="http://bad.com/foo"/>)
-      output = "<#{tag_name.downcase}></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc}></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name}></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
 
     define_method "test_#{tag_name}_should_forbid_nonlocal_href_with_newline" do
       input = %(<#{tag_name} xlink:href="\nhttp://bad.com/foo"/>)
-      output = "<#{tag_name.downcase}></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc}></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name}></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
   end
 
   def test_figure_element_is_valid
-    fragment = Loofah.scrub_fragment("<span>hello</span> <figure>asd</figure>", :prune)
+    fragment = Loofah.scrub_html4_fragment("<span>hello</span> <figure>asd</figure>", :prune)
     assert fragment.at_css("figure"), "<figure> tag was scrubbed"
   end
 
@@ -264,7 +329,6 @@ class Html5TestSanitizer < Loofah::TestCase
     JSON::parse(open(filename).read).each do |test|
       it "testdata sanitizer #{test["name"]}" do
         test.delete("name")
-        test.delete("commentary")
         input = test.delete("input")
         outputs = test.keys.sort.map { |k| test[k] }
         check_sanitization(input, *outputs)
@@ -282,233 +346,237 @@ class Html5TestSanitizer < Loofah::TestCase
 
     define_method "test_disallow_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect #{attr_name}='yellow url(http://bad.com/) #fff \"blue\"' />"
-      output = "<rect #{attr_name}='yellow #fff \"blue\"'></rect>"
-      check_sanitization(input, output)
+      check_sanitization(
+        input,
+        "<rect #{attr_name}='yellow #fff \"blue\"'></rect>", # libxml
+        "<rect #{attr_name}='yellow #fff &quot;blue&quot;'></rect>", # libgumbo
+        "<rect #{attr_name}='yellow #fff %22blue%22'></rect>", # nekohtml
+      )
     end
   end
 
   def test_css_list_style
     html = '<ul style="list-style: none"></ul>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/list-style/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization
     html = "<span style=\"letter-spacing:-0.03em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/-0.03em/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization_shorthand_css_properties
     html = "<span style=\"margin-left:-0.05em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/-0.05em/, sane.inner_html
   end
 
   def test_css_high_precision_value_shorthand_css_properties
     html = "<span style=\"margin-left:0.3333333334em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/0.3333333334em/, sane.inner_html
   end
 
   def test_css_rem_value
     html = "<span style=\"margin-top:10rem;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/10rem/, sane.inner_html
   end
 
   def test_css_ch_value
     html = "<div style=\"width:60ch;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/60ch/, sane.inner_html
   end
 
   def test_css_vw_value
     html = "<div style=\"font-size: calc(16px + 1vw);\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/1vw/, sane.inner_html
   end
 
   def test_css_vh_value
     html = "<div style=\"height: 100vh;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/100vh/, sane.inner_html
   end
 
   def test_css_Q_value
     html = "<div style=\"height: 10Q;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/10Q/, sane.inner_html
   end
 
   def test_css_lh_value
     html = "<p style=\"line-height: 2lh;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/2lh/, sane.inner_html
   end
 
   def test_css_vmin_value
     html = "<div style=\"width: 42vmin;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/42vmin/, sane.inner_html
   end
 
   def test_css_vmax_value
     html = "<div style=\"width: 42vmax;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/42vmax/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
 
     html = "<span style=\"width: calc(5%)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_functions_rgb
     html = '<span style="color: rgb(255, 0, 0)">'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/rgb\(255, 0, 0\)/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_list_style_type
     html = "<ol style='list-style-type:lower-greek;'></ol>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/list-style-type:lower-greek/, sane.inner_html
   end
 
   def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
     html = "<span style=\"width:url(data-evil-url)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
 
     html = "<span style=\"width: url(data-evil-url)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
   end
 
   def test_css_max_width
     html = '<div style="max-width: 100%;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/max-width/, sane.inner_html
   end
 
   def test_css_page_break_after
     html = '<div style="page-break-after:always;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-after:always/, sane.inner_html
   end
 
   def test_css_page_break_before
     html = '<div style="page-break-before:always;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-before:always/, sane.inner_html
   end
 
   def test_css_page_break_inside
     html = '<div style="page-break-inside:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-inside:auto/, sane.inner_html
   end
 
   def test_css_align_content
     html = '<div style="align-content:flex-start;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-content:flex-start/, sane.inner_html
   end
 
   def test_css_align_items
     html = '<div style="align-items:stretch;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-items:stretch/, sane.inner_html
   end
 
   def test_css_align_self
     html = '<div style="align-self:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-self:auto/, sane.inner_html
   end
 
   def test_css_flex
     html = '<div style="flex:none;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex:none/, sane.inner_html
   end
 
   def test_css_flex_basis
     html = '<div style="flex-basis:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-basis:auto/, sane.inner_html
   end
 
   def test_css_flex_direction
     html = '<div style="flex-direction:row;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-direction:row/, sane.inner_html
   end
 
   def test_css_flex_flow
     html = '<div style="flex-flow:column wrap;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-flow:column wrap/, sane.inner_html
   end
 
   def test_css_flex_grow
     html = '<div style="flex-grow:4;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-grow:4/, sane.inner_html
   end
 
   def test_css_flex_shrink
     html = '<div style="flex-shrink:3;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-shrink:3/, sane.inner_html
   end
 
   def test_css_flex_wrap
     html = '<div style="flex-wrap:wrap;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-wrap:wrap/, sane.inner_html
   end
 
   def test_css_justify_content
     html = '<div style="justify-content:flex-start;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/justify-content:flex-start/, sane.inner_html
   end
 
   def test_css_order
     html = '<div style="order:5;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/order:5/, sane.inner_html
   end
 
   def test_upper_case_css_property
     html = "<div style=\"COLOR: BLUE; NOTAPROPERTY: RED;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/COLOR:\s*BLUE/i, sane.at_css("div")["style"])
     refute_match(/NOTAPROPERTY/i, sane.at_css("div")["style"])
   end
 
   def test_many_properties_some_allowed
     html = "<div style=\"background: bold notaproperty center alsonotaproperty 10px;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/bold\s+center\s+10px/, sane.at_css("div")["style"])
   end
 
   def test_many_properties_non_allowed
     html = "<div style=\"background: notaproperty alsonotaproperty;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_nil sane.at_css("div")["style"]
   end
 
   def test_svg_properties
     html = "<line style='stroke-width: 10px;'></line>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/stroke-width:\s*10px/, sane.at_css("line")["style"])
   end
 end
