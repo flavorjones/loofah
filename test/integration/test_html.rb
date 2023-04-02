@@ -1,7 +1,7 @@
 require "helper"
 
 class IntegrationTestHtml < Loofah::TestCase
-  ["html4", "html5"].each do |html_version|
+  LOOFAH_HTML_VERSIONS.each do |html_version|
     context "#{html_version} fragment" do
       context "#to_s" do
         it "includes header tags (like style)" do
@@ -12,7 +12,9 @@ class IntegrationTestHtml < Loofah::TestCase
 
           # assumption check is that Nokogiri does the same
           assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).to_s)
-          assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).to_s)
+          if Nokogiri.uses_gumbo?
+            assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).to_s)
+          end
         end
       end
 
@@ -25,7 +27,9 @@ class IntegrationTestHtml < Loofah::TestCase
 
           # assumption check is that Nokogiri does the same
           assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).text)
-          assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
+          if Nokogiri.uses_gumbo?
+            assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
+          end
         end
 
         it "does not include cdata tags (like comments)" do
@@ -36,7 +40,9 @@ class IntegrationTestHtml < Loofah::TestCase
 
           # assumption check is that Nokogiri does the same
           assert_equal(expected, Nokogiri::HTML4::DocumentFragment.parse(html).text)
-          assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
+          if Nokogiri.uses_gumbo?
+            assert_equal(expected, Nokogiri::HTML5::DocumentFragment.parse(html).text)
+          end
         end
       end
 

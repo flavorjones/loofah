@@ -19,8 +19,11 @@ require_relative "loofah/xml/document"
 require_relative "loofah/xml/document_fragment"
 require_relative "loofah/html4/document"
 require_relative "loofah/html4/document_fragment"
-require_relative "loofah/html5/document"
-require_relative "loofah/html5/document_fragment"
+
+if Nokogiri.respond_to?(:uses_gumbo?) && Nokogiri.uses_gumbo?
+  require_relative "loofah/html5/document"
+  require_relative "loofah/html5/document_fragment"
+end
 
 # == Strings and IO Objects as Input
 #
@@ -54,6 +57,10 @@ module Loofah
   HTML = HTML4
 
   class << self
+    def html5_support?
+      Nokogiri.respond_to?(:uses_gumbo?) && Nokogiri.uses_gumbo?
+    end
+
     # Shortcut for Loofah::HTML4::Document.parse(*args, &block)
     #
     # This method accepts the same parameters as Nokogiri::HTML4::Document.parse
@@ -78,28 +85,46 @@ module Loofah
       Loofah::HTML4::DocumentFragment.parse(string_or_io).scrub!(method)
     end
 
-    # Shortcut for Loofah::HTML5::Document.parse(*args, &block)
-    #
-    # This method accepts the same parameters as Nokogiri::HTML5::Document.parse
-    def html5_document(*args, &block)
-      Loofah::HTML5::Document.parse(*args, &block)
-    end
+    if Loofah.html5_support?
+      # Shortcut for Loofah::HTML5::Document.parse(*args, &block)
+      #
+      # This method accepts the same parameters as Nokogiri::HTML5::Document.parse
+      def html5_document(*args, &block)
+        Loofah::HTML5::Document.parse(*args, &block)
+      end
 
-    # Shortcut for Loofah::HTML5::DocumentFragment.parse(*args, &block)
-    #
-    # This method accepts the same parameters as Nokogiri::HTML5::DocumentFragment.parse
-    def html5_fragment(*args, &block)
-      Loofah::HTML5::DocumentFragment.parse(*args, &block)
-    end
+      # Shortcut for Loofah::HTML5::DocumentFragment.parse(*args, &block)
+      #
+      # This method accepts the same parameters as Nokogiri::HTML5::DocumentFragment.parse
+      def html5_fragment(*args, &block)
+        Loofah::HTML5::DocumentFragment.parse(*args, &block)
+      end
 
-    # Shortcut for Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
-    def scrub_html5_document(string_or_io, method)
-      Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
-    end
+      # Shortcut for Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
+      def scrub_html5_document(string_or_io, method)
+        Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
+      end
 
-    # Shortcut for Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
-    def scrub_html5_fragment(string_or_io, method)
-      Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
+      # Shortcut for Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
+      def scrub_html5_fragment(string_or_io, method)
+        Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
+      end
+    else
+      def html5_document(*args, &block)
+        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+      end
+
+      def html5_fragment(*args, &block)
+        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+      end
+
+      def scrub_html5_document(string_or_io, method)
+        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+      end
+
+      def scrub_html5_fragment(string_or_io, method)
+        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+      end
     end
 
     alias_method :document, :html4_document

@@ -184,8 +184,8 @@ module Loofah
         end
 
         def cdata_needs_escaping?(node)
-          # Nokogiri's HTML4 parser on JRuby doesn't flag the child of a `style` or `script` tag as cdata, but it acts that way
-          node.cdata? || (Nokogiri.jruby? && node.text? && (node.parent.name == "style" || node.parent.name == "script"))
+          # Nokogiri's HTML4 parser on JRuby doesn't flag the child of a `style` tag as cdata, but it acts that way
+          node.cdata? || (Nokogiri.jruby? && node.text? && node.parent.name == "style")
         end
 
         def cdata_escape(node)

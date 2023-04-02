@@ -9,6 +9,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
   WHITEWASH_FRAGMENT = "<o:div>no</o:div><div id='no'>foo</div><invalid>bar</invalid><!--[if gts mso9]><div>microsofty stuff</div><![endif]-->"
   WHITEWASH_RESULT = "<div>foo</div>"
   WHITEWASH_RESULT_LIBXML2911 = "<div>no</div>\n<div>foo</div>"
+  WHITEWASH_RESULT_JRUBY = "<o:div>no</o:div><div>foo</div>"
 
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
@@ -70,7 +71,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         mock_doc.verify
       end
-    end
+    end if Loofah.html5_support?
 
     context "#scrub_fragment" do
       it "is a shortcut for parse-and-scrub" do
@@ -109,18 +110,15 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         mock_doc.verify
       end
-    end
+    end if Loofah.html5_support?
   end
 
-  [
-    Loofah::HTML4::Document,
-    Loofah::HTML5::Document,
-  ].each do |klass|
+  LOOFAH_HTML_DOCUMENT_CLASSES.each do |klass|
     context klass do
       let(:klass) { klass }
 
       def html5?
-        klass == Loofah::HTML5::Document
+        klass.to_s == "Loofah::HTML5::Document"
       end
 
       context "#scrub!" do
@@ -161,6 +159,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
             ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
               WHITEWASH_RESULT
+            elsif Nokogiri.jruby?
+              WHITEWASH_RESULT_JRUBY
             else
               WHITEWASH_RESULT_LIBXML2911
             end
@@ -226,7 +226,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           refute_nil doc.xpath("/html/head").first
           refute_nil doc.xpath("/html/body").first
 
-          if html5?
+          if html5? || Nokogiri.jruby?
             refute_match %r/<!DOCTYPE/, string
           else
             assert_match %r/<!DOCTYPE/, string
@@ -246,7 +246,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
           refute_nil doc.xpath("/html/head").first
           refute_nil doc.xpath("/html/body").first
 
-          if html5?
+          if html5? || Nokogiri.jruby?
             refute_match %r/<!DOCTYPE/, string
           else
             assert_match %r/<!DOCTYPE/, string
@@ -308,15 +308,12 @@ class IntegrationTestScrubbers < Loofah::TestCase
     end
   end
 
-  [
-    Loofah::HTML4::DocumentFragment,
-    Loofah::HTML5::DocumentFragment,
-  ].each do |klass|
+  LOOFAH_HTML_DOCUMENT_FRAGMENT_CLASSES.each do |klass|
     context klass do
       let(:klass) { klass }
 
       def html5?
-        klass == Loofah::HTML5::DocumentFragment
+        klass.to_s == "Loofah::HTML5::DocumentFragment"
       end
 
       context "#scrub!" do
@@ -357,6 +354,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
             ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
               WHITEWASH_RESULT
+            elsif Nokogiri.jruby?
+              WHITEWASH_RESULT_JRUBY
             else
               WHITEWASH_RESULT_LIBXML2911
             end

@@ -84,27 +84,31 @@
     "name": "double_open_angle_brackets",
     "input": "<img src=http://ha.ckers.org/scriptlet.html <",
     "libxml": "<img src='http://ha.ckers.org/scriptlet.html'>",
-    "libgumbo": "" /* it is indeed the empty result, see next test for a better test */
+    "libgumbo": "", /* it is indeed the empty result, see next test for a better test */
+    "jruby": "<img src='http://ha.ckers.org/scriptlet.html'>&lt;"
   },
 
   {
     "name": "double_open_angle_brackets v2",
     "input": "<div><img src=http://ha.ckers.org/scriptlet.html < </div>",
-    "libxml": "<div><img src='http://ha.ckers.org/scriptlet.html'></div>"
+    "libxml": "<div><img src='http://ha.ckers.org/scriptlet.html'></div>",
+    "jruby": "<div><img src='http://ha.ckers.org/scriptlet.html'>&lt; </div>"
   },
 
   {
     "name": "double_open_angle_brackets_2",
     "input": "<script src=http://ha.ckers.org/scriptlet.html <",
     "libxml": "&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;",
-    "libgumbo": "" /* it is indeed empty */
+    "libgumbo": "", /* it is indeed empty */
+    "jruby": "&lt;script src='http://ha.ckers.org/scriptlet.html'&gt;&lt;&lt;/script&gt;"
   },
 
   {
     "name": "double_open_angle_brackets_2 v2",
     "input": "<div><script src=http://ha.ckers.org/scriptlet.html < </div>",
     "libxml": "<div>&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;</div>",
-    "libgumbo": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/script&gt;</div>"
+    "libgumbo": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/script&gt;</div>",
+    "jruby": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html'&gt;&lt; &lt;/div&gt;&lt;/script&gt;</div>"
   },
 
   {
@@ -134,13 +138,15 @@
   {
     "name": "link_stylesheets",
     "input": "<link rel=\"stylesheet\" href=\"javascript:alert('XSS');\" />",
-    "libxml": "&lt;link rel=\"stylesheet\" href=\"javascript:alert('XSS');\"&gt;"
+    "libxml": "&lt;link rel=\"stylesheet\" href=\"javascript:alert('XSS');\"&gt;",
+    "jruby": "&lt;link href='javascript:alert('XSS');' rel='stylesheet'&gt;"
   },
 
   {
     "name": "link_stylesheets_2",
     "input": "<link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\" />",
-    "libxml": "&lt;link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\"&gt;"
+    "libxml": "&lt;link rel=\"stylesheet\" href=\"http://ha.ckers.org/xss.css\"&gt;",
+    "jruby": "&lt;link href='http://ha.ckers.org/xss.css' rel='stylesheet'&gt;"
   },
 
   {
@@ -160,7 +166,8 @@
     "name": "non_alpha_non_digit",
     "input": "<script/XSS src=\"http://ha.ckers.org/xss.js\"></script>",
     "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
-    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;"
+    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "jruby": "&lt;script&gt;&lt;/script&gt;"
   },
 
   {
@@ -361,7 +368,8 @@
     "name": "should_sanitize_invalid_script_tag",
     "input": "<script/XSS SRC=\"http://ha.ckers.org/xss.js\"></script>",
     "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
-    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;"
+    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "jruby": "&lt;script&gt;&lt;/script&gt;"
   },
 
   {
@@ -374,21 +382,24 @@
     "name": "should_sanitize_script_tag_with_multiple_open_brackets_2a",
     "input": "<iframe src=http://ha.ckers.org/scriptlet.html\n<",
     "libxml": "&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;",
-    "libgumbo": "" /* it is indeed empty, see next test */
+    "libgumbo": "", /* it is indeed empty, see next test */
+    "jruby": "&lt;iframe src='http://ha.ckers.org/scriptlet.html'&gt;&amp;lt;&lt;/iframe&gt;"
   },
 
   {
     "name": "should_sanitize_script_tag_with_multiple_open_brackets_2b",
     "input": "<div><iframe src=http://ha.ckers.org/scriptlet.html\n< </div>",
     "libxml": "<div>&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;</div>",
-    "libgumbo": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/iframe&gt;</div>"
+    "libgumbo": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/iframe&gt;</div>",
+    "jruby": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html'&gt;&amp;lt; &amp;lt;/div&amp;gt;&lt;/iframe&gt;</div>"
   },
 
   {
     "name": "should_sanitize_tag_broken_up_by_null",
     "input": "<scr\u0000ipt>alert(\"XSS\")</scr\u0000ipt>",
     "libxml": "&lt;scr&gt;&lt;/scr&gt;",
-    "libgumbo": "&lt;scr�ipt&gt;alert('XSS')&lt;/scr�ipt&gt;"
+    "libgumbo": "&lt;scr�ipt&gt;alert('XSS')&lt;/scr�ipt&gt;",
+    "jruby": "&lt;scr \u0000ipt=''&gt;alert('XSS')&lt;/scr&gt;"
   },
 
   {
@@ -438,7 +449,8 @@
     "name": "quotes_in_attributes",
     "input": "<img src='foo' title='\"foo\" bar' />",
     "libxml": "<img src='foo' title='\"foo\" bar'>",
-    "libgumbo": "<img src='foo' title='&quot;foo&quot; bar'>"
+    "libgumbo": "<img src='foo' title='&quot;foo&quot; bar'>",
+    "jruby": "<img src='foo' title='%22foo%22 bar'>"
   },
 
   {
@@ -456,7 +468,8 @@
   {
     "name": "uri_ref_with_space_in svg_attribute",
     "input": "<rect fill='url(\n#foo)' />",
-    "libxml": "<rect fill='url(\n#foo)'></rect>"
+    "libxml": "<rect fill='url(\n#foo)'></rect>",
+    "jruby": "<rect fill='url(&#10;#foo)'></rect>"
   },
 
   {
@@ -469,7 +482,8 @@
     "name": "allow_html5_image_tag",
     "input": "<image src='foo' />",
     "libxml": "&lt;image src=\"foo\"&gt;&lt;/image&gt;",
-    "libgumbo": "<img src='foo'>"
+    "libgumbo": "<img src='foo'>",
+    "jruby": "&lt;image src='foo'&gt;"
   },
 
   {

@@ -27,13 +27,15 @@ class Html5TestSanitizer < Loofah::TestCase
 
     assert_includes(possible_output, sane, caller(1..1).first)
 
-    # now do libgumbo
-    sane = sanitize_html5(input).gsub('"', "'")
-    possible_output = possible_answers.compact.map do |possible_answer|
-      possible_answer.gsub('"', "'")
-    end
+    if Loofah.html5_support?
+      # now do libgumbo
+      sane = sanitize_html5(input).gsub('"', "'")
+      possible_output = possible_answers.compact.map do |possible_answer|
+        possible_answer.gsub('"', "'")
+      end
 
-    assert_includes(possible_output, sane, caller(1..1).first)
+      assert_includes(possible_output, sane, caller(1..1).first)
+    end
   end
 
   def assert_completes_in_reasonable_time(&block)
@@ -89,8 +91,24 @@ class Html5TestSanitizer < Loofah::TestCase
         outputs << "<table>\n<col title='1'>foo</table>" # libxml
       end
 
+      # nekohtml
+      case tag_name
+      when "col"
+        outputs << "<table><colgroup><col title='1'>foo</colgroup></table>"
+      when "table"
+        outputs << "<table title='1'>foo</table>"
+      when "tr"
+        outputs << "<table><tbody><tr title='1'>foo</tr></tbody></table>"
+      when "th", "td"
+        outputs << "<table><tbody><tr><#{tag_name} title='1'>foo</#{tag_name}></tr></tbody></table>"
+      when "colgroup", "tbody", "tfoot", "thead"
+        outputs << "<table><#{tag_name} title='1'>foo</#{tag_name}></table>"
+      when "br"
+        outputs << "<br title='1'>foo<br>"
+      end
+
       # common
-      if outputs.length < 2
+      if outputs.length < 3
         if HTML5::SafeList::VOID_ELEMENTS.include?(tag_name) || tag_name == "wbr"
           outputs << "<#{tag_name} title='1'>foo"
         end
@@ -151,10 +169,13 @@ class Html5TestSanitizer < Loofah::TestCase
 
   def test_should_allow_empty_data_attributes
     input = "<p data-foo data-bar="">foo <bad>bar</bad> baz</p>"
-    output = "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
-    html5output = "<p data-foo='' data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, output, html5output)
+    check_sanitization(
+      input,
+      "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>",
+      "<p data-foo='' data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>",
+      "<p data-bar='' data-foo=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>", # nekohtml
+    )
   end
 
   def test_should_allow_contenteditable
@@ -237,30 +258,36 @@ class Html5TestSanitizer < Loofah::TestCase
 
   HTML5::SafeList::SVG_ALLOW_LOCAL_HREF.each do |tag_name|
     next unless HTML5::SafeList::ALLOWED_ELEMENTS.include?(tag_name)
+
+    tag_name_dc = tag_name.downcase
+
     define_method "test_#{tag_name}_should_allow_local_href" do
       input = %(<#{tag_name} xlink:href="#foo"/>)
-      output = "<#{tag_name.downcase} xlink:href='#foo'></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc} xlink:href='#foo'></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name} xlink:href='#foo'></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
 
     define_method "test_#{tag_name}_should_allow_local_href_with_newline" do
       input = %(<#{tag_name} xlink:href="\n#foo"/>)
-      output = "<#{tag_name.downcase} xlink:href='\n#foo'></#{tag_name.downcase}>"
-      xhtmloutput = "<#{tag_name} xlink:href='\n#foo'></#{tag_name}>"
-      check_sanitization(input, output, xhtmloutput, xhtmloutput)
+
+      check_sanitization(
+        input,
+        "<#{tag_name_dc} xlink:href='\n#foo'></#{tag_name_dc}>",
+        "<#{tag_name_dc} xlink:href='&#10;#foo'></#{tag_name_dc}>", # nekohtml
+      )
     end
 
     define_method "test_#{tag_name}_should_forbid_nonlocal_href" do
       input = %(<#{tag_name} xlink:href="http://bad.com/foo"/>)
-      output = "<#{tag_name.downcase}></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc}></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name}></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
 
     define_method "test_#{tag_name}_should_forbid_nonlocal_href_with_newline" do
       input = %(<#{tag_name} xlink:href="\nhttp://bad.com/foo"/>)
-      output = "<#{tag_name.downcase}></#{tag_name.downcase}>"
+      output = "<#{tag_name_dc}></#{tag_name_dc}>"
       xhtmloutput = "<#{tag_name}></#{tag_name}>"
       check_sanitization(input, output, xhtmloutput, xhtmloutput)
     end
@@ -323,6 +350,7 @@ class Html5TestSanitizer < Loofah::TestCase
         input,
         "<rect #{attr_name}='yellow #fff \"blue\"'></rect>", # libxml
         "<rect #{attr_name}='yellow #fff &quot;blue&quot;'></rect>", # libgumbo
+        "<rect #{attr_name}='yellow #fff %22blue%22'></rect>", # nekohtml
       )
     end
   end

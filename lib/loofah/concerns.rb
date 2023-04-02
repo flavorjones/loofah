@@ -172,7 +172,7 @@ module Loofah
       end
 
       def document_klass
-        @document_klass ||= if (self == Loofah::HTML5::DocumentFragment)
+        @document_klass ||= if (Loofah.html5_support? && self == Loofah::HTML5::DocumentFragment)
           Loofah::HTML5::Document
         elsif (self == Loofah::HTML4::DocumentFragment)
           Loofah::HTML4::Document

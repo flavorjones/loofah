@@ -1,7 +1,7 @@
 require "helper"
 
 class IntegrationTestAdHoc < Loofah::TestCase
-  ["html4", "html5"].each do |html_version|
+  LOOFAH_HTML_VERSIONS.each do |html_version|
     describe "ad hoc #{html_version}" do
       let(:html_version) { html_version }
 
@@ -29,7 +29,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
         end
 
         context "document" do
-          if html_version == "html5"
+          if html_version == :html5
             it "returns a document with an empty head and body" do
               assert_equal(
                 "<html><head></head><body></body></html>",
@@ -100,34 +100,44 @@ class IntegrationTestAdHoc < Loofah::TestCase
           assert_equal "text<p>fragment</p>text", scrub_fragment("text<p>fragment</p>text", :escape).to_xml
         end
 
+        def test_whitewash_on_document
+          html = "<html><body>safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
+          whitewashed = scrub_document(html, :whitewash).xpath("/html/body")
+          expected = "<body>safe <b>description</b></body>"
+
+          assert_equal(expected, whitewashed.to_s.gsub("\n", ""))
+        end
+
         def test_whitewash_on_fragment
           html = "safe<frameset rows=\"*\"><frame src=\"http://example.com\"></frameset> <b>description</b>"
-          whitewashed = scrub_document(html, :whitewash).xpath("/html/body")
-          expected = if html_version == "html4"
-            "<body><p>safe</p> <b>description</b></body>"
-          else
-            "<body>safe <b>description</b></body>"
-          end
+          whitewashed = scrub_fragment(html, :whitewash)
+          expected = "safe <b>description</b>"
 
           assert_equal(expected, whitewashed.to_s.gsub("\n", ""))
         end
 
         def test_fragment_whitewash_on_microsofty_markup
           whitewashed = fragment(MSWORD_HTML).scrub!(:whitewash)
-          if Nokogiri.uses_libxml?("<2.9.11") || html_version == "html5"
-            assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.to_s.strip
+          expected = if Nokogiri.uses_libxml?("<2.9.11") || html_version == :html5
+            "<p>Foo <b>BOLD</b></p>"
+          elsif Nokogiri.jruby?
+            "<p>Foo <b>BOLD<o:p></o:p></b></p>"
           else
-            assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.to_s.strip
+            "<p>Foo <b>BOLD<p></p></b></p>"
           end
+          assert_equal(expected, whitewashed.to_s.strip)
         end
 
         def test_document_whitewash_on_microsofty_markup
           whitewashed = document(MSWORD_HTML).scrub!(:whitewash)
-          if Nokogiri.uses_libxml?("<2.9.11") || html_version == "html5"
-            assert_equal "<p>Foo <b>BOLD</b></p>", whitewashed.xpath("/html/body/*").to_s
+          expected = if Nokogiri.uses_libxml?("<2.9.11") || html_version == :html5
+            "<p>Foo <b>BOLD</b></p>"
+          elsif Nokogiri.jruby?
+            "<p>Foo <b>BOLD<o:p></o:p></b></p>"
           else
-            assert_equal "<p>Foo <b>BOLD<p></p></b></p>", whitewashed.xpath("/html/body/*").to_s
+            "<p>Foo <b>BOLD<p></p></b></p>"
           end
+          assert_equal(expected, whitewashed.xpath("/html/body/*").to_s)
         end
 
         def test_return_empty_string_when_nothing_left
@@ -401,7 +411,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
           it "handles < character in an attribute" do
             input = %{<div alt="this < that">wave</div>}
-            expected = if html_version == "html4"
+            expected = if html_version == :html4
               %{<div alt="this &lt; that">wave</div>}
             else
               %{<div alt="this < that">wave</div>}

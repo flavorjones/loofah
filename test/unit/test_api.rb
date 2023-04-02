@@ -64,28 +64,37 @@ class UnitTestApi < Loofah::TestCase
     end
 
     describe "html5 methods" do
-      it "creates html5 documents" do
-        doc = Loofah.html5_document(html)
-        assert_kind_of(Loofah::HTML5::Document, doc)
-        assert_equal html, doc.xpath("/html/body").inner_html
-      end
+      if Loofah.html5_support?
+        it "creates html5 documents" do
+          doc = Loofah.html5_document(html)
+          assert_kind_of(Loofah::HTML5::Document, doc)
+          assert_equal html, doc.xpath("/html/body").inner_html
+        end
 
-      it "scrubs html5 documents" do
-        doc = Loofah.scrub_html5_document(html, :strip)
-        assert_kind_of(Loofah::HTML5::Document, doc)
-        assert_equal html, doc.xpath("/html/body").inner_html
-      end
+        it "scrubs html5 documents" do
+          doc = Loofah.scrub_html5_document(html, :strip)
+          assert_kind_of(Loofah::HTML5::Document, doc)
+          assert_equal html, doc.xpath("/html/body").inner_html
+        end
 
-      it "creates html5 fragments" do
-        doc = Loofah.html5_fragment(html)
-        assert_kind_of(Loofah::HTML5::DocumentFragment, doc)
-        assert_equal html, doc.inner_html
-      end
+        it "creates html5 fragments" do
+          doc = Loofah.html5_fragment(html)
+          assert_kind_of(Loofah::HTML5::DocumentFragment, doc)
+          assert_equal html, doc.inner_html
+        end
 
-      it "scrubs html5 fragments" do
-        doc = Loofah.scrub_html5_fragment(html, :strip)
-        assert_kind_of(Loofah::HTML5::DocumentFragment, doc)
-        assert_equal html, doc.inner_html
+        it "scrubs html5 fragments" do
+          doc = Loofah.scrub_html5_fragment(html, :strip)
+          assert_kind_of(Loofah::HTML5::DocumentFragment, doc)
+          assert_equal html, doc.inner_html
+        end
+      else
+        it "raises an error" do
+          assert_raises(NotImplementedError) { Loofah.html5_document(html) }
+          assert_raises(NotImplementedError) { Loofah.scrub_html5_document(html, :strip) }
+          assert_raises(NotImplementedError) { Loofah.html5_fragment(html) }
+          assert_raises(NotImplementedError) { Loofah.scrub_html5_fragment(html, :strip) }
+        end
       end
     end
 

@@ -34,12 +34,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates properly" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
 
       it "operates properly" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "returning STOP" do
@@ -63,12 +63,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as top-down" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
 
       it "operates as top-down" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "returning neither CONTINUE nor STOP" do
@@ -91,12 +91,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "acts as if CONTINUE was returned" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
 
       it "acts as if CONTINUE was returned" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "not specifying direction" do
@@ -120,12 +120,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as top-down" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
 
       it "operates as top-down" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "specifying top-down direction" do
@@ -149,12 +149,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as top-down" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
 
       it "operates as top-down" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "specifying bottom-up direction" do
@@ -177,12 +177,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as bottom-up" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
 
       it "operates as bottom-up" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
     end
 
     context "invalid direction" do
@@ -213,12 +213,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "works anyway, shrug" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
 
       it "works anyway, shrug" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
-      end
+      end if Loofah.html5_support?
     end
   end
 
@@ -258,12 +258,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as top-down" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
-      end
+      end if Loofah.html5_support?
 
       it "operates as top-down" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
-      end
+      end if Loofah.html5_support?
     end
 
     context "when direction is specified as top_down" do
@@ -285,12 +285,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as top-down" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
-      end
+      end if Loofah.html5_support?
 
       it "operates as top-down" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
-      end
+      end if Loofah.html5_support?
     end
 
     context "when direction is specified as bottom_up" do
@@ -312,12 +312,12 @@ class UnitTestScrubber < Loofah::TestCase
       it "operates as bottom-up" do
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @scrubber.count
-      end
+      end if Loofah.html5_support?
 
       it "operates as bottom-up" do
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @scrubber.count
-      end
+      end if Loofah.html5_support?
     end
   end
 
@@ -340,11 +340,11 @@ class UnitTestScrubber < Loofah::TestCase
 
       assert_raises(Loofah::ScrubberNotFound) {
         Loofah.scrub_html5_fragment(FRAGMENT, @scrubber)
-      }
+      } if Loofah.html5_support?
 
       assert_raises(Loofah::ScrubberNotFound) {
         Loofah.scrub_html5_document(DOCUMENT, @scrubber)
-      }
+      } if Loofah.html5_support?
     end
   end
 end
