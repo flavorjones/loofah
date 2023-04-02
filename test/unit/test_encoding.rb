@@ -12,6 +12,13 @@ class UnitTestEncoding < Loofah::TestCase
       end
     end
 
+    describe "#scrub_html5_fragment" do
+      it "sets the encoding for html" do
+        escaped = Loofah.scrub_html5_fragment(UTF8_STRING, :escape).to_s
+        assert_equal UTF8_STRING.encoding, escaped.encoding
+      end
+    end
+
     describe "#scrub_xml_fragment" do
       it "sets the encoding for xml" do
         escaped = Loofah.scrub_xml_fragment(UTF8_STRING, :escape).to_s

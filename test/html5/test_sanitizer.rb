@@ -9,24 +9,31 @@ require "helper"
 class Html5TestSanitizer < Loofah::TestCase
   include Loofah
 
-  def sanitize_xhtml(stream)
-    Loofah.html4_fragment(stream).scrub!(:escape).to_xhtml
-  end
-
-  def sanitize_html(stream)
+  def sanitize_html4(stream)
     Loofah.html4_fragment(stream).scrub!(:escape).to_html
   end
 
-  def check_sanitization(input, *possible_answers)
-    # shotgun approach - if any of the possible answers match, we win
+  def sanitize_html5(stream)
+    Loofah.html5_fragment(stream).scrub!(:escape).to_html
+  end
 
+  # shotgun approach - if any of the possible answers match, we win
+  def check_sanitization(input, *possible_answers)
     # libxml uses double-quotes, so let's swappo-boppo our quotes before comparing.
-    sane = sanitize_html(input).gsub('"', "'")
+    sane = sanitize_html4(input).gsub('"', "'")
     possible_output = possible_answers.compact.map do |possible_answer|
       possible_answer.gsub('"', "'")
     end
 
-    assert_includes(possible_output, sane)
+    assert_includes(possible_output, sane, caller(1..1).first)
+
+    # now do libgumbo
+    sane = sanitize_html5(input).gsub('"', "'")
+    possible_output = possible_answers.compact.map do |possible_answer|
+      possible_answer.gsub('"', "'")
+    end
+
+    assert_includes(possible_output, sane, caller(1..1).first)
   end
 
   def assert_completes_in_reasonable_time(&block)
@@ -35,34 +42,64 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_in_delta t0, Time.now, 0.1 # arbitrary seconds
   end
 
+  ALLOWED_ELEMENTS_PARENT = {
+    "caption" => "table",
+    "col" => "table",
+    "colgroup" => "table",
+    "li" => "ul",
+    "tbody" => "table",
+    "td" => "table",
+    "tfoot" => "table",
+    "th" => "table",
+    "thead" => "table",
+    "tr" => "table",
+  }
   (HTML5::SafeList::ALLOWED_ELEMENTS).each do |tag_name|
     define_method "test_should_allow_#{tag_name}_tag" do
-      input = "<#{tag_name} title='1'>foo <bad>bar</bad> baz</#{tag_name}>"
-      htmloutput = "<#{tag_name.downcase} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name.downcase}>"
-      xhtmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</#{tag_name}>"
-      rexmloutput = xhtmloutput
-
-      if %w[caption colgroup optgroup option tbody td tfoot th thead tr].include?(tag_name)
-        htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-      elsif tag_name == "col"
-        htmloutput = "<col title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        rexmloutput = "<col title='1' />"
-      elsif tag_name == "table"
-        htmloutput = "foo &lt;bad&gt;bar&lt;/bad&gt;baz<table title='1'> </table>"
-        xhtmloutput = htmloutput
-      elsif tag_name == "image"
-        htmloutput = "<img title='1'/>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        rexmloutput = "<image title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</image>"
-      elsif HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
-        htmloutput = "<#{tag_name} title='1'>foo &lt;bad&gt;bar&lt;/bad&gt; baz"
-        xhtmloutput = htmloutput
-        htmloutput += "<br/>" if tag_name == "br"
-        rexmloutput = "<#{tag_name} title='1' />"
+      parent = ALLOWED_ELEMENTS_PARENT[tag_name]
+      if parent
+        input = "<#{parent}><#{tag_name} title='1'>foo</#{tag_name}></#{parent}>"
+        naive_output = "<#{parent}><#{tag_name.downcase} title='1'>foo</#{tag_name.downcase}></#{parent}>"
+      else
+        input = "<#{tag_name} title='1'>foo</#{tag_name}>"
+        naive_output = "<#{tag_name.downcase} title='1'>foo</#{tag_name.downcase}>"
       end
-      check_sanitization(input, htmloutput, xhtmloutput, rexmloutput)
+
+      outputs = []
+
+      # libgumbo
+      case tag_name
+      when "col"
+        outputs << "foo<table><colgroup><col title='1'></colgroup></table>" # libgumbo
+      when "table"
+        outputs << "foo<table title='1'></table>" # libgumbo
+      when "tr"
+        outputs << "foo<table><tbody><tr title='1'></tr></tbody></table>" # libgumbo
+      when "th", "td"
+        outputs << "<table><tbody><tr><#{tag_name} title='1'>foo</#{tag_name}></tr></tbody></table>" # libgumbo
+      when "colgroup", "tbody", "tfoot", "thead"
+        outputs << "foo<table><#{tag_name} title='1'></#{tag_name}></table>" # libgumbo
+      when "br"
+        outputs << "<br title='1'>foo<br>"
+      end
+
+      # libxml
+      case tag_name
+      when "col"
+        outputs << "<table>\n<col title='1'>foo</table>" # libxml
+      end
+
+      # common
+      if outputs.length < 2
+        if HTML5::SafeList::VOID_ELEMENTS.include?(tag_name) || tag_name == "wbr"
+          outputs << "<#{tag_name} title='1'>foo"
+        end
+        if !HTML5::SafeList::VOID_ELEMENTS.include?(tag_name)
+          outputs << naive_output
+        end
+      end
+
+      check_sanitization(input, *outputs)
     end
   end
 
@@ -88,13 +125,13 @@ class Html5TestSanitizer < Loofah::TestCase
     define_method "test_should_allow_#{attribute_name}_attribute" do
       input = "<p #{attribute_name}='foo'>foo <bad>bar</bad> baz</p>"
       if %w[checked compact disabled ismap multiple nohref noshade nowrap readonly selected].include?(attribute_name)
-        output = "<p #{attribute_name}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         htmloutput = "<p #{attribute_name.downcase}>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+        html5output = "<p #{attribute_name.downcase}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
       else
-        output = "<p #{attribute_name}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
         htmloutput = "<p #{attribute_name.downcase}='foo'>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+        html5output = nil
       end
-      check_sanitization(input, htmloutput, output)
+      check_sanitization(input, htmloutput, html5output)
     end
   end
 
@@ -115,8 +152,9 @@ class Html5TestSanitizer < Loofah::TestCase
   def test_should_allow_empty_data_attributes
     input = "<p data-foo data-bar="">foo <bad>bar</bad> baz</p>"
     output = "<p data-foo data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
+    html5output = "<p data-foo='' data-bar=''>foo &lt;bad&gt;bar&lt;/bad&gt; baz</p>"
 
-    check_sanitization(input, output)
+    check_sanitization(input, output, html5output)
   end
 
   def test_should_allow_contenteditable
@@ -281,8 +319,11 @@ class Html5TestSanitizer < Loofah::TestCase
 
     define_method "test_disallow_absolute_uri_refs_in_svg_attribute_#{attr_name}" do
       input = "<rect #{attr_name}='yellow url(http://bad.com/) #fff \"blue\"' />"
-      output = "<rect #{attr_name}='yellow #fff \"blue\"'></rect>"
-      check_sanitization(input, output)
+      check_sanitization(
+        input,
+        "<rect #{attr_name}='yellow #fff \"blue\"'></rect>", # libxml
+        "<rect #{attr_name}='yellow #fff &quot;blue&quot;'></rect>", # libgumbo
+      )
     end
   end
 

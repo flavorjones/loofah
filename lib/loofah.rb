@@ -19,6 +19,8 @@ require_relative "loofah/xml/document"
 require_relative "loofah/xml/document_fragment"
 require_relative "loofah/html4/document"
 require_relative "loofah/html4/document_fragment"
+require_relative "loofah/html5/document"
+require_relative "loofah/html5/document_fragment"
 
 # == Strings and IO Objects as Input
 #
@@ -26,12 +28,19 @@ require_relative "loofah/html4/document_fragment"
 #
 # - Loofah.html4_document
 # - Loofah.html4_fragment
-# - Loofah.xml_document
-# - Loofah.xml_fragment
 # - Loofah.scrub_html4_document
 # - Loofah.scrub_html4_fragment
+#
+# - Loofah.html5_document
+# - Loofah.html5_fragment
+# - Loofah.scrub_html5_document
+# - Loofah.scrub_html5_fragment
+#
+# - Loofah.xml_document
+# - Loofah.xml_fragment
 # - Loofah.scrub_xml_document
 # - Loofah.scrub_xml_fragment
+#
 # - Loofah.document
 # - Loofah.fragment
 # - Loofah.scrub_document
@@ -67,6 +76,30 @@ module Loofah
     # Shortcut for Loofah::HTML4::DocumentFragment.parse(string_or_io).scrub!(method)
     def scrub_html4_fragment(string_or_io, method)
       Loofah::HTML4::DocumentFragment.parse(string_or_io).scrub!(method)
+    end
+
+    # Shortcut for Loofah::HTML5::Document.parse(*args, &block)
+    #
+    # This method accepts the same parameters as Nokogiri::HTML5::Document.parse
+    def html5_document(*args, &block)
+      Loofah::HTML5::Document.parse(*args, &block)
+    end
+
+    # Shortcut for Loofah::HTML5::DocumentFragment.parse(*args, &block)
+    #
+    # This method accepts the same parameters as Nokogiri::HTML5::DocumentFragment.parse
+    def html5_fragment(*args, &block)
+      Loofah::HTML5::DocumentFragment.parse(*args, &block)
+    end
+
+    # Shortcut for Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
+    def scrub_html5_document(string_or_io, method)
+      Loofah::HTML5::Document.parse(string_or_io).scrub!(method)
+    end
+
+    # Shortcut for Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
+    def scrub_html5_fragment(string_or_io, method)
+      Loofah::HTML5::DocumentFragment.parse(string_or_io).scrub!(method)
     end
 
     alias_method :document, :html4_document
