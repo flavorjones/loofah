@@ -2,13 +2,34 @@
 
 ## next / unreleased
 
-### Notable Change: `Loofah::HTML4` module and namespace
+### HTML5 Support
 
-`Loofah::HTML` has been renamed to `Loofah::HTML4`, and `Loofah::HTML` is aliased to preserve backwards-compatibility. `Nokogiri::HTML` and `Nokogiri::HTML4` parse methods still use libxml2's (or NekoHTML's) HTML4 parser in the v1.12 release series.
+Classes `Loofah::HTML5::Document` and `Loofah::HTML5::DocumentFragment` are introduced, along with helper methods:
+
+- `Loofah.html5_document`
+- `Loofah.html5_fragment`
+- `Loofah.scrub_html5_document`
+- `Loofah.scrub_html5_fragment`
+
+These classes and methods use Nokogiri's HTML5 parser to ensure modern web standards are used.
+
+⚠ HTML5 functionality is only available with Nokogiri v1.14.0 and higher.
+
+⚠ HTML5 functionality is not available for JRuby. Please see [this upstream Nokogiri issue](https://github.com/sparklemotion/nokogiri/issues/2227) if you're interested in helping implement and support HTML5 support.
+
+
+### `Loofah::HTML4` module and namespace
+
+`Loofah::HTML` has been renamed to `Loofah::HTML4`, and `Loofah::HTML` is aliased to preserve backwards-compatibility. `Nokogiri::HTML` and `Nokogiri::HTML4` parse methods still use libxml2's (or NekoHTML's) HTML4 parser.
 
 Take special note that if you rely on the class name of an object in your code, objects will now report a class of `Loofah::HTML4::Foo` where they previously reported `Loofah::HTML::Foo`. Instead of relying on the string returned by `Object#class`, prefer `Class#===` or `Object#is_a?` or `Object#instance_of?`.
 
-Future releases of Nokogiri may deprecate `HTML` methods or otherwise change this behavior, so please start using `HTML4` in place of `HTML`.
+Future releases of Nokogiri may deprecate `HTML` classes and methods or otherwise change this behavior, so please start using `HTML4` in place of `HTML`.
+
+
+### Official support for JRuby
+
+This version introduces official support for JRuby. Previously, the test suite had never been green due to differences in behavior in the underlying HTML parser used by Nokogiri. We've updated the test suite to accommodate those differences, and have added JRuby to the CI suite.
 
 
 ## 2.20.0 / 2023-04-01

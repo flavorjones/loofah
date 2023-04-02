@@ -95,15 +95,16 @@ Generally speaking, unless you expect to have a DOCTYPE and a single root node, 
 
 ### Side Note: HTML4 vs HTML5
 
-Currently, Loofah's methods `Loofah.document` and `Loofah.fragment` are aliases to `.html4_document` and `.html4_fragment`, which use Nokogiri's HTML4 parser. Similarly, `Loofah::HTML::Document` and `Loofah::HTML::DocumentFragment` are aliased to `Loofah::HTML4::Document` and `Loofah::HTML4::DocumentFragment`.
+⚠ _HTML5 functionality is not available on JRuby, or with versions of Nokogiri `< 1.14.0`._
 
-**Please note** that in a future version of Loofah, these methods and classes will switch to using Nokogiri's HTML5 parser and classes on platforms that support it [1].
+Currently, Loofah's methods `Loofah.document` and `Loofah.fragment` are aliases to `.html4_document` and `.html4_fragment`, which use Nokogiri's HTML4 parser. (Similarly, `Loofah::HTML::Document` and `Loofah::HTML::DocumentFragment` are aliased to `Loofah::HTML4::Document` and `Loofah::HTML4::DocumentFragment`.)
 
-If you are sure that you need to use the HTML4 parser, you should explicitly call `.html4_document` or `.html4_fragment` to avoid breakage in a future version.
+**Please note** that in a future version of Loofah, these methods and classes may switch to using Nokogiri's HTML5 parser and classes on platforms that support it [1].
 
-**We strongly recommend that you explicitly use `.html5_document` or `.html5_fragment`** unless you know of a compelling reason not to.
+**We strongly recommend that you explicitly use `.html5_document` or `.html5_fragment`** unless you know of a compelling reason not to. If you are sure that you need to use the HTML4 parser, you should explicitly call `.html4_document` or `.html4_fragment` to avoid breakage in a future version.
 
   [1]: [[feature request] HTML5 parser for JRuby implementation · Issue #2227 · sparklemotion/nokogiri](https://github.com/sparklemotion/nokogiri/issues/2227)
+
 
 ### `Loofah::HTML5::Document` and `Loofah::HTML5::DocumentFragment`
 
