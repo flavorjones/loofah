@@ -40,4 +40,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency("rake", ["~> 13.0"])
   spec.add_development_dependency("rdoc", [">= 4.0", "< 7"])
   spec.add_development_dependency("rubocop", "~> 1.1")
+  spec.add_development_dependency("rubocop-minitest", "0.29.0")
+  spec.add_development_dependency("rubocop-performance", "1.16.0")
+  spec.add_development_dependency("rubocop-rake", "0.6.0")
+  spec.add_development_dependency("rubocop-shopify", "2.12.0")
 end

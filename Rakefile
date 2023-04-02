@@ -12,13 +12,35 @@ task :generate_safelists do
   load "tasks/generate-safelists"
 end
 
-task :rubocop => [:rubocop_security, :rubocop_frozen_string_literals]
-task :rubocop_security do
-  sh "rubocop lib --only Security"
+
+require "rubocop/rake_task"
+
+module RubocopHelper
+  class << self
+    def common_options(task)
+      task.patterns += [
+        "Gemfile",
+        "Rakefile",
+        "lib",
+        "loofah.gemspec",
+        "test",
+      ]
+    end
+  end
 end
-task :rubocop_frozen_string_literals do
-  sh "rubocop lib --auto-correct --only Style/FrozenStringLiteralComment"
+
+RuboCop::RakeTask.new do |task|
+  RubocopHelper.common_options(task)
 end
+
+desc("Generate the rubocop todo list")
+RuboCop::RakeTask.new("rubocop:todo") do |task|
+  RubocopHelper.common_options(task)
+  task.options << "--auto-gen-config"
+  task.options << "--exclude-limit=50"
+end
+Rake::Task["rubocop:todo:autocorrect"].clear
+Rake::Task["rubocop:todo:autocorrect_all"].clear
 
 task :default => [:rubocop, :test]
 
