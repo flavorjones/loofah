@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "helper"
 
 class UnitTestScrubbers < Loofah::TestCase
@@ -5,8 +7,8 @@ class UnitTestScrubbers < Loofah::TestCase
     context klass do
       context "bad scrub method" do
         it "raise a ScrubberNotFound exception" do
-          doc = klass.parse "<p>foo</p>"
-          assert_raises(Loofah::ScrubberNotFound) { doc.scrub! :frippery }
+          doc = klass.parse("<p>foo</p>")
+          assert_raises(Loofah::ScrubberNotFound) { doc.scrub!(:frippery) }
         end
       end
     end

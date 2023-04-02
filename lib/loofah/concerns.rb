@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  Mixes +scrub!+ into Document, DocumentFragment, Node and NodeSet.
@@ -39,7 +40,7 @@ module Loofah
         when Nokogiri::XML::Document
           scrubber.traverse(root) if root
         when Nokogiri::XML::DocumentFragment
-          children.scrub! scrubber
+          children.scrub!(scrubber)
         else
           scrubber.traverse(self)
         end
@@ -54,11 +55,12 @@ module Loofah
       end
     end
 
-    def ScrubBehavior.resolve_scrubber(scrubber) # :nodoc:
+    def self.resolve_scrubber(scrubber) # :nodoc:
       scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
       unless scrubber.is_a?(Loofah::Scrubber)
         raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}"
       end
+
       scrubber
     end
   end
@@ -96,12 +98,12 @@ module Loofah
       if options[:encode_special_chars] == false
         result # possibly dangerous if rendered in a browser
       else
-        encode_special_chars result
+        encode_special_chars(result)
       end
     end
 
-    alias :inner_text :text
-    alias :to_str :text
+    alias_method :inner_text, :text
+    alias_method :to_str, :text
 
     #
     #  Returns a plain-text version of the markup contained by the fragment, with HTML entities
@@ -114,15 +116,15 @@ module Loofah
     #    # => "\nTitle\n\nContent\nNext line\n"
     #
     def to_text(options = {})
-      Loofah.remove_extraneous_whitespace self.dup.scrub!(:newline_block_elements).text(options)
+      Loofah.remove_extraneous_whitespace(dup.scrub!(:newline_block_elements).text(options))
     end
   end
 
   module DocumentDecorator # :nodoc:
     def initialize(*args, &block)
       super
-      self.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
-      self.decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
+      decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
+      decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
     end
   end
 
@@ -172,9 +174,9 @@ module Loofah
       end
 
       def document_klass
-        @document_klass ||= if (Loofah.html5_support? && self == Loofah::HTML5::DocumentFragment)
+        @document_klass ||= if Loofah.html5_support? && self == Loofah::HTML5::DocumentFragment
           Loofah::HTML5::Document
-        elsif (self == Loofah::HTML4::DocumentFragment)
+        elsif self == Loofah::HTML4::DocumentFragment
           Loofah::HTML4::Document
         else
           raise ArgumentError, "unexpected class: #{self}"
@@ -190,11 +192,10 @@ module Loofah
       serialize_root.children.to_s
     end
 
-    alias :serialize :to_s
+    alias_method :serialize, :to_s
 
     def serialize_root
       at_xpath("./body") || self
     end
   end
 end
-

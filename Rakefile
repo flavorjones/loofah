@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "hoe/markdown"
 Hoe::Markdown::Standalone.new("loofah").define_markdown_tasks
 
@@ -11,7 +13,6 @@ desc "generate safelists from W3C specifications"
 task :generate_safelists do
   load "tasks/generate-safelists"
 end
-
 
 require "rubocop/rake_task"
 
@@ -42,9 +43,8 @@ end
 Rake::Task["rubocop:todo:autocorrect"].clear
 Rake::Task["rubocop:todo:autocorrect_all"].clear
 
-task :default => [:rubocop, :test]
+task default: [:rubocop, :test]
 
 task :debug_manifest do
-  spec = eval(File.read("loofah.gemspec"))
-  puts spec.files
+  puts Bundler.load_gemspec("loofah.gemspec").files
 end

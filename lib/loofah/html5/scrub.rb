@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "cgi"
 require "crass"
 
@@ -8,7 +9,7 @@ module Loofah
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
-      CSS_IMPORTANT = '!important'
+      CSS_IMPORTANT = "!important"
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
@@ -26,7 +27,7 @@ module Loofah
               attr_node.node_name
             end
 
-            if attr_name =~ DATA_ATTRIBUTE_NAME
+            if DATA_ATTRIBUTE_NAME.match?(attr_name)
               next
             end
 
@@ -77,18 +78,16 @@ module Loofah
 
             name = node[:name].downcase
             next unless SafeList::ALLOWED_CSS_PROPERTIES.include?(name) ||
-                SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
-                SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
+              SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
+              SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
 
             value = node[:children].map do |child|
               case child[:node]
               when :whitespace
                 nil
               when :string
-                if child[:raw] =~ CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES
+                if CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES.match?(child[:raw])
                   Crass::Parser.stringify(child)
-                else
-                  nil
                 end
               when :function
                 if SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase)
@@ -97,8 +96,8 @@ module Loofah
               when :ident
                 keyword = child[:value]
                 if !SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first) ||
-                   SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
-                   (keyword =~ CSS_KEYWORDISH)
+                    SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
+                    (keyword =~ CSS_KEYWORDISH)
                   keyword
                 end
               else
@@ -107,6 +106,7 @@ module Loofah
             end.compact
 
             next if value.empty?
+
             value << CSS_IMPORTANT if node[:important]
             propstring = format("%s:%s", name, value.join(" "))
             sanitized_node = Crass.parse_properties(propstring).first
@@ -126,13 +126,9 @@ module Loofah
             when :url
               if node[:value].start_with?("#")
                 node[:raw]
-              else
-                nil
               end
             when :hash, :ident, :string
               node[:raw]
-            else
-              nil
             end
           end.compact
 
@@ -198,28 +194,28 @@ module Loofah
         end
 
         TABLE_FOR_ESCAPE_HTML__ = {
-          '<' => '&lt;',
-          '>' => '&gt;',
-          '&' => '&amp;',
+          "<" => "&lt;",
+          ">" => "&gt;",
+          "&" => "&amp;",
         }
 
         def escape_tags(string)
           # modified version of CGI.escapeHTML from ruby 3.1
           enc = string.encoding
-          unless enc.ascii_compatible?
+          if enc.ascii_compatible?
+            string = string.b
+            string.gsub!(/[<>&]/, TABLE_FOR_ESCAPE_HTML__)
+            string.force_encoding(enc)
+          else
             if enc.dummy?
               origenc = enc
               enc = Encoding::Converter.asciicompat_encoding(enc)
               string = enc ? string.encode(enc) : string.b
             end
-            table = Hash[TABLE_FOR_ESCAPE_HTML__.map {|pair|pair.map {|s|s.encode(enc)}}]
+            table = Hash[TABLE_FOR_ESCAPE_HTML__.map { |pair| pair.map { |s| s.encode(enc) } }]
             string = string.gsub(/#{"[<>&]".encode(enc)}/, table)
             string.encode!(origenc) if origenc
             string
-          else
-            string = string.b
-            string.gsub!(/[<>&]/, TABLE_FOR_ESCAPE_HTML__)
-            string.force_encoding(enc)
           end
         end
       end

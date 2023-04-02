@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "helper"
 
 class UnitTestHelpers < Loofah::TestCase
@@ -70,7 +72,7 @@ class UnitTestHelpers < Loofah::TestCase
         it "calls .sanitize_css" do
           actual = nil
           Loofah::Helpers.stub(:sanitize_css, "sanitized", ["foobar"]) do
-            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css "foobar"
+            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css("foobar")
           end
 
           assert_equal("sanitized", actual)

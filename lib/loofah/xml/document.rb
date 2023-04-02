@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   module XML # :nodoc:
     #

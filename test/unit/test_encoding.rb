@@ -1,4 +1,6 @@
 # :coding: utf-8
+# frozen_string_literal: true
+
 require "helper"
 
 class UnitTestEncoding < Loofah::TestCase
@@ -8,6 +10,7 @@ class UnitTestEncoding < Loofah::TestCase
     describe "#scrub_html4_fragment" do
       it "sets the encoding for html" do
         escaped = Loofah.scrub_html4_fragment(UTF8_STRING, :escape).to_s
+
         assert_equal UTF8_STRING.encoding, escaped.encoding
       end
     end
@@ -15,6 +18,7 @@ class UnitTestEncoding < Loofah::TestCase
     describe "#scrub_html5_fragment" do
       it "sets the encoding for html" do
         escaped = Loofah.scrub_html5_fragment(UTF8_STRING, :escape).to_s
+
         assert_equal UTF8_STRING.encoding, escaped.encoding
       end
     end if Loofah.html5_support?
@@ -22,6 +26,7 @@ class UnitTestEncoding < Loofah::TestCase
     describe "#scrub_xml_fragment" do
       it "sets the encoding for xml" do
         escaped = Loofah.scrub_xml_fragment(UTF8_STRING, :escape).to_s
+
         assert_equal UTF8_STRING.encoding, escaped.encoding
       end
     end

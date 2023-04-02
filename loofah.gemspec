@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "./lib/loofah/version"
 
 Gem::Specification.new do |spec|
@@ -22,12 +24,12 @@ Gem::Specification.new do |spec|
   }
 
   spec.require_paths = ["lib"]
-  spec.files = Dir.chdir(File.expand_path("..", __FILE__)) do
-    spec.files = %w[
-      CHANGELOG.md
-      MIT-LICENSE.txt
-      README.md
-      SECURITY.md
+  Dir.chdir(File.expand_path("..", __FILE__)) do
+    spec.files = [
+      "CHANGELOG.md",
+      "MIT-LICENSE.txt",
+      "README.md",
+      "SECURITY.md",
     ] + Dir.glob("lib/**/*.*")
   end
 

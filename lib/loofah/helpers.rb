@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   module Helpers
     class << self
@@ -29,7 +30,7 @@ module Loofah
       #    Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg)") # => "display: block;"
       #
       def sanitize_css(style_string)
-        ::Loofah::HTML5::Scrub.scrub_css style_string
+        ::Loofah::HTML5::Scrub.scrub_css(style_string)
       end
 
       #
@@ -37,7 +38,7 @@ module Loofah
       #  TODO: remove this in a future major-point-release.
       #
       def remove_extraneous_whitespace(string)
-        Loofah.remove_extraneous_whitespace string
+        Loofah.remove_extraneous_whitespace(string)
       end
     end
 
@@ -52,7 +53,7 @@ module Loofah
         end
 
         def white_list_sanitizer
-          warn "warning: white_list_sanitizer is deprecated, please use safe_list_sanitizer instead."
+          warn("warning: white_list_sanitizer is deprecated, please use safe_list_sanitizer instead.")
           safe_list_sanitizer
         end
       end
@@ -70,7 +71,7 @@ module Loofah
       #
       class FullSanitizer
         def sanitize(html, *args)
-          Loofah::Helpers.strip_tags html
+          Loofah::Helpers.strip_tags(html)
         end
       end
 
@@ -87,11 +88,11 @@ module Loofah
       #
       class SafeListSanitizer
         def sanitize(html, *args)
-          Loofah::Helpers.sanitize html
+          Loofah::Helpers.sanitize(html)
         end
 
         def sanitize_css(style_string, *args)
-          Loofah::Helpers.sanitize_css style_string
+          Loofah::Helpers.sanitize_css(style_string)
         end
       end
 

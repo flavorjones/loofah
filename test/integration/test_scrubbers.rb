@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "helper"
 
 class IntegrationTestScrubbers < Loofah::TestCase
@@ -27,7 +29,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b><script>xy</script>"
 
   ENTITY_FRAGMENT = "<p>this is &lt; that &quot;&amp;&quot; the other &gt; boo&apos;ya</p><div>w00t</div>"
-  ENTITY_TEXT = %Q(this is < that "&" the other > boo\'yaw00t)
+  ENTITY_TEXT = %(this is < that "&" the other > boo'yaw00t)
 
   ENTITY_HACK_ATTACK = "<div><div>Hack attack!</div><div>&lt;script&gt;alert('evil')&lt;/script&gt;</div></div>"
   ENTITY_HACK_ATTACK_TEXT_SCRUB = "Hack attack!&lt;script&gt;alert('evil')&lt;/script&gt;"
@@ -124,8 +126,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
       context "#scrub!" do
         context ":escape" do
           it "escape bad tags" do
-            doc = klass.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-            result = doc.scrub! :escape
+            doc = klass.parse("<html><body>#{INVALID_FRAGMENT}</body></html>")
+            result = doc.scrub!(:escape)
 
             assert_equal INVALID_ESCAPED, doc.xpath("/html/body").inner_html
             assert_equal doc, result
@@ -134,8 +136,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":prune" do
           it "prune bad tags" do
-            doc = klass.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-            result = doc.scrub! :prune
+            doc = klass.parse("<html><body>#{INVALID_FRAGMENT}</body></html>")
+            result = doc.scrub!(:prune)
 
             assert_equal INVALID_PRUNED, doc.xpath("/html/body").inner_html
             assert_equal doc, result
@@ -144,8 +146,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":strip" do
           it "strip bad tags" do
-            doc = klass.parse "<html><body>#{INVALID_FRAGMENT}</body></html>"
-            result = doc.scrub! :strip
+            doc = klass.parse("<html><body>#{INVALID_FRAGMENT}</body></html>")
+            result = doc.scrub!(:strip)
 
             assert_equal INVALID_STRIPPED, doc.xpath("/html/body").inner_html
             assert_equal doc, result
@@ -154,8 +156,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":whitewash" do
           it "whitewash the markup" do
-            doc = klass.parse "<html><body>#{WHITEWASH_FRAGMENT}</body></html>"
-            result = doc.scrub! :whitewash
+            doc = klass.parse("<html><body>#{WHITEWASH_FRAGMENT}</body></html>")
+            result = doc.scrub!(:whitewash)
 
             ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
               WHITEWASH_RESULT
@@ -164,6 +166,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
             else
               WHITEWASH_RESULT_LIBXML2911
             end
+
             assert_equal ww_result, doc.xpath("/html/body").inner_html
             assert_equal doc, result
           end
@@ -171,8 +174,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":nofollow" do
           it "add a 'nofollow' attribute to hyperlinks" do
-            doc = klass.parse "<html><body>#{NOFOLLOW_FRAGMENT}</body></html>"
-            result = doc.scrub! :nofollow
+            doc = klass.parse("<html><body>#{NOFOLLOW_FRAGMENT}</body></html>")
+            result = doc.scrub!(:nofollow)
 
             assert_equal NOFOLLOW_RESULT, doc.xpath("/html/body").inner_html
             assert_equal doc, result
@@ -181,8 +184,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":unprintable" do
           it "removes unprintable unicode characters" do
-            doc = klass.parse "<html><body>#{UNPRINTABLE_FRAGMENT}</body></html>"
-            result = doc.scrub! :unprintable
+            doc = klass.parse("<html><body>#{UNPRINTABLE_FRAGMENT}</body></html>")
+            result = doc.scrub!(:unprintable)
 
             assert_equal UNPRINTABLE_RESULT, doc.xpath("/html/body").inner_html
             assert_equal doc, result
@@ -192,7 +195,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "#text" do
         it "leave behind only inner text with html entities still escaped" do
-          doc = klass.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
+          doc = klass.parse("<html><body>#{ENTITY_HACK_ATTACK}</body></html>")
           result = doc.text
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
@@ -200,8 +203,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "with encode_special_chars => false" do
           it "leave behind only inner text with html entities unescaped" do
-            doc = klass.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
-            result = doc.text(:encode_special_chars => false)
+            doc = klass.parse("<html><body>#{ENTITY_HACK_ATTACK}</body></html>")
+            result = doc.text(encode_special_chars: false)
 
             assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
           end
@@ -209,8 +212,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "with encode_special_chars => true" do
           it "leave behind only inner text with html entities still escaped" do
-            doc = klass.parse "<html><body>#{ENTITY_HACK_ATTACK}</body></html>"
-            result = doc.text(:encode_special_chars => true)
+            doc = klass.parse("<html><body>#{ENTITY_HACK_ATTACK}</body></html>")
+            result = doc.text(encode_special_chars: true)
 
             assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
           end
@@ -227,13 +230,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
           refute_nil doc.xpath("/html/body").first
 
           if html5? || Nokogiri.jruby?
-            refute_match %r/<!DOCTYPE/, string
+            refute_match(/<!DOCTYPE/, string)
           else
-            assert_match %r/<!DOCTYPE/, string
+            assert_match(/<!DOCTYPE/, string)
           end
-          assert_match %r/<html>/, string
-          assert_match %r/<head>/, string
-          assert_match %r/<body>/, string
+
+          assert_match(/<html>/, string)
+          assert_match(/<head>/, string)
+          assert_match(/<body>/, string)
         end
       end
 
@@ -247,13 +251,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
           refute_nil doc.xpath("/html/body").first
 
           if html5? || Nokogiri.jruby?
-            refute_match %r/<!DOCTYPE/, string
+            refute_match(/<!DOCTYPE/, string)
           else
-            assert_match %r/<!DOCTYPE/, string
+            assert_match(/<!DOCTYPE/, string)
           end
-          assert_match %r/<html>/, string
-          assert_match %r/<head>/, string
-          assert_match %r/<body>/, string
+
+          assert_match(/<html>/, string)
+          assert_match(/<head>/, string)
+          assert_match(/<body>/, string)
         end
       end
 
@@ -261,20 +266,20 @@ class IntegrationTestScrubbers < Loofah::TestCase
         context "#scrub!" do
           it "only scrub subtree" do
             xml = klass.parse(<<~HTML)
-             <html><body>
-               <div class='scrub'>
-                 <script>I should be removed</script>
-               </div>
-               <div class='noscrub'>
-                 <script>I should remain</script>
-               </div>
-             </body></html>
+              <html><body>
+                <div class='scrub'>
+                  <script>I should be removed</script>
+                </div>
+                <div class='noscrub'>
+                  <script>I should remain</script>
+                </div>
+              </body></html>
             HTML
-            node = xml.at_css "div.scrub"
+            node = xml.at_css("div.scrub")
             node.scrub!(:prune)
 
-            assert_match %r/I should remain/, xml.to_s
-            refute_match %r/I should be removed/, xml.to_s
+            assert_match(/I should remain/, xml.to_s)
+            refute_match(/I should be removed/, xml.to_s)
           end
         end
       end
@@ -295,13 +300,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
                 </div>
               </body></html>
             HTML
-            node_set = xml.css "div.scrub"
+            node_set = xml.css("div.scrub")
+
             assert_equal 2, node_set.length
             node_set.scrub!(:prune)
 
-            assert_match %r/I should remain/, xml.to_s
-            refute_match %r/I should be removed/, xml.to_s
-            refute_match %r/I should also be removed/, xml.to_s
+            assert_match(/I should remain/, xml.to_s)
+            refute_match(/I should be removed/, xml.to_s)
+            refute_match(/I should also be removed/, xml.to_s)
           end
         end
       end
@@ -319,8 +325,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
       context "#scrub!" do
         context ":escape" do
           it "escape bad tags" do
-            doc = klass.parse "<div>#{INVALID_FRAGMENT}</div>"
-            result = doc.scrub! :escape
+            doc = klass.parse("<div>#{INVALID_FRAGMENT}</div>")
+            result = doc.scrub!(:escape)
 
             assert_equal INVALID_ESCAPED, doc.xpath("./div").inner_html
             assert_equal doc, result
@@ -329,8 +335,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":prune" do
           it "prune bad tags" do
-            doc = klass.parse "<div>#{INVALID_FRAGMENT}</div>"
-            result = doc.scrub! :prune
+            doc = klass.parse("<div>#{INVALID_FRAGMENT}</div>")
+            result = doc.scrub!(:prune)
 
             assert_equal INVALID_PRUNED, doc.xpath("./div").inner_html
             assert_equal doc, result
@@ -339,8 +345,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":strip" do
           it "strip bad tags" do
-            doc = klass.parse "<div>#{INVALID_FRAGMENT}</div>"
-            result = doc.scrub! :strip
+            doc = klass.parse("<div>#{INVALID_FRAGMENT}</div>")
+            result = doc.scrub!(:strip)
 
             assert_equal INVALID_STRIPPED, doc.xpath("./div").inner_html
             assert_equal doc, result
@@ -349,8 +355,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":whitewash" do
           it "whitewash the markup" do
-            doc = klass.parse "<div>#{WHITEWASH_FRAGMENT}</div>"
-            result = doc.scrub! :whitewash
+            doc = klass.parse("<div>#{WHITEWASH_FRAGMENT}</div>")
+            result = doc.scrub!(:whitewash)
 
             ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
               WHITEWASH_RESULT
@@ -359,6 +365,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
             else
               WHITEWASH_RESULT_LIBXML2911
             end
+
             assert_equal ww_result, doc.xpath("./div").inner_html
             assert_equal doc, result
           end
@@ -367,8 +374,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
         context ":nofollow" do
           context "for a hyperlink that does not have a rel attribute" do
             it "add a 'nofollow' attribute to hyperlinks" do
-              doc = klass.parse "<div>#{NOFOLLOW_FRAGMENT}</div>"
-              result = doc.scrub! :nofollow
+              doc = klass.parse("<div>#{NOFOLLOW_FRAGMENT}</div>")
+              result = doc.scrub!(:nofollow)
 
               assert_equal NOFOLLOW_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
@@ -377,8 +384,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
           context "for a hyperlink that does have a rel attribute" do
             it "appends nofollow to rel attribute" do
-              doc = klass.parse "<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>"
-              result = doc.scrub! :nofollow
+              doc = klass.parse("<div>#{NOFOLLOW_WITH_REL_FRAGMENT}</div>")
+              result = doc.scrub!(:nofollow)
 
               assert_equal NOFOLLOW_WITH_REL_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
@@ -389,8 +396,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
         context ":noopener" do
           context "for a hyperlink without a 'rel' attribute" do
             it "add a 'noopener' attribute to hyperlinks" do
-              doc = klass.parse "<div>#{NOOPENER_FRAGMENT}</div>"
-              result = doc.scrub! :noopener
+              doc = klass.parse("<div>#{NOOPENER_FRAGMENT}</div>")
+              result = doc.scrub!(:noopener)
 
               assert_equal NOOPENER_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
@@ -399,8 +406,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
           context "for a hyperlink that does have a rel attribute" do
             it "appends 'noopener' to 'rel' attribute" do
-              doc = klass.parse "<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>"
-              result = doc.scrub! :noopener
+              doc = klass.parse("<div>#{NOOPENER_WITH_REL_FRAGMENT}</div>")
+              result = doc.scrub!(:noopener)
 
               assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
@@ -410,8 +417,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context ":unprintable" do
           it "removes unprintable unicode characters" do
-            doc = klass.parse "<div>#{UNPRINTABLE_FRAGMENT}</div>"
-            result = doc.scrub! :unprintable
+            doc = klass.parse("<div>#{UNPRINTABLE_FRAGMENT}</div>")
+            result = doc.scrub!(:unprintable)
 
             assert_equal UNPRINTABLE_RESULT, doc.xpath("./div").inner_html
             assert_equal doc, result
@@ -421,7 +428,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
       context "#text" do
         it "leave behind only inner text with html entities still escaped" do
-          doc = klass.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
+          doc = klass.parse("<div>#{ENTITY_HACK_ATTACK}</div>")
           result = doc.text
 
           assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
@@ -429,8 +436,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "with encode_special_chars => false" do
           it "leave behind only inner text with html entities unescaped" do
-            doc = klass.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
-            result = doc.text(:encode_special_chars => false)
+            doc = klass.parse("<div>#{ENTITY_HACK_ATTACK}</div>")
+            result = doc.text(encode_special_chars: false)
 
             assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC, result
           end
@@ -438,8 +445,8 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
         context "with encode_special_chars => true" do
           it "leave behind only inner text with html entities still escaped" do
-            doc = klass.parse "<div>#{ENTITY_HACK_ATTACK}</div>"
-            result = doc.text(:encode_special_chars => true)
+            doc = klass.parse("<div>#{ENTITY_HACK_ATTACK}</div>")
+            result = doc.text(encode_special_chars: true)
 
             assert_equal ENTITY_HACK_ATTACK_TEXT_SCRUB, result
           end
@@ -450,7 +457,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
         it "not remove entities" do
           string = klass.parse(ENTITY_FRAGMENT).to_s
 
-          assert_match %r/this is &lt;/, string
+          assert_match(/this is &lt;/, string)
         end
       end
 
@@ -465,11 +472,11 @@ class IntegrationTestScrubbers < Loofah::TestCase
                 <script>I should remain</script>
               </div>
             HTML
-            node = xml.at_css "div.scrub"
+            node = xml.at_css("div.scrub")
             node.scrub!(:prune)
 
-            assert_match %r(I should remain), xml.to_s
-            refute_match %r(I should be removed), xml.to_s
+            assert_match(/I should remain/, xml.to_s)
+            refute_match(/I should be removed/, xml.to_s)
           end
         end
       end
@@ -488,15 +495,15 @@ class IntegrationTestScrubbers < Loofah::TestCase
                 <script>I should also be removed</script>
               </div>
             HTML
-            node_set = xml.css "div.scrub"
+            node_set = xml.css("div.scrub")
 
             assert_equal 2, node_set.length
 
             node_set.scrub!(:prune)
 
-            assert_match %r/I should remain/, xml.to_s
-            refute_match %r/I should be removed/, xml.to_s
-            refute_match %r/I should also be removed/, xml.to_s
+            assert_match(/I should remain/, xml.to_s)
+            refute_match(/I should be removed/, xml.to_s)
+            refute_match(/I should also be removed/, xml.to_s)
           end
         end
       end

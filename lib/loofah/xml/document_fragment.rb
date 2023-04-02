@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   module XML # :nodoc:
     #
@@ -11,7 +12,7 @@ module Loofah
         def parse(tags)
           doc = Loofah::XML::Document.new
           doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
-          self.new(doc, tags)
+          new(doc, tags)
         end
       end
     end
