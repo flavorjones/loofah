@@ -10,11 +10,11 @@ class Html5TestSanitizer < Loofah::TestCase
   include Loofah
 
   def sanitize_xhtml(stream)
-    Loofah.fragment(stream).scrub!(:escape).to_xhtml
+    Loofah.html4_fragment(stream).scrub!(:escape).to_xhtml
   end
 
   def sanitize_html(stream)
-    Loofah.fragment(stream).scrub!(:escape).to_html
+    Loofah.html4_fragment(stream).scrub!(:escape).to_html
   end
 
   def check_sanitization(input, *possible_answers)
@@ -229,7 +229,7 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   def test_figure_element_is_valid
-    fragment = Loofah.scrub_fragment("<span>hello</span> <figure>asd</figure>", :prune)
+    fragment = Loofah.scrub_html4_fragment("<span>hello</span> <figure>asd</figure>", :prune)
     assert fragment.at_css("figure"), "<figure> tag was scrubbed"
   end
 
@@ -288,226 +288,226 @@ class Html5TestSanitizer < Loofah::TestCase
 
   def test_css_list_style
     html = '<ul style="list-style: none"></ul>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/list-style/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization
     html = "<span style=\"letter-spacing:-0.03em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/-0.03em/, sane.inner_html
   end
 
   def test_css_negative_value_sanitization_shorthand_css_properties
     html = "<span style=\"margin-left:-0.05em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/-0.05em/, sane.inner_html
   end
 
   def test_css_high_precision_value_shorthand_css_properties
     html = "<span style=\"margin-left:0.3333333334em;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/0.3333333334em/, sane.inner_html
   end
 
   def test_css_rem_value
     html = "<span style=\"margin-top:10rem;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/10rem/, sane.inner_html
   end
 
   def test_css_ch_value
     html = "<div style=\"width:60ch;\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/60ch/, sane.inner_html
   end
 
   def test_css_vw_value
     html = "<div style=\"font-size: calc(16px + 1vw);\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/1vw/, sane.inner_html
   end
 
   def test_css_vh_value
     html = "<div style=\"height: 100vh;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/100vh/, sane.inner_html
   end
 
   def test_css_Q_value
     html = "<div style=\"height: 10Q;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/10Q/, sane.inner_html
   end
 
   def test_css_lh_value
     html = "<p style=\"line-height: 2lh;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/2lh/, sane.inner_html
   end
 
   def test_css_vmin_value
     html = "<div style=\"width: 42vmin;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/42vmin/, sane.inner_html
   end
 
   def test_css_vmax_value
     html = "<div style=\"width: 42vmax;\"></body>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/42vmax/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_functions_calc
     html = "<span style=\"width:calc(5%)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
 
     html = "<span style=\"width: calc(5%)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/calc\(5%\)/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_functions_rgb
     html = '<span style="color: rgb(255, 0, 0)">'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/rgb\(255, 0, 0\)/, sane.inner_html
   end
 
   def test_css_function_sanitization_leaves_safelisted_list_style_type
     html = "<ol style='list-style-type:lower-greek;'></ol>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/list-style-type:lower-greek/, sane.inner_html
   end
 
   def test_css_function_sanitization_strips_style_attributes_with_unsafe_functions
     html = "<span style=\"width:url(data-evil-url)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
 
     html = "<span style=\"width: url(data-evil-url)\">"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_html)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_html)
     assert_match %r/<span><\/span>/, sane.inner_html
   end
 
   def test_css_max_width
     html = '<div style="max-width: 100%;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/max-width/, sane.inner_html
   end
 
   def test_css_page_break_after
     html = '<div style="page-break-after:always;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-after:always/, sane.inner_html
   end
 
   def test_css_page_break_before
     html = '<div style="page-break-before:always;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-before:always/, sane.inner_html
   end
 
   def test_css_page_break_inside
     html = '<div style="page-break-inside:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/page-break-inside:auto/, sane.inner_html
   end
 
   def test_css_align_content
     html = '<div style="align-content:flex-start;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-content:flex-start/, sane.inner_html
   end
 
   def test_css_align_items
     html = '<div style="align-items:stretch;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-items:stretch/, sane.inner_html
   end
 
   def test_css_align_self
     html = '<div style="align-self:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/align-self:auto/, sane.inner_html
   end
 
   def test_css_flex
     html = '<div style="flex:none;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex:none/, sane.inner_html
   end
 
   def test_css_flex_basis
     html = '<div style="flex-basis:auto;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-basis:auto/, sane.inner_html
   end
 
   def test_css_flex_direction
     html = '<div style="flex-direction:row;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-direction:row/, sane.inner_html
   end
 
   def test_css_flex_flow
     html = '<div style="flex-flow:column wrap;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-flow:column wrap/, sane.inner_html
   end
 
   def test_css_flex_grow
     html = '<div style="flex-grow:4;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-grow:4/, sane.inner_html
   end
 
   def test_css_flex_shrink
     html = '<div style="flex-shrink:3;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-shrink:3/, sane.inner_html
   end
 
   def test_css_flex_wrap
     html = '<div style="flex-wrap:wrap;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/flex-wrap:wrap/, sane.inner_html
   end
 
   def test_css_justify_content
     html = '<div style="justify-content:flex-start;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/justify-content:flex-start/, sane.inner_html
   end
 
   def test_css_order
     html = '<div style="order:5;"></div>'
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :escape).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
     assert_match %r/order:5/, sane.inner_html
   end
 
   def test_upper_case_css_property
     html = "<div style=\"COLOR: BLUE; NOTAPROPERTY: RED;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/COLOR:\s*BLUE/i, sane.at_css("div")["style"])
     refute_match(/NOTAPROPERTY/i, sane.at_css("div")["style"])
   end
 
   def test_many_properties_some_allowed
     html = "<div style=\"background: bold notaproperty center alsonotaproperty 10px;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/bold\s+center\s+10px/, sane.at_css("div")["style"])
   end
 
   def test_many_properties_non_allowed
     html = "<div style=\"background: notaproperty alsonotaproperty;\">asdf</div>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_nil sane.at_css("div")["style"]
   end
 
   def test_svg_properties
     html = "<line style='stroke-width: 10px;'></line>"
-    sane = Nokogiri::HTML(Loofah.scrub_fragment(html, :strip).to_xml)
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :strip).to_xml)
     assert_match(/stroke-width:\s*10px/, sane.at_css("line")["style"])
   end
 end

@@ -22,12 +22,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate properly on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
       end
 
       it "operate properly on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
       end
     end
@@ -41,12 +41,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as top-down on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
       end
 
       it "operate as top-down on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
       end
     end
@@ -59,7 +59,7 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "act as if CONTINUE was returned" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
       end
     end
@@ -73,12 +73,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as top-down on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
       end
 
       it "operate as top-down on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
       end
     end
@@ -92,12 +92,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as top-down on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @count
       end
 
       it "operate as top-down on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @count
       end
     end
@@ -110,12 +110,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as bottom-up on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
       end
 
       it "operate as bottom-up on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @count
       end
     end
@@ -136,7 +136,7 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "work anyway, shrug" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @count
       end
     end
@@ -166,12 +166,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as top-down on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
       end
 
       it "operate as top-down on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
       end
     end
@@ -183,12 +183,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as top-down on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_STOP_TOP_DOWN, @scrubber.count
       end
 
       it "operate as top-down on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_STOP_TOP_DOWN, @scrubber.count
       end
     end
@@ -200,12 +200,12 @@ class UnitTestScrubber < Loofah::TestCase
       end
 
       it "operate as bottom-up on a fragment" do
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
         assert_equal FRAGMENT_NODE_COUNT, @scrubber.count
       end
 
       it "operate as bottom-up on a document" do
-        Loofah.scrub_document(DOCUMENT, @scrubber)
+        Loofah.scrub_html4_document(DOCUMENT, @scrubber)
         assert_equal DOCUMENT_NODE_COUNT, @scrubber.count
       end
     end
@@ -221,7 +221,7 @@ class UnitTestScrubber < Loofah::TestCase
 
     it "raise an exception" do
       assert_raises(Loofah::ScrubberNotFound) {
-        Loofah.scrub_fragment(FRAGMENT, @scrubber)
+        Loofah.scrub_html4_fragment(FRAGMENT, @scrubber)
       }
     end
   end

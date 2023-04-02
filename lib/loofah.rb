@@ -22,46 +22,67 @@ require_relative "loofah/html4/document_fragment"
 
 # == Strings and IO Objects as Input
 #
-# Loofah.document and Loofah.fragment accept any IO object in addition
-# to accepting a string. That IO object could be a file, or a socket,
-# or a StringIO, or anything that responds to +read+ and
-# +close+. Which makes it particularly easy to sanitize mass
-# quantities of docs.
+# The following methods accept any IO object in addition to accepting a string:
+#
+# - Loofah.html4_document
+# - Loofah.html4_fragment
+# - Loofah.xml_document
+# - Loofah.xml_fragment
+# - Loofah.scrub_html4_document
+# - Loofah.scrub_html4_fragment
+# - Loofah.scrub_xml_document
+# - Loofah.scrub_xml_fragment
+# - Loofah.document
+# - Loofah.fragment
+# - Loofah.scrub_document
+# - Loofah.scrub_fragment
+#
+# That IO object could be a file, or a socket, or a StringIO, or anything that responds to +read+
+# and +close+.
 #
 module Loofah
   # Alias for Loofah::HTML4
   HTML = HTML4
 
   class << self
-    # Shortcut for Loofah::HTML4::Document.parse
+    # Shortcut for Loofah::HTML4::Document.parse(*args, &block)
+    #
     # This method accepts the same parameters as Nokogiri::HTML4::Document.parse
-    def document(*args, &block)
-      remove_comments_before_html_element(Loofah::HTML4::Document.parse(*args, &block))
+    def html4_document(*args, &block)
+      Loofah::HTML4::Document.parse(*args, &block)
     end
 
-    # Shortcut for Loofah::HTML4::DocumentFragment.parse
+    # Shortcut for Loofah::HTML4::DocumentFragment.parse(*args, &block)
+    #
     # This method accepts the same parameters as Nokogiri::HTML4::DocumentFragment.parse
-    def fragment(*args, &block)
+    def html4_fragment(*args, &block)
       Loofah::HTML4::DocumentFragment.parse(*args, &block)
     end
 
-    # Shortcut for Loofah.fragment(string_or_io).scrub!(method)
-    def scrub_fragment(string_or_io, method)
-      Loofah.fragment(string_or_io).scrub!(method)
+    # Shortcut for Loofah::HTML4::Document.parse(string_or_io).scrub!(method)
+    def scrub_html4_document(string_or_io, method)
+      Loofah::HTML4::Document.parse(string_or_io).scrub!(method)
     end
 
-    # Shortcut for Loofah.document(string_or_io).scrub!(method)
-    def scrub_document(string_or_io, method)
-      Loofah.document(string_or_io).scrub!(method)
+    # Shortcut for Loofah::HTML4::DocumentFragment.parse(string_or_io).scrub!(method)
+    def scrub_html4_fragment(string_or_io, method)
+      Loofah::HTML4::DocumentFragment.parse(string_or_io).scrub!(method)
     end
 
-    # Shortcut for Loofah::XML::Document.parse
+    alias_method :document, :html4_document
+    alias_method :fragment, :html4_fragment
+    alias_method :scrub_document, :scrub_html4_document
+    alias_method :scrub_fragment, :scrub_html4_fragment
+
+    # Shortcut for Loofah::XML::Document.parse(*args, &block)
+    #
     # This method accepts the same parameters as Nokogiri::XML::Document.parse
     def xml_document(*args, &block)
       Loofah::XML::Document.parse(*args, &block)
     end
 
-    # Shortcut for Loofah::XML::DocumentFragment.parse
+    # Shortcut for Loofah::XML::DocumentFragment.parse(*args, &block)
+    #
     # This method accepts the same parameters as Nokogiri::XML::DocumentFragment.parse
     def xml_fragment(*args, &block)
       Loofah::XML::DocumentFragment.parse(*args, &block)
@@ -80,24 +101,6 @@ module Loofah
     # A helper to remove extraneous whitespace from text-ified HTML
     def remove_extraneous_whitespace(string)
       string.gsub(/\n\s*\n\s*\n/, "\n\n")
-    end
-
-    private
-
-    # remove comments that exist outside of the HTML element.
-    #
-    # these comments are allowed by the HTML spec:
-    #
-    #    https://www.w3.org/TR/html401/struct/global.html#h-7.1
-    #
-    # but are not scrubbed by Loofah because these nodes don't meet
-    # the contract that scrubbers expect of a node (e.g., it can be
-    # replaced, sibling and children nodes can be created).
-    def remove_comments_before_html_element(doc)
-      doc.children.each do |child|
-        child.unlink if child.comment?
-      end
-      doc
     end
   end
 end

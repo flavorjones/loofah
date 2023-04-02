@@ -8,7 +8,7 @@ module Loofah
       #   Loofah::Helpers.strip_tags("<div>Hello <b>there</b></div>") # => "Hello there"
       #
       def strip_tags(string_or_io)
-        Loofah.fragment(string_or_io).text
+        Loofah.html4_fragment(string_or_io).text
       end
 
       #
@@ -17,7 +17,7 @@ module Loofah
       #   Loofah::Helpers.sanitize("<script src=http://ha.ckers.org/xss.js></script>") # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
       #
       def sanitize(string_or_io)
-        loofah_fragment = Loofah.fragment(string_or_io)
+        loofah_fragment = Loofah.html4_fragment(string_or_io)
         loofah_fragment.scrub!(:strip)
         loofah_fragment.xpath("./form").each { |form| form.remove }
         loofah_fragment.to_s

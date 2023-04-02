@@ -5,12 +5,14 @@ class UnitTestEncoding < Loofah::TestCase
   UTF8_STRING = "日本語"
 
   if String.new.respond_to?(:encoding)
-    describe "scrub_fragment" do
+    describe "#scrub_html4_fragment" do
       it "sets the encoding for html" do
-        escaped = Loofah.scrub_fragment(UTF8_STRING, :escape).to_s
+        escaped = Loofah.scrub_html4_fragment(UTF8_STRING, :escape).to_s
         assert_equal UTF8_STRING.encoding, escaped.encoding
       end
+    end
 
+    describe "#scrub_xml_fragment" do
       it "sets the encoding for xml" do
         escaped = Loofah.scrub_xml_fragment(UTF8_STRING, :escape).to_s
         assert_equal UTF8_STRING.encoding, escaped.encoding

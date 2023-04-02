@@ -10,11 +10,6 @@ module Loofah
       include Loofah::TextBehavior
 
       class << self
-        #
-        #  Overridden Nokogiri::HTML5::DocumentFragment
-        #  constructor. Applications should use Loofah.fragment to
-        #  parse a fragment.
-        #
         def parse(tags, encoding = nil)
           doc = Loofah::HTML4::Document.new
 

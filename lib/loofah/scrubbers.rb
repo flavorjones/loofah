@@ -11,7 +11,7 @@ module Loofah
   #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:strip)
+  #     Loofah.html4_fragment(unsafe_html).scrub!(:strip)
   #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
   #
   #
@@ -20,7 +20,7 @@ module Loofah
   #  +:prune+ removes unknown/unsafe tags and their contents (including their subtrees):
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:prune)
+  #     Loofah.html4_fragment(unsafe_html).scrub!(:prune)
   #     => "ohai! <div>div is safe</div> "
   #
   #
@@ -29,7 +29,7 @@ module Loofah
   #  +:escape+ performs HTML entity escaping on the unknown/unsafe tags:
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:escape)
+  #     Loofah.html4_fragment(unsafe_html).scrub!(:escape)
   #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
   #
   #
@@ -41,7 +41,7 @@ module Loofah
   #  layer of paint on top of the HTML input to make it look nice.
   #
   #     messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
-  #     Loofah.fragment(messy_markup).scrub!(:whitewash)
+  #     Loofah.html4_fragment(messy_markup).scrub!(:whitewash)
   #     => "ohai! <div>div with attributes</div>"
   #
   #  One use case for this scrubber is to clean up HTML that was
@@ -56,7 +56,7 @@ module Loofah
   #  +:nofollow+ adds a rel="nofollow" attribute to all links
   #
   #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-  #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
+  #     Loofah.html4_fragment(link_farmers_markup).scrub!(:nofollow)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
   #
   #
@@ -65,7 +65,7 @@ module Loofah
   #  +:noopener+ adds a rel="noopener" attribute to all links
   #
   #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-  #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+  #     Loofah.html4_fragment(link_farmers_markup).scrub!(:noopener)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
   #
   #
@@ -74,7 +74,7 @@ module Loofah
   #  +:unprintable+ removes unprintable Unicode characters.
   #
   #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
-  #     Loofah.fragment(markup).scrub!(:unprintable)
+  #     Loofah.html4_fragment(markup).scrub!(:unprintable)
   #     => "<p>Some text with an unprintable character at the end</p>"
   #
   #  You may not be able to see the unprintable character in the above example, but there is a
@@ -90,7 +90,7 @@ module Loofah
     #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:strip)
+    #     Loofah.html4_fragment(unsafe_html).scrub!(:strip)
     #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
     #
     class Strip < Scrubber
@@ -112,7 +112,7 @@ module Loofah
     #  +:prune+ removes unknown/unsafe tags and their contents (including their subtrees):
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:prune)
+    #     Loofah.html4_fragment(unsafe_html).scrub!(:prune)
     #     => "ohai! <div>div is safe</div> "
     #
     class Prune < Scrubber
@@ -133,7 +133,7 @@ module Loofah
     #  +:escape+ performs HTML entity escaping on the unknown/unsafe tags:
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:escape)
+    #     Loofah.html4_fragment(unsafe_html).scrub!(:escape)
     #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
     #
     class Escape < Scrubber
@@ -158,7 +158,7 @@ module Loofah
     #  layer of paint on top of the HTML input to make it look nice.
     #
     #     messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
-    #     Loofah.fragment(messy_markup).scrub!(:whitewash)
+    #     Loofah.html4_fragment(messy_markup).scrub!(:whitewash)
     #     => "ohai! <div>div with attributes</div>"
     #
     #  One use case for this scrubber is to clean up HTML that was
@@ -193,7 +193,7 @@ module Loofah
     #  +:nofollow+ adds a rel="nofollow" attribute to all links
     #
     #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-    #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
+    #     Loofah.html4_fragment(link_farmers_markup).scrub!(:nofollow)
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
     #
     class NoFollow < Scrubber
@@ -214,7 +214,7 @@ module Loofah
     #  +:noopener+ adds a rel="noopener" attribute to all links
     #
     #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-    #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+    #     Loofah.html4_fragment(link_farmers_markup).scrub!(:noopener)
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
     #
     class NoOpener < Scrubber
@@ -253,7 +253,7 @@ module Loofah
     #  +:unprintable+ removes unprintable Unicode characters.
     #
     #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
-    #     Loofah.fragment(markup).scrub!(:unprintable)
+    #     Loofah.html4_fragment(markup).scrub!(:unprintable)
     #     => "<p>Some text with an unprintable character at the end</p>"
     #
     #  You may not be able to see the unprintable character in the above example, but there is a

@@ -17,8 +17,20 @@ class UnitTestApi < Loofah::TestCase
       assert_equal html, doc.xpath("/html/body").inner_html
     end
 
+    it "creates html4 documents" do
+      doc = Loofah.html4_document(html)
+      assert_kind_of(Loofah::HTML4::Document, doc)
+      assert_equal html, doc.xpath("/html/body").inner_html
+    end
+
     it "scrubs html4 documents" do
       doc = Loofah.scrub_document(html, :strip)
+      assert_kind_of(Loofah::HTML4::Document, doc)
+      assert_equal html, doc.xpath("/html/body").inner_html
+    end
+
+    it "scrubs html4 documents" do
+      doc = Loofah.scrub_html4_document(html, :strip)
       assert_kind_of(Loofah::HTML4::Document, doc)
       assert_equal html, doc.xpath("/html/body").inner_html
     end
@@ -29,8 +41,20 @@ class UnitTestApi < Loofah::TestCase
       assert_equal html, doc.inner_html
     end
 
+    it "creates html4 fragments" do
+      doc = Loofah.html4_fragment(html)
+      assert_kind_of(Loofah::HTML4::DocumentFragment, doc)
+      assert_equal html, doc.inner_html
+    end
+
     it "scrubs html4 fragments" do
       doc = Loofah.scrub_fragment(html, :strip)
+      assert_kind_of(Loofah::HTML4::DocumentFragment, doc)
+      assert_equal html, doc.inner_html
+    end
+
+    it "scrubs html4 fragments" do
+      doc = Loofah.scrub_html4_fragment(html, :strip)
       assert_kind_of(Loofah::HTML4::DocumentFragment, doc)
       assert_equal html, doc.inner_html
     end
@@ -88,39 +112,49 @@ class UnitTestApi < Loofah::TestCase
       assert_equal html, doc.inner_html
     end
 
-    it "scrubs document nodes" do
+    it "adds instance methods to documents" do
+      doc = Loofah::HTML4::Document.parse(html)
+      doc.scrub!(:strip)
+    end
+
+    it "adds instance methods to document nodes" do
       doc = Loofah::HTML4::Document.parse(html)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
-    it "scrubs fragment nodes" do
-      doc = Loofah.fragment(html)
+    it "adds instance methods to fragments" do
+      doc = Loofah::HTML4::DocumentFragment.parse(html)
+      doc.scrub!(:strip)
+    end
+
+    it "adds instance methods to fragment nodes" do
+      doc = Loofah::HTML4::DocumentFragment.parse(html)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
-    it "scrubs document nodesets" do
-      doc = Loofah.document(html)
+    it "adds instance methods to document nodesets" do
+      doc = Loofah.html4_document(html)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)
     end
 
-    it "scrubs fragment nodesets" do
-      doc = Loofah.fragment(html)
+    it "adds instance methods to fragment nodesets" do
+      doc = Loofah.html4_fragment(html)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)
     end
 
     it "exposes serialize_root on Loofah::HTML4::DocumentFragment" do
-      doc = Loofah.fragment(html)
+      doc = Loofah.html4_fragment(html)
       assert_equal html, doc.serialize_root.to_html
     end
 
     it "exposes serialize_root on Loofah::HTML4::Document" do
-      doc = Loofah.document(html)
+      doc = Loofah.html4_document(html)
       assert_equal html, doc.serialize_root.children.to_html
     end
   end
@@ -155,20 +189,38 @@ class UnitTestApi < Loofah::TestCase
       assert_equal xml_fragment, doc.children.to_xml
     end
 
-    it "scrubs document nodes" do
+    it "adds instance methods to documents" do
+      doc = Loofah.xml_document(xml)
+      scrubber = Loofah::Scrubber.new { |node| }
+      doc.scrub!(scrubber)
+    end
+
+    it "adds instance methods to document nodes" do
       doc = Loofah.xml_document(xml)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
-    it "scrubs fragment nodes" do
+    it "adds instance methods to fragments" do
+      doc = Loofah.xml_fragment(xml)
+      doc.scrub!(:strip)
+    end
+
+    it "adds instance methods to fragment nodes" do
       doc = Loofah.xml_fragment(xml)
       assert(node = doc.at_css("div"))
       node.scrub!(:strip)
     end
 
-    it "scrubs document nodesets" do
+    it "adds instance methods to document nodesets" do
       doc = Loofah.xml_document(xml)
+      assert(node_set = doc.css("div"))
+      assert_instance_of Nokogiri::XML::NodeSet, node_set
+      node_set.scrub!(:strip)
+    end
+
+    it "adds instance methods to document nodesets" do
+      doc = Loofah.xml_fragment(xml)
       assert(node_set = doc.css("div"))
       assert_instance_of Nokogiri::XML::NodeSet, node_set
       node_set.scrub!(:strip)

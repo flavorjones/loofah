@@ -100,8 +100,22 @@ class IntegrationTestScrubbers < Loofah::TestCase
       it "is a shortcut for parse-and-scrub" do
         mock_doc = MiniTest::Mock.new
         mock_doc.expect(:scrub!, "sanitized_string", [:method])
-        Loofah.stub(:document, mock_doc) do
+
+        Loofah::HTML4::Document.stub(:parse, mock_doc) do
           Loofah.scrub_document("string", :method)
+        end
+
+        mock_doc.verify
+      end
+    end
+
+    context "#scrub_html4_document" do
+      it "is a shortcut for parse-and-scrub" do
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:scrub!, "sanitized_string", [:method])
+
+        Loofah::HTML4::Document.stub(:parse, mock_doc) do
+          Loofah.scrub_html4_document("string", :method)
         end
 
         mock_doc.verify
@@ -137,7 +151,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
     context "#to_s" do
       it "generate HTML" do
-        doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
+        doc = Loofah.scrub_html4_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
         refute_nil doc.xpath("/html").first
         refute_nil doc.xpath("/html/head").first
         refute_nil doc.xpath("/html/body").first
@@ -152,7 +166,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
     context "#serialize" do
       it "generate HTML" do
-        doc = Loofah.scrub_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
+        doc = Loofah.scrub_html4_document "<html><head><title>quux</title></head><body><div>foo</div></body></html>", :prune
         refute_nil doc.xpath("/html").first
         refute_nil doc.xpath("/html/head").first
         refute_nil doc.xpath("/html/body").first
@@ -168,7 +182,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "Node" do
       context "#scrub!" do
         it "only scrub subtree" do
-          xml = Loofah.document <<-EOHTML
+          xml = Loofah.html4_document <<-EOHTML
            <html><body>
              <div class='scrub'>
                <script>I should be removed</script>
@@ -189,7 +203,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "NodeSet" do
       context "#scrub!" do
         it "only scrub subtrees" do
-          xml = Loofah.document <<-EOHTML
+          xml = Loofah.html4_document <<-EOHTML
             <html><body>
               <div class='scrub'>
                 <script>I should be removed</script>
@@ -315,8 +329,22 @@ class IntegrationTestScrubbers < Loofah::TestCase
       it "is a shortcut for parse-and-scrub" do
         mock_doc = MiniTest::Mock.new
         mock_doc.expect(:scrub!, "sanitized_string", [:method])
-        Loofah.stub(:fragment, mock_doc) do
+
+        Loofah::HTML4::DocumentFragment.stub(:parse, mock_doc) do
           Loofah.scrub_fragment("string", :method)
+        end
+
+        mock_doc.verify
+      end
+    end
+
+    context "#scrub_html4_fragment" do
+      it "is a shortcut for parse-and-scrub" do
+        mock_doc = MiniTest::Mock.new
+        mock_doc.expect(:scrub!, "sanitized_string", [:method])
+
+        Loofah::HTML4::DocumentFragment.stub(:parse, mock_doc) do
+          Loofah.scrub_html4_fragment("string", :method)
         end
 
         mock_doc.verify
@@ -352,7 +380,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
     context "#to_s" do
       it "not remove entities" do
-        string = Loofah.scrub_fragment(ENTITY_FRAGMENT, :prune).to_s
+        string = Loofah.scrub_html4_fragment(ENTITY_FRAGMENT, :prune).to_s
         assert_match %r/this is &lt;/, string
       end
     end
@@ -360,7 +388,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "Node" do
       context "#scrub!" do
         it "only scrub subtree" do
-          xml = Loofah.fragment <<-EOHTML
+          xml = Loofah.html4_fragment <<-EOHTML
             <div class='scrub'>
               <script>I should be removed</script>
             </div>
@@ -379,7 +407,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     context "NodeSet" do
       context "#scrub!" do
         it "only scrub subtrees" do
-          xml = Loofah.fragment <<-EOHTML
+          xml = Loofah.html4_fragment <<-EOHTML
             <div class='scrub'>
               <script>I should be removed</script>
             </div>

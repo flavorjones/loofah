@@ -24,7 +24,7 @@ module Loofah
   #
   #  This can then be run on a document:
   #
-  #    Loofah.fragment("<span>foo</span><p>bar</p>").scrub!(span2div).to_s
+  #    Loofah.html4_fragment("<span>foo</span><p>bar</p>").scrub!(span2div).to_s
   #    # => "<div>foo</div><p>bar</p>"
   #
   #  Scrubbers can be run on a document in either a top-down traversal (the
