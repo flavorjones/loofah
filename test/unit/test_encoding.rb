@@ -6,7 +6,7 @@ require "helper"
 class UnitTestEncoding < Loofah::TestCase
   UTF8_STRING = "日本語"
 
-  if String.new.respond_to?(:encoding)
+  if (+"").respond_to?(:encoding)
     describe "#scrub_html4_fragment" do
       it "sets the encoding for html" do
         escaped = Loofah.scrub_html4_fragment(UTF8_STRING, :escape).to_s

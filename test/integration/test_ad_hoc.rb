@@ -325,7 +325,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
             it "document removes the comment" do
               sanitized = document(html)
 
-              refute(sanitized.children.any? { |node| node.comment? })
+              refute(sanitized.children.any?(&:comment?))
             end
 
             it "scrub_document removes the comment" do

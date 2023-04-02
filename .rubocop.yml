@@ -9,3 +9,7 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   NewCops: enable
   TargetRubyVersion: "2.5"
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - test/**

@@ -14,7 +14,7 @@ class IntegrationTestXml < Loofah::TestCase
             </root>
           XML
           bring_out_your_dead = Loofah::Scrubber.new do |node|
-            if node.name == "employee" and node["deceased"] == "true"
+            if (node.name == "employee") && (node["deceased"] == "true")
               node.remove
               Loofah::Scrubber::STOP # don't bother with the rest of the subtree
             end
@@ -40,7 +40,7 @@ class IntegrationTestXml < Loofah::TestCase
             <employee deceased='false'>Abe Vigoda</employee>
           XML
           bring_out_your_dead = Loofah::Scrubber.new do |node|
-            if node.name == "employee" and node["deceased"] == "true"
+            if (node.name == "employee") && (node["deceased"] == "true")
               node.remove
               Loofah::Scrubber::STOP # don't bother with the rest of the subtree
             end

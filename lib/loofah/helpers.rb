@@ -20,7 +20,7 @@ module Loofah
       def sanitize(string_or_io)
         loofah_fragment = Loofah.html4_fragment(string_or_io)
         loofah_fragment.scrub!(:strip)
-        loofah_fragment.xpath("./form").each { |form| form.remove }
+        loofah_fragment.xpath("./form").each(&:remove)
         loofah_fragment.to_s
       end
 
