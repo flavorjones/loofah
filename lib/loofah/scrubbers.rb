@@ -95,7 +95,7 @@ module Loofah
     #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
     #
     class Strip < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :bottom_up
       end
 
@@ -118,7 +118,7 @@ module Loofah
     #     => "ohai! <div>div is safe</div> "
     #
     class Prune < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -140,7 +140,7 @@ module Loofah
     #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
     #
     class Escape < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -172,7 +172,7 @@ module Loofah
     #  Certainly not me.
     #
     class Whitewash < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -201,7 +201,7 @@ module Loofah
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
     #
     class NoFollow < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -223,7 +223,7 @@ module Loofah
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
     #
     class NoOpener < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -237,7 +237,7 @@ module Loofah
 
     # This class probably isn't useful publicly, but is used for #to_text's current implemention
     class NewlineBlockElements < Scrubber # :nodoc:
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :bottom_up
       end
 
@@ -270,7 +270,7 @@ module Loofah
     #     http://timelessrepo.com/json-isnt-a-javascript-subset
     #
     class Unprintable < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -296,11 +296,13 @@ module Loofah
       unprintable: Unprintable,
     }
 
-    #
-    #  Returns an array of symbols representing the built-in scrubbers
-    #
-    def self.scrubber_symbols
-      MAP.keys
+    class << self
+      #
+      #  Returns an array of symbols representing the built-in scrubbers
+      #
+      def scrubber_symbols
+        MAP.keys
+      end
     end
   end
 end

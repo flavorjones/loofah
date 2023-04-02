@@ -55,13 +55,15 @@ module Loofah
       end
     end
 
-    def self.resolve_scrubber(scrubber) # :nodoc:
-      scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
-      unless scrubber.is_a?(Loofah::Scrubber)
-        raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}"
-      end
+    class << self
+      def resolve_scrubber(scrubber) # :nodoc:
+        scrubber = Scrubbers::MAP[scrubber].new if Scrubbers::MAP[scrubber]
+        unless scrubber.is_a?(Loofah::Scrubber)
+          raise Loofah::ScrubberNotFound, "not a Scrubber or a scrubber name: #{scrubber.inspect}"
+        end
 
-      scrubber
+        scrubber
+      end
     end
   end
 
@@ -153,8 +155,10 @@ module Loofah
       end
     end
 
-    def self.included(base)
-      base.extend(ClassMethods)
+    class << self
+      def included(base)
+        base.extend(ClassMethods)
+      end
     end
 
     def serialize_root
@@ -184,8 +188,10 @@ module Loofah
       end
     end
 
-    def self.included(base)
-      base.extend(ClassMethods)
+    class << self
+      def included(base)
+        base.extend(ClassMethods)
+      end
     end
 
     def to_s

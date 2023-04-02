@@ -6,7 +6,7 @@ module Loofah
       #
       #  A replacement for Rails's built-in +strip_tags+ helper.
       #
-      #   Loofah::Helpers.strip_tags("<div>Hello <b>there</b></div>") # => "Hello there"
+      #    Loofah::Helpers.strip_tags("<div>Hello <b>there</b></div>") # => "Hello there"
       #
       def strip_tags(string_or_io)
         Loofah.html4_fragment(string_or_io).text
@@ -15,7 +15,8 @@ module Loofah
       #
       #  A replacement for Rails's built-in +sanitize+ helper.
       #
-      #   Loofah::Helpers.sanitize("<script src=http://ha.ckers.org/xss.js></script>") # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
+      #    Loofah::Helpers.sanitize("<script src=http://ha.ckers.org/xss.js></script>")
+      #    # => "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;"
       #
       def sanitize(string_or_io)
         loofah_fragment = Loofah.html4_fragment(string_or_io)
@@ -27,14 +28,16 @@ module Loofah
       #
       #  A replacement for Rails's built-in +sanitize_css+ helper.
       #
-      #    Loofah::Helpers.sanitize_css("display:block;background-image:url(http://www.ragingplatypus.com/i/cam-full.jpg)") # => "display: block;"
+      #    Loofah::Helpers.sanitize_css("display:block;background-image:url(http://example.com/foo.jpg)")
+      #    # => "display: block;"
       #
       def sanitize_css(style_string)
         ::Loofah::HTML5::Scrub.scrub_css(style_string)
       end
 
       #
-      #  A helper to remove extraneous whitespace from text-ified HTML
+      #  A helper to remove extraneous whitespace from text-ified HTML.
+      #
       #  TODO: remove this in a future major-point-release.
       #
       def remove_extraneous_whitespace(string)
@@ -63,7 +66,8 @@ module Loofah
       #
       #  To use by default, call this in an application initializer:
       #
-      #    ActionView::Helpers::SanitizeHelper.full_sanitizer = ::Loofah::Helpers::ActionView::FullSanitizer.new
+      #    ActionView::Helpers::SanitizeHelper.full_sanitizer = \
+      #      Loofah::Helpers::ActionView::FullSanitizer.new
       #
       #  Or, to generally opt-in to Loofah's view sanitizers:
       #
@@ -80,7 +84,8 @@ module Loofah
       #
       #  To use by default, call this in an application initializer:
       #
-      #    ActionView::Helpers::SanitizeHelper.safe_list_sanitizer = ::Loofah::Helpers::ActionView::SafeListSanitizer.new
+      #    ActionView::Helpers::SanitizeHelper.safe_list_sanitizer = \
+      #      Loofah::Helpers::ActionView::SafeListSanitizer.new
       #
       #  Or, to generally opt-in to Loofah's view sanitizers:
       #

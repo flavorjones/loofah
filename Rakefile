@@ -45,6 +45,7 @@ Rake::Task["rubocop:todo:autocorrect_all"].clear
 
 task default: [:rubocop, :test]
 
+desc "Print out the files packaged in the gem"
 task :debug_manifest do
   puts Bundler.load_gemspec("loofah.gemspec").files
 end

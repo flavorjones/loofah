@@ -7,7 +7,7 @@ module Loofah
   module HTML5 # :nodoc:
     module Scrub
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
-      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
+      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/ # rubocop:disable Layout/LineLength
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
       CSS_IMPORTANT = "!important"
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
@@ -44,10 +44,12 @@ module Loofah
               scrub_attribute_that_allows_local_ref(attr_node)
             end
 
-            if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == "xlink:href" && attr_node.value =~ /^\s*[^#\s].*/m
-              attr_node.remove
-              next
-            end
+            next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
+              attr_name == "xlink:href" &&
+              attr_node.value =~ /^\s*[^#\s].*/m
+
+            attr_node.remove
+            next
           end
 
           scrub_css_attribute(node)
@@ -67,13 +69,14 @@ module Loofah
         end
 
         def scrub_css(style)
+          url_flags = [:url, :bad_url]
           style_tree = Crass.parse_properties(style)
           sanitized_tree = []
 
           style_tree.each do |node|
             next unless node[:node] == :property
             next if node[:children].any? do |child|
-              [:url, :bad_url].include?(child[:node])
+              url_flags.include?(child[:node])
             end
 
             name = node[:name].downcase
@@ -138,7 +141,8 @@ module Loofah
         def scrub_uri_attribute(attr_node)
           # this block lifted nearly verbatim from HTML5 sanitization
           val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS, "").downcase
-          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
+          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ &&
+              !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
             attr_node.remove
             return true
           elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == "data"

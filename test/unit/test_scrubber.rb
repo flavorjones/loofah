@@ -257,7 +257,7 @@ class UnitTestScrubber < Loofah::TestCase
       @klass = Class.new(Loofah::Scrubber) do
         attr_accessor :count
 
-        def initialize(direction = nil)
+        def initialize(direction = nil) # rubocop:disable Lint/MissingSuper
           @direction = direction
           @count = 0
         end
@@ -369,7 +369,7 @@ class UnitTestScrubber < Loofah::TestCase
   context "creating a new Scrubber class with no scrub method" do
     before do
       @klass = Class.new(Loofah::Scrubber) do
-        def initialize; end
+        def initialize; end # rubocop:disable Lint/MissingSuper
       end
       @scrubber = @klass.new
     end

@@ -9,8 +9,17 @@ Gem::Specification.new do |spec|
   spec.authors = ["Mike Dalessio", "Bryan Helmkamp"]
   spec.email = ["mike.dalessio@gmail.com", "bryan@brynary.com"]
 
-  spec.summary = "Loofah is a general library for manipulating and transforming HTML/XML documents and fragments, built on top of Nokogiri"
-  spec.description = "Loofah is a general library for manipulating and transforming HTML/XML documents and fragments, built on top of Nokogiri.\n\nLoofah excels at HTML sanitization (XSS prevention). It includes some nice HTML sanitizers, which are based on HTML5lib's safelist, so it most likely won't make your codes less secure. (These statements have not been evaluated by Netexperts.)\n\nActiveRecord extensions for sanitization are available in the [`loofah-activerecord` gem](https://github.com/flavorjones/loofah-activerecord)."
+  spec.summary = <<~TEXT
+    Loofah is a general library for manipulating and transforming HTML/XML documents and fragments,
+    built on top of Nokogiri.
+  TEXT
+  spec.description = <<~TEXT
+    Loofah is a general library for manipulating and transforming HTML/XML documents and fragments,
+    built on top of Nokogiri.
+
+    Loofah also includes some HTML sanitizers based on `html5lib`'s safelist, which are a specific
+    application of the general transformation functionality.
+  TEXT
 
   spec.homepage = "https://github.com/flavorjones/loofah"
   spec.license = "MIT"

@@ -183,7 +183,7 @@ class Html5TestSanitizer < Loofah::TestCase
   end
 
   def test_should_allow_empty_data_attributes
-    input = "<p data-foo data-bar="">foo <bad>bar</bad> baz</p>"
+    input = '<p data-foo data-bar="">foo <bad>bar</bad> baz</p>'
 
     check_sanitization(
       input,
@@ -342,7 +342,7 @@ class Html5TestSanitizer < Loofah::TestCase
   ##
   require "json"
   Dir[File.join(File.dirname(__FILE__), "..", "assets", "testdata_sanitizer_tests1.dat")].each do |filename|
-    JSON.parse(open(filename).read).each do |test|
+    JSON.parse(File.read(filename)).each do |test|
       it "testdata sanitizer #{test["name"]}" do
         test.delete("name")
         input = test.delete("input")
@@ -427,7 +427,7 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match(/100vh/, sane.inner_html)
   end
 
-  def test_css_Q_value
+  def test_css_q_value
     html = "<div style=\"height: 10Q;\"></body>"
     sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
 
