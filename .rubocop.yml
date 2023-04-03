@@ -22,3 +22,6 @@ Naming/InclusiveLanguage:
 Performance/CollectionLiteralInLoop:
   Exclude:
     - test/**/*.rb
+
+Rake/DuplicateTask:
+  Enabled: false
