@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "helper"
 
 class IntegrationTestHtml < Loofah::TestCase
@@ -133,6 +135,7 @@ class IntegrationTestHtml < Loofah::TestCase
             "#{html_version}_document",
             "<div>tweedle\n\n\t\n\s\nbeetle</div>",
           )
+
           assert_equal "\ntweedle\n\nbeetle\n", html.to_text
         end
 

@@ -1,0 +1,27 @@
+require:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rake
+inherit_gem:
+  rubocop-shopify: rubocop.yml
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: "2.5"
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - test/**
+
+Naming/InclusiveLanguage:
+  Exclude:
+    - lib/loofah/helpers.rb
+    - lib/loofah/html5/safelist.rb
+
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - test/**/*.rb
+
+Rake/DuplicateTask:
+  Enabled: false
