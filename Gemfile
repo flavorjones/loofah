@@ -14,6 +14,7 @@ group :development do
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.0.0")
     gem("rubocop", "~> 1.1")
     gem("rubocop-minitest", "0.29.0")
+    gem("rubocop-packaging", "0.5.2")
     gem("rubocop-performance", "1.16.0")
     gem("rubocop-rake", "0.6.0")
     gem("rubocop-shopify", "2.12.0")

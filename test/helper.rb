@@ -4,8 +4,8 @@ require "minitest/autorun"
 require "minitest/unit"
 require "minitest/spec"
 
-require_relative "../lib/loofah"
-require_relative "../lib/loofah/helpers"
+require "loofah"
+require "loofah/helpers"
 
 puts "=> testing with Nokogiri #{Nokogiri::VERSION_INFO.inspect}"
 
