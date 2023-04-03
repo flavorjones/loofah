@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.21.0.rc1 / 2023-04-02
 
 ### HTML5 Support
 
