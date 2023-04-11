@@ -159,7 +159,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
             doc = klass.parse("<html><body>#{WHITEWASH_FRAGMENT}</body></html>")
             result = doc.scrub!(:whitewash)
 
-            ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
+            ww_result = if Nokogiri.uses_libxml?("<2.9.11") || Nokogiri.uses_libxml?(">=2.10.4") || html5?
               WHITEWASH_RESULT
             elsif Nokogiri.jruby?
               WHITEWASH_RESULT_JRUBY
@@ -358,7 +358,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
             doc = klass.parse("<div>#{WHITEWASH_FRAGMENT}</div>")
             result = doc.scrub!(:whitewash)
 
-            ww_result = if Nokogiri.uses_libxml?("<2.9.11") || html5?
+            ww_result = if Nokogiri.uses_libxml?("<2.9.11") || Nokogiri.uses_libxml?(">=2.10.4") || html5?
               WHITEWASH_RESULT
             elsif Nokogiri.jruby?
               WHITEWASH_RESULT_JRUBY
