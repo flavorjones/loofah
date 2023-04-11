@@ -130,7 +130,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
         def test_fragment_whitewash_on_microsofty_markup
           whitewashed = fragment(MSWORD_HTML).scrub!(:whitewash)
-          expected = if Nokogiri.uses_libxml?("<2.9.11") || html_version == :html5
+          expected = if Nokogiri.uses_libxml?("<2.9.11") || Nokogiri.uses_libxml?(">=2.10.4") || html_version == :html5
             "<p>Foo <b>BOLD</b></p>"
           elsif Nokogiri.jruby?
             "<p>Foo <b>BOLD<o:p></o:p></b></p>"
@@ -143,7 +143,7 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
         def test_document_whitewash_on_microsofty_markup
           whitewashed = document(MSWORD_HTML).scrub!(:whitewash)
-          expected = if Nokogiri.uses_libxml?("<2.9.11") || html_version == :html5
+          expected = if Nokogiri.uses_libxml?("<2.9.11") || Nokogiri.uses_libxml?(">=2.10.4") || html_version == :html5
             "<p>Foo <b>BOLD</b></p>"
           elsif Nokogiri.jruby?
             "<p>Foo <b>BOLD<o:p></o:p></b></p>"
