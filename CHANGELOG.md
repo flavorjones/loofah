@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.21.1 / 2023-05-10
+
+### Fixed
+
+* Don't define `HTML5::Document` and `HTML5::DocumentFragment` when Nokogiri is `< 1.14`. In 2.21.0 these classes were defined whenever `Nokogiri::HTML5` was defined, but Nokogiri v1.12 and v1.13 do not support Loofah subclassing properly.
+
+
 ## 2.21.0 / 2023-05-10
 
 ### HTML5 Support
