@@ -36,7 +36,7 @@ require_relative "loofah/xml/document_fragment"
 require_relative "loofah/html4/document"
 require_relative "loofah/html4/document_fragment"
 
-if Nokogiri.respond_to?(:uses_gumbo?) && Nokogiri.uses_gumbo?
+if Loofah.html5_support?
   require_relative "loofah/html5/document"
   require_relative "loofah/html5/document_fragment"
 end
