@@ -123,19 +123,19 @@ module Loofah
       end
     else
       def html5_document(*args, &block)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def html5_fragment(*args, &block)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def scrub_html5_document(string_or_io, method)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def scrub_html5_fragment(string_or_io, method)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
     end
 
