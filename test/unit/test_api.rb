@@ -109,6 +109,11 @@ class UnitTestApi < Loofah::TestCase
           assert_raises(NotImplementedError) { Loofah.html5_fragment(html) }
           assert_raises(NotImplementedError) { Loofah.scrub_html5_fragment(html, :strip) }
         end
+
+        it "does not implement classes" do
+          assert_raises(NameError) { Loofah::HTML5::Document }
+          assert_raises(NameError) { Loofah::HTML5::DocumentFragment }
+        end
       end
     end
 

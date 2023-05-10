@@ -36,7 +36,7 @@ require_relative "loofah/xml/document_fragment"
 require_relative "loofah/html4/document"
 require_relative "loofah/html4/document_fragment"
 
-if Nokogiri.respond_to?(:uses_gumbo?) && Nokogiri.uses_gumbo?
+if Loofah.html5_support?
   require_relative "loofah/html5/document"
   require_relative "loofah/html5/document_fragment"
 end
@@ -123,19 +123,19 @@ module Loofah
       end
     else
       def html5_document(*args, &block)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def html5_fragment(*args, &block)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def scrub_html5_document(string_or_io, method)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
 
       def scrub_html5_fragment(string_or_io, method)
-        raise NotImplementedError, "HTML5 is not supported by your version of Nokogiri"
+        raise NotImplementedError, "Loofah::HTML5 is not supported by your version of Nokogiri"
       end
     end
 
