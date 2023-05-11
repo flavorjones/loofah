@@ -290,7 +290,11 @@ These are not required automatically. You must require `loofah/helpers` to use t
 
 Unsurprisingly:
 
-* gem install loofah
+> gem install loofah
+
+Requirements:
+
+* Ruby >= 2.5
 
 
 ## Support

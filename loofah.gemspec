@@ -42,6 +42,8 @@ Gem::Specification.new do |spec|
     ] + Dir.glob("lib/**/*.*")
   end
 
+  spec.required_ruby_version = ">= 2.5.0"
+
   spec.add_runtime_dependency("crass", ["~> 1.0.2"])
-  spec.add_runtime_dependency("nokogiri", [">= 1.5.9"])
+  spec.add_runtime_dependency("nokogiri", [">= 1.12.0"])
 end
