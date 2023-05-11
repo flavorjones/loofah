@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.21.2 / 2023-05-11
+
+### Dependencies
+
+* Update the dependency on Nokogiri to be `>= 1.12.0`. The dependency in 2.21.0 and 2.21.1 was left at `>= 1.5.9` but versions before 1.12 would result in a `NameError` exception. [[#266](https://github.com/flavorjones/loofah/issues/266)]
+
+
 ## 2.21.1 / 2023-05-10
 
 ### Fixed
