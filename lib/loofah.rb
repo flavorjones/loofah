@@ -8,15 +8,15 @@ module Loofah
       # Note that Loofah can only support HTML5 in Nokogiri >= 1.14.0 because it requires the
       # subclassing fix from https://github.com/sparklemotion/nokogiri/pull/2534
       unless @html5_support_set
-        @html5_support = (
+        @html5_support =
           Gem::Version.new(Nokogiri::VERSION) > Gem::Version.new("1.14.0") &&
           Nokogiri.uses_gumbo?
-        )
         @html5_support_set = true
       end
       @html5_support
     end
   end
+  @html5_support_set = false
 end
 
 require_relative "loofah/version"
