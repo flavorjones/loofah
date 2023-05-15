@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.21.3 / 2023-05-15
+
+* Quash "instance variable not initialized" warning in Ruby < 3.0. [[#268](https://github.com/flavorjones/loofah/issues/268)] (Thanks, [@dharamgollapudi](https://github.com/dharamgollapudi)!)
+
+
 ## 2.21.2 / 2023-05-11
 
 ### Dependencies
