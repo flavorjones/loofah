@@ -69,6 +69,26 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert_empty(Loofah::HTML5::Scrub.scrub_css('font-family:"AvenirNext-Regular;'))
       assert_empty(Loofah::HTML5::Scrub.scrub_css(%q(font-family:"AvenirNext-Regular';)))
     end
+
+    it "keeps whitespace around delimiters if it's already there" do
+      assert_equal(
+        "font:13px / 1.5 Arial , sans-serif;",
+        Loofah::HTML5::Scrub.scrub_css("font: 13px / 1.5 Arial , sans-serif;"),
+      )
+    end
+
+    it "does not insert spaces around delimiters if they aren't already there" do
+      assert_equal(
+        "font:13px/1.5 Arial, sans-serif;",
+        Loofah::HTML5::Scrub.scrub_css("font: 13px/1.5 Arial, sans-serif;"),
+      )
+    end
+  end
+
+  describe "whitespace" do
+    it "converts all whitespace to a single space except initial and final whitespace" do
+      assert_equal("font:12px Arial;", Loofah::HTML5::Scrub.scrub_css("font: \n\t 12px \n\t Arial \n\t ;"))
+    end
   end
 
   describe "colors" do
