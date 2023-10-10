@@ -1,6 +1,15 @@
 # Changelog
 
+## 2.21.4 / 2023-10-10
+
+### Fixed
+
+* `Loofah::HTML5::Scrub.scrub_css` is more consistent in preserving whitespace (and lack of whitespace) in CSS property values. In particular, `.scrub_css` no longer inserts whitespace between tokens that did not already have whitespace between them. [[#273](https://github.com/flavorjones/loofah/issues/273), fixes [#271](https://github.com/flavorjones/loofah/issues/271)]
+
+
 ## 2.21.3 / 2023-05-15
+
+### Fixed
 
 * Quash "instance variable not initialized" warning in Ruby < 3.0. [[#268](https://github.com/flavorjones/loofah/issues/268)] (Thanks, [@dharamgollapudi](https://github.com/dharamgollapudi)!)
 
