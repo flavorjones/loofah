@@ -5,7 +5,7 @@ source "https://rubygems.org/"
 gemspec
 
 group :development do
-  gem("hoe-markdown", ["~> 1.3"])
+  gem("hoe-markdown", ["~> 1.5", ">= 1.5.1"])
   gem("json", ["~> 2.2"])
   gem("minitest", ["~> 5.14"])
   gem("rake", ["~> 13.0"])
