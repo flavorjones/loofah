@@ -10,6 +10,7 @@ module Loofah
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/ # rubocop:disable Layout/LineLength
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
       CSS_IMPORTANT = "!important"
+      CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
@@ -87,7 +88,7 @@ module Loofah
             value = node[:children].map do |child|
               case child[:node]
               when :whitespace
-                nil
+                CSS_WHITESPACE
               when :string
                 if CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES.match?(child[:raw])
                   Crass::Parser.stringify(child)
@@ -106,12 +107,12 @@ module Loofah
               else
                 child[:raw]
               end
-            end.compact
+            end.compact.join.strip
 
             next if value.empty?
 
-            value << CSS_IMPORTANT if node[:important]
-            propstring = format("%s:%s", name, value.join(" "))
+            value << CSS_WHITESPACE << CSS_IMPORTANT if node[:important]
+            propstring = format("%s:%s", name, value)
             sanitized_node = Crass.parse_properties(propstring).first
             sanitized_tree << sanitized_node << CRASS_SEMICOLON
           end
