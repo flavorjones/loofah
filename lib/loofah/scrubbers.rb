@@ -61,6 +61,15 @@ module Loofah
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
   #
   #
+  #  === Loofah::Scrubbers::TargetBlank / scrub!(:targetblank)
+  #
+  #  +:targetblank+ adds a target="_blank" attribute to all links
+  #
+  #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:targetblank)
+  #     => "ohai! <a href='http://www.myswarmysite.com/' target="_blank">I like your blog post</a>"
+  #
+  #
   #  === Loofah::Scrubbers::NoOpener / scrub!(:noopener)
   #
   #  +:noopener+ adds a rel="noopener" attribute to all links
@@ -214,6 +223,33 @@ module Loofah
     end
 
     #
+    #  === scrub!(:targetblank)
+    #
+    #  +:targetblank+ adds a target="_blank" attribute to all links.
+    #  If there is a target already set, replaces it with target="_blank".
+    #
+    #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:targetblank)
+    #     => "ohai! <a href='http://www.myswarmysite.com/' target="_blank">I like your blog post</a>"
+    #
+    #  On modern browsers, setting target="_blank" on anchor elements implicitly provides the same
+    #  behavior as setting rel="noopener".
+    #
+    class TargetBlank < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
+        node.set_attribute("target", "_blank")
+
+        STOP
+      end
+    end
+
+    #
     #  === scrub!(:noopener)
     #
     #  +:noopener+ adds a rel="noopener" attribute to all links
@@ -292,6 +328,7 @@ module Loofah
       strip: Strip,
       nofollow: NoFollow,
       noopener: NoOpener,
+      targetblank: TargetBlank,
       newline_block_elements: NewlineBlockElements,
       unprintable: Unprintable,
     }

@@ -29,6 +29,7 @@ Active Record extensions for HTML sanitization are available in the [`loofah-act
   * _Whitewash_ the markup, removing all attributes and namespaced nodes.
 * Other common HTML transformations are built-in:
   * Add the _nofollow_ attribute to all hyperlinks.
+  * Add the _target=\_blank_ attribute to all hyperlinks.
   * Remove _unprintable_ characters from text nodes.
 * Format markup as plain text, with (or without) sensible whitespace handling around block elements.
 * Replace Rails's `strip_tags` and `sanitize` view helper methods.
@@ -231,6 +232,7 @@ Loofah also comes with some common transformation tasks:
 ``` ruby
 doc.scrub!(:nofollow)    #     adds rel="nofollow" attribute to links
 doc.scrub!(:unprintable) #  removes unprintable characters from text nodes
+doc.scrub!(:targetblank) #     adds target="_blank" attribute to links
 ```
 
 See `Loofah::Scrubbers` for more details and example usage.
