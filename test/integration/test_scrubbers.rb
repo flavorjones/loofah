@@ -31,6 +31,12 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOOPENER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
   NOOPENER_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="nofollow noopener">Click here</a>'
 
+  NOREFERRER_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
+  NOREFERRER_RESULT = '<a href="http://www.example.com/" rel="noreferrer">Click here</a>'
+
+  NOREFERRER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
+  NOREFERRER_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="noopener noreferrer">Click here</a>'
+
   UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b><script>x\u2028y</script>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b><script>xy</script>"
 
@@ -438,6 +444,28 @@ class IntegrationTestScrubbers < Loofah::TestCase
               result = doc.scrub!(:noopener)
 
               assert_equal NOOPENER_WITH_REL_RESULT, doc.xpath("./div").inner_html
+              assert_equal doc, result
+            end
+          end
+        end
+
+        context ":noreferrer" do
+          context "for a hyperlink without a 'rel' attribute" do
+            it "add a 'noreferrer' attribute to hyperlinks" do
+              doc = klass.parse("<div>#{NOREFERRER_FRAGMENT}</div>")
+              result = doc.scrub!(:noreferrer)
+
+              assert_equal NOREFERRER_RESULT, doc.xpath("./div").inner_html
+              assert_equal doc, result
+            end
+          end
+
+          context "for a hyperlink that does have a rel attribute" do
+            it "appends 'noreferrer' to 'rel' attribute" do
+              doc = klass.parse("<div>#{NOREFERRER_WITH_REL_FRAGMENT}</div>")
+              result = doc.scrub!(:noreferrer)
+
+              assert_equal NOREFERRER_WITH_REL_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
             end
           end
