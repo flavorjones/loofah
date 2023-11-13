@@ -16,6 +16,12 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOFOLLOW_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   NOFOLLOW_RESULT = '<a href="http://www.example.com/" rel="nofollow">Click here</a>'
 
+  TARGET_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
+  TARGET_RESULT = '<a href="http://www.example.com/" target="_blank">Click here</a>'
+
+  TARGET_WITH_TOP_FRAGMENT = '<a href="http://www.example.com/" target="_top">Click here</a>'
+  TARGET_WITH_TOP_RESULT = '<a href="http://www.example.com/" target="_blank">Click here</a>'
+
   NOFOLLOW_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
   NOFOLLOW_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="noopener nofollow">Click here</a>'
 
@@ -179,6 +185,28 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
             assert_equal NOFOLLOW_RESULT, doc.xpath("/html/body").inner_html
             assert_equal doc, result
+          end
+        end
+
+        context ":targetblank" do
+          context "when target is not set" do
+            it "adds a target='_blank' attribute to hyperlinks" do
+              doc = klass.parse("<html><body>#{TARGET_FRAGMENT}</body></html>")
+              result = doc.scrub!(:targetblank)
+
+              assert_equal TARGET_RESULT, doc.xpath("/html/body").inner_html
+              assert_equal doc, result
+            end
+          end
+
+          context "when target is set" do
+            it "replaces existing 'target' attribute with '_blank' to hyperlinks" do
+              doc = klass.parse("<html><body>#{TARGET_WITH_TOP_FRAGMENT}</body></html>")
+              result = doc.scrub!(:targetblank)
+
+              assert_equal TARGET_WITH_TOP_RESULT, doc.xpath("/html/body").inner_html
+              assert_equal doc, result
+            end
           end
         end
 
