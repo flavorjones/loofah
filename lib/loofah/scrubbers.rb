@@ -78,6 +78,14 @@ module Loofah
   #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noopener)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
   #
+  #  === Loofah::Scrubbers::NoReferrer / scrub!(:noreferrer)
+  #
+  #  +:noreferrer+ adds a rel="noreferrer" attribute to all links
+  #
+  #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noreferrer)
+  #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noreferrer">I like your blog post</a>"
+  #
   #
   #  === Loofah::Scrubbers::Unprintable / scrub!(:unprintable)
   #
@@ -271,6 +279,28 @@ module Loofah
       end
     end
 
+    #
+    #  === scrub!(:noreferrer)
+    #
+    #  +:noreferrer+ adds a rel="noreferrer" attribute to all links
+    #
+    #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noreferrer)
+    #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noreferrer">I like your blog post</a>"
+    #
+    class NoReferrer < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
+        append_attribute(node, "rel", "noreferrer")
+        STOP
+      end
+    end
+
     # This class probably isn't useful publicly, but is used for #to_text's current implemention
     class NewlineBlockElements < Scrubber # :nodoc:
       def initialize # rubocop:disable Lint/MissingSuper
@@ -328,6 +358,7 @@ module Loofah
       strip: Strip,
       nofollow: NoFollow,
       noopener: NoOpener,
+      noreferrer: NoReferrer,
       targetblank: TargetBlank,
       newline_block_elements: NewlineBlockElements,
       unprintable: Unprintable,

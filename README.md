@@ -230,7 +230,9 @@ doc.scrub!(:whitewash)   #  removes unknown/unsafe/namespaced tags and their chi
 Loofah also comes with some common transformation tasks:
 
 ``` ruby
-doc.scrub!(:nofollow)    #     adds rel="nofollow" attribute to links
+doc.scrub!(:nofollow)    #  adds rel="nofollow" attribute to links
+doc.scrub!(:noopener)    #  adds rel="noopener" attribute to links
+doc.scrub!(:noreferrer)  #  adds rel="noreferrer" attribute to links
 doc.scrub!(:unprintable) #  removes unprintable characters from text nodes
 doc.scrub!(:targetblank) #     adds target="_blank" attribute to links
 ```
