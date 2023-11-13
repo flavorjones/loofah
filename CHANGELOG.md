@@ -1,5 +1,13 @@
 # Changelog
 
+## next / unreleased
+
+### Added
+
+* A `:targetblank` HTML scrubber which ensures all hyperlinks have `target="_blank"`. [#275] @stefannibrasil and @thdaraujo
+* A `:noreferrer` HTML scrubber which ensures all hyperlinks have `rel=noreferrer`, similar to the `:nofollow` and `:noopener` scrubbers. [#277] @wynksaiddestroy
+
+
 ## 2.21.4 / 2023-10-10
 
 ### Fixed
