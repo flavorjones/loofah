@@ -229,6 +229,154 @@ module Loofah
         "use",
       ])
 
+      ACCEPTABLE_EMPTY_ATTRIBUTES = {
+        "*" => Set.new([
+          "title",
+        ]),
+        "area" => Set.new([
+          "alt",
+        ]),
+        "audio" => Set.new([
+          "src",
+        ]),
+        "base" => Set.new([
+          "href",
+        ]),
+        "img" => Set.new([
+          "alt",
+        ]),
+        "input" => Set.new([
+          "value",
+          "placeholder",
+        ]),
+        "li" => Set.new([
+          "value",
+        ]),
+        "link" => Set.new([
+          "href",
+        ]),
+        "meter" => Set.new([
+          "value",
+        ]),
+        "option" => Set.new([
+          "value",
+        ]),
+        "progress" => Set.new([
+          "value",
+        ]),
+        "source" => Set.new([
+          "src",
+        ]),
+        "textarea" => Set.new([
+          "placeholder",
+        ]),
+        "track" => Set.new([
+          "default",
+        ]),
+      }
+
+      ACCEPTABLE_BOOLEAN_ATTRIBUTES = {
+        "*" => Set.new([
+          "hidden",
+          "contenteditable",
+          "draggable",
+          "spellcheck",
+          "translate",
+        ]),
+        "a" => Set.new([
+          "download",
+        ]),
+        "area" => Set.new([
+          "download",
+        ]),
+        "audio" => Set.new([
+          "autoplay",
+          "controls",
+          "loop",
+          "muted",
+        ]),
+        "button" => Set.new([
+          "autofocus",
+          "disabled",
+          "formnovalidate",
+        ]),
+        "details" => Set.new([
+          "open",
+        ]),
+        "fieldset" => Set.new([
+          "disabled",
+        ]),
+        "form" => Set.new([
+          "novalidate",
+        ]),
+        "iframe" => Set.new([
+          "allowfullscreen",
+          "seamless",
+        ]),
+        "img" => Set.new([
+          "alt",
+          "ismap",
+        ]),
+        "input" => Set.new([
+          "autofocus",
+          "checked",
+          "disabled",
+          "multiple",
+          "readonly",
+          "required",
+          "formnovalidate",
+        ]),
+        "ol" => Set.new([
+          "reversed",
+        ]),
+        "optgroup" => Set.new([
+          "disabled",
+        ]),
+        "option" => Set.new([
+          "disabled",
+          "selected",
+        ]),
+        "select" => Set.new([
+          "autofocus",
+          "disabled",
+          "multiple",
+          "required",
+        ]),
+        "style" => Set.new([
+          "scoped",
+        ]),
+        "table" => Set.new([
+          "sortable",
+        ]),
+        "td" => Set.new([
+          "nowrap",
+        ]),
+        "th" => Set.new([
+          "nowrap",
+        ]),
+        "textarea" => Set.new([
+          "autofocus",
+          "disabled",
+          "readonly",
+          "required",
+        ]),
+        "track" => Set.new([
+          "default",
+        ]),
+        "video" => Set.new([
+          "autoplay",
+          "controls",
+          "loop",
+          "muted",
+          "playsinline",
+        ]),
+      }
+
+      ACCEPTABLE_BOOLEAN_OR_EMPTY_ATTRIBUTES =
+        ACCEPTABLE_BOOLEAN_ATTRIBUTES.merge(ACCEPTABLE_EMPTY_ATTRIBUTES) do |_, a, b|
+          a + b
+        end
+
       ACCEPTABLE_ATTRIBUTES = Set.new([
         "abbr",
         "accept",
