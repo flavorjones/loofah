@@ -348,9 +348,10 @@ And a big shout-out to Corey Innis for the name, and feedback on the API.
 
 ## Thank You
 
-The following people have generously funded Loofah:
+The following people have generously funded Loofah with financial sponsorship:
 
 * Bill Harding
+* [Sentry](https://sentry.io/) @getsentry
 
 
 ## Historical Note
