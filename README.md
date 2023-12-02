@@ -337,11 +337,53 @@ See [`SECURITY.md`](SECURITY.md) for vulnerability reporting details.
 
 Featuring code contributed by:
 
-* Aaron Patterson
-* John Barnette
-* Josh Owens
-* Paul Dix
-* Luke Melia
+* [@flavorjones](https://github.com/flavorjones)
+* [@brynary](https://github.com/brynary)
+* [@olleolleolle](https://github.com/olleolleolle)
+* [@JuanitoFatas](https://github.com/JuanitoFatas)
+* [@kaspth](https://github.com/kaspth)
+* [@tenderlove](https://github.com/tenderlove)
+* [@ktdreyer](https://github.com/ktdreyer)
+* [@orien](https://github.com/orien)
+* [@asok](https://github.com/asok)
+* [@junaruga](https://github.com/junaruga)
+* [@MothOnMars](https://github.com/MothOnMars)
+* [@nick-desteffen](https://github.com/nick-desteffen)
+* [@NikoRoberts](https://github.com/NikoRoberts)
+* [@trans](https://github.com/trans)
+* [@andreynering](https://github.com/andreynering)
+* [@aried3r](https://github.com/aried3r)
+* [@baopham](https://github.com/baopham)
+* [@batter](https://github.com/batter)
+* [@brendon](https://github.com/brendon)
+* [@cjba7](https://github.com/cjba7)
+* [@christiankisssner](https://github.com/christiankisssner)
+* [@dacort](https://github.com/dacort)
+* [@danfstucky](https://github.com/danfstucky)
+* [@david-a-wheeler](https://github.com/david-a-wheeler)
+* [@dharamgollapudi](https://github.com/dharamgollapudi)
+* [@georgeclaghorn](https://github.com/georgeclaghorn)
+* [@gogainda](https://github.com/gogainda)
+* [@jaredbeck](https://github.com/jaredbeck)
+* [@ThatHurleyGuy](https://github.com/ThatHurleyGuy)
+* [@jstorimer](https://github.com/jstorimer)
+* [@jbarnette](https://github.com/jbarnette)
+* [@queso](https://github.com/queso)
+* [@technicalpickles](https://github.com/technicalpickles)
+* [@kyoshidajp](https://github.com/kyoshidajp)
+* [@kristianfreeman](https://github.com/kristianfreeman)
+* [@louim](https://github.com/louim)
+* [@mrpasquini](https://github.com/mrpasquini)
+* [@olivierlacan](https://github.com/olivierlacan)
+* [@pauldix](https://github.com/pauldix)
+* [@sampokuokkanen](https://github.com/sampokuokkanen)
+* [@stefannibrasil](https://github.com/stefannibrasil)
+* [@tastycode](https://github.com/tastycode)
+* [@vipulnsward](https://github.com/vipulnsward)
+* [@joncalhoun](https://github.com/joncalhoun)
+* [@ahorek](https://github.com/ahorek)
+* [@rmacklin](https://github.com/rmacklin)
+* [@y-yagi](https://github.com/y-yagi)
 
 And a big shout-out to Corey Innis for the name, and feedback on the API.
 
