@@ -351,6 +351,24 @@ module Loofah
     end
 
     #
+    #  === scrub!(:double_breakpoint)
+    #
+    #  +:double_breakpoint+ replaces double-break tags with closing/opening paragraph tags.
+    #
+    #     double_breakpoint_markup = "<p>Some text here in a logical paragraph.<br><br>Some more text, apparently a second paragraph.</p>"
+    #     Loofah.html5_fragment(messy_markup).scrub!(:double_breakpoint)
+    #     => "<p>Some text here in a logical paragraph.</p><p>Some more text, apparently a second paragraph.</p>"
+    #
+    class DoubleBreakpoint < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        
+      end
+    end
+    #
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
@@ -364,6 +382,7 @@ module Loofah
       targetblank: TargetBlank,
       newline_block_elements: NewlineBlockElements,
       unprintable: Unprintable,
+      double_breakpoint: DoubleBreakpoint,
     }
 
     class << self
