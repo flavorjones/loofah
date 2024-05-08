@@ -1,19 +1,17 @@
 # frozen_string_literal: true
+
 module Loofah
-  module HTML # :nodoc:
+  module HTML5 # :nodoc:
     #
-    #  Subclass of Nokogiri::HTML::Document.
+    #  Subclass of Nokogiri::HTML5::Document.
     #
     #  See Loofah::ScrubBehavior and Loofah::TextBehavior for additional methods.
     #
-    class Document < Nokogiri::HTML::Document
+    class Document < Nokogiri::HTML5::Document
       include Loofah::ScrubBehavior::Node
       include Loofah::DocumentDecorator
       include Loofah::TextBehavior
-
-      def serialize_root
-        at_xpath("/html/body")
-      end
+      include Loofah::HtmlDocumentBehavior
     end
   end
 end

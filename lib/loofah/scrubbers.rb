@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  Loofah provides some built-in scrubbers for sanitizing with
@@ -11,7 +12,7 @@ module Loofah
   #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:strip)
+  #     Loofah.html5_fragment(unsafe_html).scrub!(:strip)
   #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
   #
   #
@@ -20,7 +21,7 @@ module Loofah
   #  +:prune+ removes unknown/unsafe tags and their contents (including their subtrees):
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:prune)
+  #     Loofah.html5_fragment(unsafe_html).scrub!(:prune)
   #     => "ohai! <div>div is safe</div> "
   #
   #
@@ -29,7 +30,7 @@ module Loofah
   #  +:escape+ performs HTML entity escaping on the unknown/unsafe tags:
   #
   #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-  #     Loofah.fragment(unsafe_html).scrub!(:escape)
+  #     Loofah.html5_fragment(unsafe_html).scrub!(:escape)
   #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
   #
   #
@@ -41,7 +42,7 @@ module Loofah
   #  layer of paint on top of the HTML input to make it look nice.
   #
   #     messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
-  #     Loofah.fragment(messy_markup).scrub!(:whitewash)
+  #     Loofah.html5_fragment(messy_markup).scrub!(:whitewash)
   #     => "ohai! <div>div with attributes</div>"
   #
   #  One use case for this scrubber is to clean up HTML that was
@@ -56,8 +57,17 @@ module Loofah
   #  +:nofollow+ adds a rel="nofollow" attribute to all links
   #
   #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-  #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:nofollow)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
+  #
+  #
+  #  === Loofah::Scrubbers::TargetBlank / scrub!(:targetblank)
+  #
+  #  +:targetblank+ adds a target="_blank" attribute to all links
+  #
+  #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:targetblank)
+  #     => "ohai! <a href='http://www.myswarmysite.com/' target="_blank">I like your blog post</a>"
   #
   #
   #  === Loofah::Scrubbers::NoOpener / scrub!(:noopener)
@@ -65,8 +75,16 @@ module Loofah
   #  +:noopener+ adds a rel="noopener" attribute to all links
   #
   #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-  #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noopener)
   #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
+  #
+  #  === Loofah::Scrubbers::NoReferrer / scrub!(:noreferrer)
+  #
+  #  +:noreferrer+ adds a rel="noreferrer" attribute to all links
+  #
+  #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+  #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noreferrer)
+  #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noreferrer">I like your blog post</a>"
   #
   #
   #  === Loofah::Scrubbers::Unprintable / scrub!(:unprintable)
@@ -74,7 +92,7 @@ module Loofah
   #  +:unprintable+ removes unprintable Unicode characters.
   #
   #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
-  #     Loofah.fragment(markup).scrub!(:unprintable)
+  #     Loofah.html5_fragment(markup).scrub!(:unprintable)
   #     => "<p>Some text with an unprintable character at the end</p>"
   #
   #  You may not be able to see the unprintable character in the above example, but there is a
@@ -90,19 +108,20 @@ module Loofah
     #  +:strip+ removes unknown/unsafe tags, but leaves behind the pristine contents:
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:strip)
+    #     Loofah.html5_fragment(unsafe_html).scrub!(:strip)
     #     => "ohai! <div>div is safe</div> but foo is <b>not</b>"
     #
     class Strip < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :bottom_up
       end
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
+
         node.before(node.children)
         node.remove
-        return STOP
+        STOP
       end
     end
 
@@ -112,18 +131,19 @@ module Loofah
     #  +:prune+ removes unknown/unsafe tags and their contents (including their subtrees):
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:prune)
+    #     Loofah.html5_fragment(unsafe_html).scrub!(:prune)
     #     => "ohai! <div>div is safe</div> "
     #
     class Prune < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
+
         node.remove
-        return STOP
+        STOP
       end
     end
 
@@ -133,19 +153,20 @@ module Loofah
     #  +:escape+ performs HTML entity escaping on the unknown/unsafe tags:
     #
     #     unsafe_html = "ohai! <div>div is safe</div> <foo>but foo is <b>not</b></foo>"
-    #     Loofah.fragment(unsafe_html).scrub!(:escape)
+    #     Loofah.html5_fragment(unsafe_html).scrub!(:escape)
     #     => "ohai! <div>div is safe</div> &lt;foo&gt;but foo is &lt;b&gt;not&lt;/b&gt;&lt;/foo&gt;"
     #
     class Escape < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
       def scrub(node)
         return CONTINUE if html5lib_sanitize(node) == CONTINUE
-        node.add_next_sibling Nokogiri::XML::Text.new(node.to_s, node.document)
+
+        node.add_next_sibling(Nokogiri::XML::Text.new(node.to_s, node.document))
         node.remove
-        return STOP
+        STOP
       end
     end
 
@@ -158,7 +179,7 @@ module Loofah
     #  layer of paint on top of the HTML input to make it look nice.
     #
     #     messy_markup = "ohai! <div id='foo' class='bar' style='margin: 10px'>div with attributes</div>"
-    #     Loofah.fragment(messy_markup).scrub!(:whitewash)
+    #     Loofah.html5_fragment(messy_markup).scrub!(:whitewash)
     #     => "ohai! <div>div with attributes</div>"
     #
     #  One use case for this scrubber is to clean up HTML that was
@@ -168,14 +189,14 @@ module Loofah
     #  Certainly not me.
     #
     class Whitewash < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
       def scrub(node)
         case node.type
         when Nokogiri::XML::Node::ELEMENT_NODE
-          if HTML5::Scrub.allowed_element? node.name
+          if HTML5::Scrub.allowed_element?(node.name)
             node.attributes.each { |attr| node.remove_attribute(attr.first) }
             return CONTINUE if node.namespaces.empty?
           end
@@ -193,18 +214,46 @@ module Loofah
     #  +:nofollow+ adds a rel="nofollow" attribute to all links
     #
     #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-    #     Loofah.fragment(link_farmers_markup).scrub!(:nofollow)
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:nofollow)
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="nofollow">I like your blog post</a>"
     #
     class NoFollow < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
         append_attribute(node, "rel", "nofollow")
-        return STOP
+        STOP
+      end
+    end
+
+    #
+    #  === scrub!(:targetblank)
+    #
+    #  +:targetblank+ adds a target="_blank" attribute to all links.
+    #  If there is a target already set, replaces it with target="_blank".
+    #
+    #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:targetblank)
+    #     => "ohai! <a href='http://www.myswarmysite.com/' target="_blank">I like your blog post</a>"
+    #
+    #  On modern browsers, setting target="_blank" on anchor elements implicitly provides the same
+    #  behavior as setting rel="noopener".
+    #
+    class TargetBlank < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
+        node.set_attribute("target", "_blank")
+
+        STOP
       end
     end
 
@@ -214,35 +263,59 @@ module Loofah
     #  +:noopener+ adds a rel="noopener" attribute to all links
     #
     #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
-    #     Loofah.fragment(link_farmers_markup).scrub!(:noopener)
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noopener)
     #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noopener">I like your blog post</a>"
     #
     class NoOpener < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
         append_attribute(node, "rel", "noopener")
-        return STOP
+        STOP
+      end
+    end
+
+    #
+    #  === scrub!(:noreferrer)
+    #
+    #  +:noreferrer+ adds a rel="noreferrer" attribute to all links
+    #
+    #     link_farmers_markup = "ohai! <a href='http://www.myswarmysite.com/'>I like your blog post</a>"
+    #     Loofah.html5_fragment(link_farmers_markup).scrub!(:noreferrer)
+    #     => "ohai! <a href='http://www.myswarmysite.com/' rel="noreferrer">I like your blog post</a>"
+    #
+    class NoReferrer < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
+
+        append_attribute(node, "rel", "noreferrer")
+        STOP
       end
     end
 
     # This class probably isn't useful publicly, but is used for #to_text's current implemention
     class NewlineBlockElements < Scrubber # :nodoc:
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :bottom_up
       end
 
       def scrub(node)
         return CONTINUE unless Loofah::Elements::LINEBREAKERS.include?(node.name)
+
         replacement = if Loofah::Elements::INLINE_LINE_BREAK.include?(node.name)
           "\n"
         else
           "\n#{node.content}\n"
         end
-        node.add_next_sibling Nokogiri::XML::Text.new(replacement, node.document)
+        node.add_next_sibling(Nokogiri::XML::Text.new(replacement, node.document))
         node.remove
       end
     end
@@ -253,7 +326,7 @@ module Loofah
     #  +:unprintable+ removes unprintable Unicode characters.
     #
     #     markup = "<p>Some text with an unprintable character at the end\u2028</p>"
-    #     Loofah.fragment(markup).scrub!(:unprintable)
+    #     Loofah.html5_fragment(markup).scrub!(:unprintable)
     #     => "<p>Some text with an unprintable character at the end</p>"
     #
     #  You may not be able to see the unprintable character in the above example, but there is a
@@ -263,7 +336,7 @@ module Loofah
     #     http://timelessrepo.com/json-isnt-a-javascript-subset
     #
     class Unprintable < Scrubber
-      def initialize
+      def initialize # rubocop:disable Lint/MissingSuper
         @direction = :top_down
       end
 
@@ -279,21 +352,25 @@ module Loofah
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
-      :escape => Escape,
-      :prune => Prune,
-      :whitewash => Whitewash,
-      :strip => Strip,
-      :nofollow => NoFollow,
-      :noopener => NoOpener,
-      :newline_block_elements => NewlineBlockElements,
-      :unprintable => Unprintable,
+      escape: Escape,
+      prune: Prune,
+      whitewash: Whitewash,
+      strip: Strip,
+      nofollow: NoFollow,
+      noopener: NoOpener,
+      noreferrer: NoReferrer,
+      targetblank: TargetBlank,
+      newline_block_elements: NewlineBlockElements,
+      unprintable: Unprintable,
     }
 
-    #
-    #  Returns an array of symbols representing the built-in scrubbers
-    #
-    def self.scrubber_symbols
-      MAP.keys
+    class << self
+      #
+      #  Returns an array of symbols representing the built-in scrubbers
+      #
+      def scrubber_symbols
+        MAP.keys
+      end
     end
   end
 end

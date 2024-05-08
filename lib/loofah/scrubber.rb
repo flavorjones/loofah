@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   #
   #  A RuntimeError raised when Loofah could not find an appropriate scrubber.
@@ -24,7 +25,7 @@ module Loofah
   #
   #  This can then be run on a document:
   #
-  #    Loofah.fragment("<span>foo</span><p>bar</p>").scrub!(span2div).to_s
+  #    Loofah.html5_fragment("<span>foo</span><p>bar</p>").scrub!(span2div).to_s
   #    # => "<div>foo</div><p>bar</p>"
   #
   #  Scrubbers can be run on a document in either a top-down traversal (the
@@ -32,7 +33,6 @@ module Loofah
   #  Scrubber::STOP to terminate the traversal of a subtree.
   #
   class Scrubber
-
     # Top-down Scrubbers may return CONTINUE to indicate that the subtree should be traversed.
     CONTINUE = Object.new.freeze
 
@@ -67,7 +67,9 @@ module Loofah
       unless [:top_down, :bottom_up].include?(direction)
         raise ArgumentError, "direction #{direction} must be one of :top_down or :bottom_up"
       end
-      @direction, @block = direction, block
+
+      @direction = direction
+      @block = block
     end
 
     #
@@ -84,7 +86,7 @@ module Loofah
     #  +scrub+, which will be called for each document node.
     #
     def scrub(node)
-      raise ScrubberNotFound, "No scrub method has been defined on #{self.class.to_s}"
+      raise ScrubberNotFound, "No scrub method has been defined on #{self.class}"
     end
 
     #
@@ -103,8 +105,8 @@ module Loofah
     def html5lib_sanitize(node)
       case node.type
       when Nokogiri::XML::Node::ELEMENT_NODE
-        if HTML5::Scrub.allowed_element? node.name
-          HTML5::Scrub.scrub_attributes node
+        if HTML5::Scrub.allowed_element?(node.name)
+          HTML5::Scrub.scrub_attributes(node)
           return Scrubber::CONTINUE
         end
       when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
@@ -120,8 +122,8 @@ module Loofah
     def traverse_conditionally_top_down(node)
       if block
         return if block.call(node) == STOP
-      else
-        return if scrub(node) == STOP
+      elsif scrub(node) == STOP
+        return
       end
       node.children.each { |j| traverse_conditionally_top_down(j) }
     end

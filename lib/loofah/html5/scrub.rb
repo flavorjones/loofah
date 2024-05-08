@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "cgi"
 require "crass"
 
@@ -6,9 +7,10 @@ module Loofah
   module HTML5 # :nodoc:
     module Scrub
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
-      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/
+      CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/ # rubocop:disable Layout/LineLength
       CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
-      CSS_IMPORTANT = '!important'
+      CSS_IMPORTANT = "!important"
+      CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
@@ -26,7 +28,7 @@ module Loofah
               attr_node.node_name
             end
 
-            if attr_name =~ DATA_ATTRIBUTE_NAME
+            if DATA_ATTRIBUTE_NAME.match?(attr_name)
               next
             end
 
@@ -43,10 +45,12 @@ module Loofah
               scrub_attribute_that_allows_local_ref(attr_node)
             end
 
-            if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) && attr_name == "xlink:href" && attr_node.value =~ /^\s*[^#\s].*/m
-              attr_node.remove
-              next
-            end
+            next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
+              attr_name == "xlink:href" &&
+              attr_node.value =~ /^\s*[^#\s].*/m
+
+            attr_node.remove
+            next
           end
 
           scrub_css_attribute(node)
@@ -66,29 +70,28 @@ module Loofah
         end
 
         def scrub_css(style)
+          url_flags = [:url, :bad_url]
           style_tree = Crass.parse_properties(style)
           sanitized_tree = []
 
           style_tree.each do |node|
             next unless node[:node] == :property
             next if node[:children].any? do |child|
-              [:url, :bad_url].include?(child[:node])
+              url_flags.include?(child[:node])
             end
 
             name = node[:name].downcase
             next unless SafeList::ALLOWED_CSS_PROPERTIES.include?(name) ||
-                SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
-                SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
+              SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
+              SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
 
             value = node[:children].map do |child|
               case child[:node]
               when :whitespace
-                nil
+                CSS_WHITESPACE
               when :string
-                if child[:raw] =~ CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES
+                if CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES.match?(child[:raw])
                   Crass::Parser.stringify(child)
-                else
-                  nil
                 end
               when :function
                 if SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase)
@@ -97,18 +100,19 @@ module Loofah
               when :ident
                 keyword = child[:value]
                 if !SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first) ||
-                   SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
-                   (keyword =~ CSS_KEYWORDISH)
+                    SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
+                    (keyword =~ CSS_KEYWORDISH)
                   keyword
                 end
               else
                 child[:raw]
               end
-            end.compact
+            end.compact.join.strip
 
             next if value.empty?
-            value << CSS_IMPORTANT if node[:important]
-            propstring = format("%s:%s", name, value.join(" "))
+
+            value << CSS_WHITESPACE << CSS_IMPORTANT if node[:important]
+            propstring = format("%s:%s", name, value)
             sanitized_node = Crass.parse_properties(propstring).first
             sanitized_tree << sanitized_node << CRASS_SEMICOLON
           end
@@ -126,13 +130,9 @@ module Loofah
             when :url
               if node[:value].start_with?("#")
                 node[:raw]
-              else
-                nil
               end
             when :hash, :ident, :string
               node[:raw]
-            else
-              nil
             end
           end.compact
 
@@ -142,7 +142,8 @@ module Loofah
         def scrub_uri_attribute(attr_node)
           # this block lifted nearly verbatim from HTML5 sanitization
           val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS, "").downcase
-          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
+          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ &&
+              !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
             attr_node.remove
             return true
           elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == "data"
@@ -184,8 +185,8 @@ module Loofah
         end
 
         def cdata_needs_escaping?(node)
-          # Nokogiri's HTML4 parser on JRuby doesn't flag the child of a `style` or `script` tag as cdata, but it acts that way
-          node.cdata? || (Nokogiri.jruby? && node.text? && (node.parent.name == "style" || node.parent.name == "script"))
+          # Nokogiri's HTML4 parser on JRuby doesn't flag the child of a `style` tag as cdata, but it acts that way
+          node.cdata? || (Nokogiri.jruby? && node.text? && node.parent.name == "style")
         end
 
         def cdata_escape(node)
@@ -198,28 +199,28 @@ module Loofah
         end
 
         TABLE_FOR_ESCAPE_HTML__ = {
-          '<' => '&lt;',
-          '>' => '&gt;',
-          '&' => '&amp;',
+          "<" => "&lt;",
+          ">" => "&gt;",
+          "&" => "&amp;",
         }
 
         def escape_tags(string)
           # modified version of CGI.escapeHTML from ruby 3.1
           enc = string.encoding
-          unless enc.ascii_compatible?
+          if enc.ascii_compatible?
+            string = string.b
+            string.gsub!(/[<>&]/, TABLE_FOR_ESCAPE_HTML__)
+            string.force_encoding(enc)
+          else
             if enc.dummy?
               origenc = enc
               enc = Encoding::Converter.asciicompat_encoding(enc)
               string = enc ? string.encode(enc) : string.b
             end
-            table = Hash[TABLE_FOR_ESCAPE_HTML__.map {|pair|pair.map {|s|s.encode(enc)}}]
+            table = Hash[TABLE_FOR_ESCAPE_HTML__.map { |pair| pair.map { |s| s.encode(enc) } }]
             string = string.gsub(/#{"[<>&]".encode(enc)}/, table)
             string.encode!(origenc) if origenc
             string
-          else
-            string = string.b
-            string.gsub!(/[<>&]/, TABLE_FOR_ESCAPE_HTML__)
-            string.force_encoding(enc)
           end
         end
       end

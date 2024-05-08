@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "helper"
 
 class UnitTestHelpers < Loofah::TestCase
@@ -5,10 +7,11 @@ class UnitTestHelpers < Loofah::TestCase
 
   describe "Helpers" do
     context ".strip_tags" do
-      it "invoke Loofah.fragment.text" do
+      it "invokes Loofah.html4_fragment.text" do
         mock_doc = MiniTest::Mock.new
         mock_doc.expect(:text, "string_value", [])
-        Loofah.stub(:fragment, mock_doc) do
+
+        Loofah.stub(:html4_fragment, mock_doc) do
           Loofah::Helpers.strip_tags(HTML_STRING)
         end
 
@@ -17,13 +20,13 @@ class UnitTestHelpers < Loofah::TestCase
     end
 
     context ".sanitize" do
-      it "invoke Loofah.scrub_fragment(:strip).to_s" do
+      it "invokes Loofah.scrub_html4_fragment(input, :strip).to_s" do
         mock_doc = MiniTest::Mock.new
         mock_doc.expect(:scrub!, mock_doc, [:strip])
         mock_doc.expect(:xpath, [], ["./form"])
         mock_doc.expect(:to_s, "string_value", [])
 
-        Loofah.stub(:fragment, mock_doc) do
+        Loofah.stub(:html4_fragment, mock_doc) do
           Loofah::Helpers.sanitize(HTML_STRING)
         end
 
@@ -69,7 +72,7 @@ class UnitTestHelpers < Loofah::TestCase
         it "calls .sanitize_css" do
           actual = nil
           Loofah::Helpers.stub(:sanitize_css, "sanitized", ["foobar"]) do
-            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css "foobar"
+            actual = Loofah::Helpers::ActionView::SafeListSanitizer.new.sanitize_css("foobar")
           end
 
           assert_equal("sanitized", actual)

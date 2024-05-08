@@ -1,12 +1,80 @@
 # Changelog
 
-## next / unreleased
+## 2.22.0 / 2023-11-13
+
+### Added
+
+* A `:targetblank` HTML scrubber which ensures all hyperlinks have `target="_blank"`. [#275] @stefannibrasil and @thdaraujo
+* A `:noreferrer` HTML scrubber which ensures all hyperlinks have `rel=noreferrer`, similar to the `:nofollow` and `:noopener` scrubbers. [#277] @wynksaiddestroy
+
+
+## 2.21.4 / 2023-10-10
+
+### Fixed
+
+* `Loofah::HTML5::Scrub.scrub_css` is more consistent in preserving whitespace (and lack of whitespace) in CSS property values. In particular, `.scrub_css` no longer inserts whitespace between tokens that did not already have whitespace between them. [[#273](https://github.com/flavorjones/loofah/issues/273), fixes [#271](https://github.com/flavorjones/loofah/issues/271)]
+
+
+## 2.21.3 / 2023-05-15
+
+### Fixed
+
+* Quash "instance variable not initialized" warning in Ruby < 3.0. [[#268](https://github.com/flavorjones/loofah/issues/268)] (Thanks, [@dharamgollapudi](https://github.com/dharamgollapudi)!)
+
+
+## 2.21.2 / 2023-05-11
+
+### Dependencies
+
+* Update the dependency on Nokogiri to be `>= 1.12.0`. The dependency in 2.21.0 and 2.21.1 was left at `>= 1.5.9` but versions before 1.12 would result in a `NameError` exception. [[#266](https://github.com/flavorjones/loofah/issues/266)]
+
+
+## 2.21.1 / 2023-05-10
+
+### Fixed
+
+* Don't define `HTML5::Document` and `HTML5::DocumentFragment` when Nokogiri is `< 1.14`. In 2.21.0 these classes were defined whenever `Nokogiri::HTML5` was defined, but Nokogiri v1.12 and v1.13 do not support Loofah subclassing properly.
+
+
+## 2.21.0 / 2023-05-10
+
+### HTML5 Support
+
+Classes `Loofah::HTML5::Document` and `Loofah::HTML5::DocumentFragment` are introduced, along with helper methods:
+
+- `Loofah.html5_document`
+- `Loofah.html5_fragment`
+- `Loofah.scrub_html5_document`
+- `Loofah.scrub_html5_fragment`
+
+These classes and methods use Nokogiri's HTML5 parser to ensure modern web standards are used.
+
+⚠ HTML5 functionality is only available with Nokogiri v1.14.0 and higher.
+
+⚠ HTML5 functionality is not available for JRuby. Please see [this upstream Nokogiri issue](https://github.com/sparklemotion/nokogiri/issues/2227) if you're interested in helping implement and support HTML5 support.
+
+
+### `Loofah::HTML4` module and namespace
+
+`Loofah::HTML` has been renamed to `Loofah::HTML4`, and `Loofah::HTML` is aliased to preserve backwards-compatibility. `Nokogiri::HTML` and `Nokogiri::HTML4` parse methods still use libxml2's (or NekoHTML's) HTML4 parser.
+
+Take special note that if you rely on the class name of an object in your code, objects will now report a class of `Loofah::HTML4::Foo` where they previously reported `Loofah::HTML::Foo`. Instead of relying on the string returned by `Object#class`, prefer `Class#===` or `Object#is_a?` or `Object#instance_of?`.
+
+Future releases of Nokogiri may deprecate `HTML` classes and methods or otherwise change this behavior, so please start using `HTML4` in place of `HTML`.
+
+
+### Official support for JRuby
+
+This version introduces official support for JRuby. Previously, the test suite had never been green due to differences in behavior in the underlying HTML parser used by Nokogiri. We've updated the test suite to accommodate those differences, and have added JRuby to the CI suite.
+
+
+## 2.20.0 / 2023-04-01
 
 ### Features
 
 * Allow SVG attributes `color-profile`, `cursor`, `filter`, `marker`, and `mask`. [[#246](https://github.com/flavorjones/loofah/issues/246)]
 * Allow SVG elements `altGlyph`, `cursor`, `feImage`, `pattern`, and `tref`. [[#246](https://github.com/flavorjones/loofah/issues/246)]
-* Allow protovols `fax` and `modem`. [[#255](https://github.com/flavorjones/loofah/issues/255)] (Thanks, [@cjba7](https://github.com/cjba7)!)
+* Allow protocols `fax` and `modem`. [[#255](https://github.com/flavorjones/loofah/issues/255)] (Thanks, [@cjba7](https://github.com/cjba7)!)
 
 
 ## 2.19.1 / 2022-12-13

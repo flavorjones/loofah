@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Loofah
   module XML # :nodoc:
     #
@@ -8,15 +9,10 @@ module Loofah
     #
     class DocumentFragment < Nokogiri::XML::DocumentFragment
       class << self
-        #
-        #  Overridden Nokogiri::XML::DocumentFragment
-        #  constructor. Applications should use Loofah.fragment to
-        #  parse a fragment.
-        #
         def parse(tags)
           doc = Loofah::XML::Document.new
           doc.encoding = tags.encoding.name if tags.respond_to?(:encoding)
-          self.new(doc, tags)
+          new(doc, tags)
         end
       end
     end
