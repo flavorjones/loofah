@@ -12,7 +12,7 @@ group :development do
   gem("rdoc", [">= 4.0", "< 7"])
 
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.0.0")
-    gem("rubocop", "~> 1.1")
+    gem("rubocop", "1.65.0")
     gem("rubocop-minitest", "0.29.0")
     gem("rubocop-packaging", "0.5.2")
     gem("rubocop-performance", "1.16.0")
