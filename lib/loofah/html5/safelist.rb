@@ -663,6 +663,7 @@ module Loofah
         "list-style",
         "list-style-type",
         "max-width",
+        "min-width",
         "order",
         "overflow",
         "overflow-x",
