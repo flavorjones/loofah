@@ -493,11 +493,25 @@ class Html5TestSanitizer < Loofah::TestCase
     assert_match(%r/<span><\/span>/, sane.inner_html)
   end
 
+  def test_css_max_height
+    html = '<div style="max-height: 100%;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
+
+    assert_match(/max-height/, sane.inner_html)
+  end
+
   def test_css_max_width
     html = '<div style="max-width: 100%;"></div>'
     sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
 
     assert_match(/max-width/, sane.inner_html)
+  end
+
+  def test_css_min_height
+    html = '<div style="min-height: 100%;"></div>'
+    sane = Nokogiri::HTML(Loofah.scrub_html4_fragment(html, :escape).to_xml)
+
+    assert_match(/min-height/, sane.inner_html)
   end
 
   def test_css_min_width
