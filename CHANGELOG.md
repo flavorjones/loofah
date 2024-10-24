@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.23.0 / 2024-10-24
+
+### Added
+
+* Allow CSS property `min-width`. [#287] @lazyatom
+
+
 ## 2.22.0 / 2023-11-13
 
 ### Added

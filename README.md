@@ -384,6 +384,7 @@ Featuring code contributed by:
 * [@ahorek](https://github.com/ahorek)
 * [@rmacklin](https://github.com/rmacklin)
 * [@y-yagi](https://github.com/y-yagi)
+* [@lazyatom](https://github.com/lazyatom)
 
 And a big shout-out to Corey Innis for the name, and feedback on the API.
 
