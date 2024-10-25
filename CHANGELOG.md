@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.23.1 / 2024-10-25
+
+### Added
+
+* Allow CSS properties `min-height` and `max-height`. [#288] @lazyatom
+
+
 ## 2.23.0 / 2024-10-24
 
 ### Added
