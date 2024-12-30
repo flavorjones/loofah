@@ -19,6 +19,9 @@ class IntegrationTestScrubbers < Loofah::TestCase
   TARGET_FRAGMENT = '<a href="http://www.example.com/">Click here</a>'
   TARGET_RESULT = '<a href="http://www.example.com/" target="_blank">Click here</a>'
 
+  ANCHOR_TARGET_FRAGMENT = '<a href="#top">Click here</a>'
+  ANCHOR_TARGET_RESULT = '<a href="#top">Click here</a>'
+
   TARGET_WITH_TOP_FRAGMENT = '<a href="http://www.example.com/" target="_top">Click here</a>'
   TARGET_WITH_TOP_RESULT = '<a href="http://www.example.com/" target="_blank">Click here</a>'
 
@@ -201,6 +204,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
               result = doc.scrub!(:targetblank)
 
               assert_equal TARGET_RESULT, doc.xpath("/html/body").inner_html
+              assert_equal doc, result
+            end
+
+            it "skips target attribute when linking to anchor" do
+              doc = klass.parse("<html><body>#{ANCHOR_TARGET_FRAGMENT}</body></html>")
+              result = doc.scrub!(:targetblank)
+
+              assert_equal ANCHOR_TARGET_RESULT, doc.xpath("/html/body").inner_html
               assert_equal doc, result
             end
           end
