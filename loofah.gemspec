@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
     "bug_tracker_uri" => "#{spec.homepage}/issues",
     "changelog_uri" => "#{spec.homepage}/blob/main/CHANGELOG.md",
     "documentation_uri" => "https://www.rubydoc.info/gems/loofah/",
+    "funding_uri" => "https://github.com/sponsors/flavorjones",
   }
 
   spec.require_paths = ["lib"]
