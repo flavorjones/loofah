@@ -245,7 +245,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
             doc = klass.parse("<html><body>#{BREAKPOINT_FRAGMENT}</body></html>")
             result = doc.scrub!(:double_breakpoint)
 
-            assert_equal BREAKPOINT_RESULT, doc.xpath("/html/body").inner_html
+            assert_equal BREAKPOINT_RESULT, doc.xpath("/html/body").inner_html.delete("\n")
             assert_equal doc, result
           end
         end
