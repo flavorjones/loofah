@@ -251,7 +251,9 @@ module Loofah
       def scrub(node)
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
 
-        node.set_attribute("target", "_blank")
+        href = node["href"]
+
+        node.set_attribute("target", "_blank") if href && href[0] != "#"
 
         STOP
       end
