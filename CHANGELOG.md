@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.24.0 / 2024-12-24
+
+### Added
+
+* Built-in scrubber `:double_breakpoint` which sees `<br><br>` and wraps the surrounding content in `<p>` tags. #279, #284 @josecolella @torihuang
+
+### Improved
+
+* Built-in scrubber `:targetblank` now skips `a` tags whose `href` attribute is an anchor link. Previously, all `a` tags were modified to have `target='_blank'`. #291 @fnando
+
+
 ## 2.23.1 / 2024-10-25
 
 ### Added

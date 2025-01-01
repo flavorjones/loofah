@@ -31,7 +31,8 @@ Active Record extensions for HTML sanitization are available in the [`loofah-act
   * Add the _nofollow_ attribute to all hyperlinks.
   * Add the _target=\_blank_ attribute to all hyperlinks.
   * Remove _unprintable_ characters from text nodes.
-  * Modify _double breakpoints_ characters to paragraph nodes.
+* Some specialized HTML transformations are also built-in:
+  * Where `<br><br>` exists inside a `p` tag, close the `p` and open a new one.
 * Format markup as plain text, with (or without) sensible whitespace handling around block elements.
 * Replace Rails's `strip_tags` and `sanitize` view helper methods.
 
@@ -228,15 +229,15 @@ doc.scrub!(:whitewash)   #  removes unknown/unsafe/namespaced tags and their chi
                          #          and strips all node attributes
 ```
 
-Loofah also comes with some common transformation tasks:
+Loofah also comes with built-in scrubers for some common transformation tasks:
 
 ``` ruby
-doc.scrub!(:nofollow)    #  adds rel="nofollow" attribute to links
-doc.scrub!(:noopener)    #  adds rel="noopener" attribute to links
-doc.scrub!(:noreferrer)  #  adds rel="noreferrer" attribute to links
-doc.scrub!(:unprintable) #  removes unprintable characters from text nodes
-doc.scrub!(:targetblank) #     adds target="_blank" attribute to links
-doc.scrub!(:double_breakpoint) #     removes double breakpoints to paragraph nodes
+doc.scrub!(:nofollow)          # adds rel="nofollow" attribute to links
+doc.scrub!(:noopener)          # adds rel="noopener" attribute to links
+doc.scrub!(:noreferrer)        # adds rel="noreferrer" attribute to links
+doc.scrub!(:unprintable)       # removes unprintable characters from text nodes
+doc.scrub!(:targetblank)       # adds target="_blank" attribute to links
+doc.scrub!(:double_breakpoint) # where `<br><br>` appears in a `p` tag, close the `p` and open a new one
 ```
 
 See `Loofah::Scrubbers` for more details and example usage.

@@ -355,8 +355,8 @@ module Loofah
     #
     #  +:double_breakpoint+ replaces double-break tags with closing/opening paragraph tags.
     #
-    #     double_breakpoint_markup = "<p>Some text here in a logical paragraph.<br><br>Some more text, apparently a second paragraph.</p>"
-    #     Loofah.html5_fragment(messy_markup).scrub!(:double_breakpoint)
+    #     markup = "<p>Some text here in a logical paragraph.<br><br>Some more text, apparently a second paragraph.</p>"
+    #     Loofah.html5_fragment(markup).scrub!(:double_breakpoint)
     #     => "<p>Some text here in a logical paragraph.</p><p>Some more text, apparently a second paragraph.</p>"
     #
     class DoubleBreakpoint < Scrubber
