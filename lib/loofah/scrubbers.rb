@@ -351,6 +351,57 @@ module Loofah
     end
 
     #
+    #  === scrub!(:double_breakpoint)
+    #
+    #  +:double_breakpoint+ replaces double-break tags with closing/opening paragraph tags.
+    #
+    #     double_breakpoint_markup = "<p>Some text here in a logical paragraph.<br><br>Some more text, apparently a second paragraph.</p>"
+    #     Loofah.html5_fragment(messy_markup).scrub!(:double_breakpoint)
+    #     => "<p>Some text here in a logical paragraph.</p><p>Some more text, apparently a second paragraph.</p>"
+    #
+    class DoubleBreakpoint < Scrubber
+      def initialize # rubocop:disable Lint/MissingSuper
+        @direction = :top_down
+      end
+
+      def scrub(node)
+        return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "p")
+
+        paragraph_with_break_point_nodes = node.xpath("//p[br[following-sibling::br]]")
+
+        paragraph_with_break_point_nodes.each do |paragraph_node|
+          new_paragraph = paragraph_node.add_previous_sibling("<p>").first
+
+          paragraph_node.children.each do |child|
+            remove_blank_text_nodes(child)
+          end
+
+          paragraph_node.children.each do |child|
+            # already unlinked
+            next if child.parent.nil?
+
+            if child.name == "br" && child.next_sibling.name == "br"
+              new_paragraph = paragraph_node.add_previous_sibling("<p>").first
+              child.next_sibling.unlink
+              child.unlink
+            else
+              child.parent = new_paragraph
+            end
+          end
+
+          paragraph_node.unlink
+        end
+
+        CONTINUE
+      end
+
+      private
+
+      def remove_blank_text_nodes(node)
+        node.unlink if node.text? && node.blank?
+      end
+    end
+    #
     #  A hash that maps a symbol (like +:prune+) to the appropriate Scrubber (Loofah::Scrubbers::Prune).
     #
     MAP = {
@@ -364,6 +415,7 @@ module Loofah
       targetblank: TargetBlank,
       newline_block_elements: NewlineBlockElements,
       unprintable: Unprintable,
+      double_breakpoint: DoubleBreakpoint,
     }
 
     class << self

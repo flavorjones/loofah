@@ -50,6 +50,9 @@ class IntegrationTestScrubbers < Loofah::TestCase
   ENTITY_HACK_ATTACK_TEXT_SCRUB = "Hack attack!&lt;script&gt;alert('evil')&lt;/script&gt;"
   ENTITY_HACK_ATTACK_TEXT_SCRUB_UNESC = "Hack attack!<script>alert('evil')</script>"
 
+  BREAKPOINT_FRAGMENT = "<p>Some text here in a logical paragraph.<br><br>Some more text, apparently a second paragraph.<br><br>Et cetera...</p>"
+  BREAKPOINT_RESULT = "<p>Some text here in a logical paragraph.</p><p>Some more text, apparently a second paragraph.</p><p>Et cetera...</p>"
+
   context "scrubbing shortcuts" do
     context "#scrub_document" do
       it "is a shortcut for parse-and-scrub" do
@@ -233,6 +236,16 @@ class IntegrationTestScrubbers < Loofah::TestCase
             result = doc.scrub!(:unprintable)
 
             assert_equal UNPRINTABLE_RESULT, doc.xpath("/html/body").inner_html
+            assert_equal doc, result
+          end
+        end
+
+        context ":double_breakpoint" do
+          it "replaces double line breaks with paragraph tags" do
+            doc = klass.parse("<html><body>#{BREAKPOINT_FRAGMENT}</body></html>")
+            result = doc.scrub!(:double_breakpoint)
+
+            assert_equal BREAKPOINT_RESULT, doc.xpath("/html/body").inner_html.delete("\n")
             assert_equal doc, result
           end
         end
