@@ -200,6 +200,14 @@ class Html5TestSanitizer < Loofah::TestCase
     check_sanitization(input, output)
   end
 
+  def test_boolean_attributes
+    input = "<video controls download></video>"
+    expected_html5 = "<video controls=''></video>"
+    output_html5 = sanitize_html5(input).tr('"', "'")
+
+    assert_equal(expected_html5, output_html5)
+  end
+
   ##
   ##  libxml2 downcases attributes, so this is moot.
   ##
