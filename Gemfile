@@ -2,6 +2,10 @@
 
 source "https://rubygems.org/"
 
+# list it ahead of other gems so it's initialized properly
+# https://github.com/jruby/jruby/issues/8606#issuecomment-2641523588
+gem("jar-dependencies", "0.5.4") if RUBY_PLATFORM == "java"
+
 gemspec
 
 group :development do
@@ -10,7 +14,6 @@ group :development do
   gem("minitest", ["~> 5.14"])
   gem("rake", ["~> 13.0"])
   gem("rdoc", [">= 4.0", "< 7"])
-  gem("jar-dependencies", "0.4.1") if RUBY_PLATFORM == "java" # https://github.com/jruby/jruby/issues/7262
 
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.0.0")
     gem("rubocop", "1.65.0")
