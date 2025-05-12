@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.24.1 / 2025-05-12
+
+### Ruby support
+
+* Import only what's needed from `cgi` for support for Ruby 3.5 #296 @Earlopain
+
+
 ## 2.24.0 / 2024-12-24
 
 ### Added

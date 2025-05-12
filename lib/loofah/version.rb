@@ -2,5 +2,5 @@
 
 module Loofah
   # The version of Loofah you are using
-  VERSION = "2.24.0"
+  VERSION = "2.24.1"
 end
