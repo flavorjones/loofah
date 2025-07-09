@@ -106,8 +106,9 @@
   {
     "name": "double_open_angle_brackets_2 v2",
     "input": "<div><script src=http://ha.ckers.org/scriptlet.html < </div>",
-    "libxml": "<div>&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;</div>",
-    "libgumbo": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/script&gt;</div>",
+    "libxml":      "<div>&lt;script src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/script&gt;</div>",
+    "libxml-2.14": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html' &lt; div&gt;&lt;/script&gt;</div>",
+    "libgumbo":    "<div>&lt;script src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/script&gt;</div>",
     "jruby": "<div>&lt;script src='http://ha.ckers.org/scriptlet.html'&gt;&lt; &lt;/div&gt;&lt;/script&gt;</div>"
   },
 
@@ -165,8 +166,9 @@
   {
     "name": "non_alpha_non_digit",
     "input": "<script/XSS src=\"http://ha.ckers.org/xss.js\"></script>",
-    "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
-    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "libxml":      "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
+    "libxml-2.14": "&lt;script xss src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "libgumbo":    "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
     "jruby": "&lt;script&gt;&lt;/script&gt;"
   },
 
@@ -367,8 +369,9 @@
   {
     "name": "should_sanitize_invalid_script_tag",
     "input": "<script/XSS SRC=\"http://ha.ckers.org/xss.js\"></script>",
-    "libxml": "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
-    "libgumbo": "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "libxml":      "&lt;script src=\"http://ha.ckers.org/xss.js\"&gt;&lt;/script&gt;",
+    "libxml-2.14": "&lt;script xss src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
+    "libgumbo":    "&lt;script xss='' src='http://ha.ckers.org/xss.js'&gt;&lt;/script&gt;",
     "jruby": "&lt;script&gt;&lt;/script&gt;"
   },
 
@@ -389,8 +392,9 @@
   {
     "name": "should_sanitize_script_tag_with_multiple_open_brackets_2b",
     "input": "<div><iframe src=http://ha.ckers.org/scriptlet.html\n< </div>",
-    "libxml": "<div>&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;</div>",
-    "libgumbo": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/iframe&gt;</div>",
+    "libxml":      "<div>&lt;iframe src=\"http://ha.ckers.org/scriptlet.html\"&gt;&lt;/iframe&gt;</div>",
+    "libxml-2.14": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html' &lt; div&gt;&lt;/iframe&gt;</div>",
+    "libgumbo":    "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html' &lt;='' div=''&gt;&lt;/iframe&gt;</div>",
     "jruby": "<div>&lt;iframe src='http://ha.ckers.org/scriptlet.html'&gt;&amp;lt; &amp;lt;/div&amp;gt;&lt;/iframe&gt;</div>"
   },
 
