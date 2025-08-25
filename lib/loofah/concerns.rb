@@ -168,13 +168,13 @@ module Loofah
 
   module HtmlFragmentBehavior # :nodoc:
     module ClassMethods
-      def parse(tags, encoding = nil)
+      def parse(tags, encoding = nil, &block)
         doc = document_klass.new
 
         encoding ||= tags.respond_to?(:encoding) ? tags.encoding.name : "UTF-8"
         doc.encoding = encoding
 
-        new(doc, tags)
+        new(doc, tags, &block)
       end
 
       def document_klass
