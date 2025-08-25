@@ -530,5 +530,23 @@
     "name": "attributes_with_embedded_quotes_II",
     "input": "<img src=notthere.jpg\"\"onerror=\"alert(2) />",
     "libxml": "<img src='notthere.jpg%22%22onerror=%22alert(2)'>"
+  },
+
+  {
+    "name": "empty_attributes_1",
+    "input": "<option value=\"\">Empty Value<script>alert(1)</script></option>",
+    "libxml": "<option value=''>Empty Value&lt;script&gt;alert(1)&lt;/script&gt;</option>"
+  },
+
+  {
+    "name": "empty_attributes_2",
+    "input": "<option value=\"\">Empty Value</script></option>",
+    "libxml": "<option value=''>Empty Value</option>"
+  },
+
+  {
+    "name": "empty_attributes_3",
+    "input": "<option value=\"\" download=\"foo-bar\">Empty Value</option>",
+    "libxml": "<option value=''>Empty Value</option>"
   }
 ]

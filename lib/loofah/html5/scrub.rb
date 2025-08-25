@@ -33,7 +33,9 @@ module Loofah
               next
             end
 
-            unless SafeList::ALLOWED_ATTRIBUTES.include?(attr_name)
+            unless SafeList::ALLOWED_ATTRIBUTES.include?(attr_name) ||
+                SafeList::ACCEPTABLE_BOOLEAN_OR_EMPTY_ATTRIBUTES[node.name]&.include?(attr_node.name) ||
+                SafeList::ACCEPTABLE_BOOLEAN_OR_EMPTY_ATTRIBUTES["*"].include?(attr_node.name)
               attr_node.remove
               next
             end
@@ -57,9 +59,11 @@ module Loofah
           scrub_css_attribute(node)
 
           node.attribute_nodes.each do |attr_node|
-            if attr_node.value !~ /[^[:space:]]/ && attr_node.name !~ DATA_ATTRIBUTE_NAME
-              node.remove_attribute(attr_node.name)
-            end
+            next if attr_node.value =~ /[^[:space:]]/ || attr_node.name =~ DATA_ATTRIBUTE_NAME ||
+              SafeList::ACCEPTABLE_BOOLEAN_OR_EMPTY_ATTRIBUTES[node.name]&.include?(attr_node.name) ||
+              SafeList::ACCEPTABLE_BOOLEAN_OR_EMPTY_ATTRIBUTES["*"].include?(attr_node.name)
+
+            node.remove_attribute(attr_node.name)
           end
 
           force_correct_attribute_escaping!(node)
