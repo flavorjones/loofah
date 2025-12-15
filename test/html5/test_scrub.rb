@@ -147,12 +147,22 @@ class UnitHTML5Scrub < Loofah::TestCase
     it "disallows javascript URIs with HTML entities" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58;alert(1)"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&colon;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&amp;colon;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&co\x00lon;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&co\tlon;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&co\nlon;alert(1)"))
     end
 
     it "disallows javascript URIs with control characters" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("java\x00script:alert(1)"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("java\tscript:alert(1)"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("java\nscript:alert(1)"))
+    end
+
+    it "disallows javascript URIs with control characters in HTML entities" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#1\x0015;cript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x\t73;cript:alert(1)"))
     end
 
     it "disallows vbscript URIs" do

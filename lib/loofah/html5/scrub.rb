@@ -146,7 +146,7 @@ module Loofah
         # requiring a Nokogiri DOM node.
         def allowed_uri?(uri_string)
           # this logic lifted nearly verbatim from HTML5 sanitization
-          val_unescaped = CGI.unescapeHTML(uri_string).gsub(CONTROL_CHARACTERS, "").downcase
+          val_unescaped = CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")).gsub("&colon;", ":").downcase
           if URI_PROTOCOL_REGEX.match?(val_unescaped)
             protocol = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0]
             return false unless SafeList::ALLOWED_PROTOCOLS.include?(protocol)
