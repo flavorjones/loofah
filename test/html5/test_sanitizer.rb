@@ -27,7 +27,7 @@ class Html5TestSanitizer < Loofah::TestCase
       possible_answer.tr('"', "'")
     end
 
-    assert_includes(possible_output, sane, caller(1..1).first)
+    assert_includes(possible_output, sane, "#{caller(1..1).first}: html4 sanitization failed")
 
     if Loofah.html5_support?
       # now do libgumbo
@@ -36,7 +36,7 @@ class Html5TestSanitizer < Loofah::TestCase
         possible_answer.tr('"', "'")
       end
 
-      assert_includes(possible_output, sane, caller(1..1).first)
+      assert_includes(possible_output, sane, "#{caller(1..1).first}: html5 sanitization failed")
     end
   end
 

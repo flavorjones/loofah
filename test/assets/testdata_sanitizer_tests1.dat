@@ -530,5 +530,36 @@
     "name": "attributes_with_embedded_quotes_II",
     "input": "<img src=notthere.jpg\"\"onerror=\"alert(2) />",
     "libxml": "<img src='notthere.jpg%22%22onerror=%22alert(2)'>"
+  },
+
+  {
+    "name": "xss_with_control_characters_and_entities_1",
+    "input": "<a href='javascript&amp;colon;alert(123)'>click here</a>",
+    "libxml": "<a>click here</a>"
+  },
+
+  {
+    "name": "xss_with_control_characters_and_entities_2",
+    "input": "<a href='javascript&colon;alert(123)'>click here</a>",
+    "libxml": "<a>click here</a>"
+  },
+
+  {
+    "name": "xss_with_control_characters_and_entities_3a",
+    "input": "<a href='java&#115cript:alert(123)'>click here</a>",
+    "libxml": "<a>click here</a>"
+  },
+
+  {
+    "name": "xss_with_control_characters_and_entities_3b",
+    "input": "<a href='java&#1\t15cript:alert(123)'>click here</a>",
+    "libxml": "<a href='java'>click here</a>",
+    "libgumbo": "<a>click here</a>"
+  },
+
+  {
+    "name": "xss_with_control_characters_and_entities_4",
+    "input": "<a href='javascript&co\tlon;alert(123)'>click here</a>",
+    "libxml": "<a>click here</a>"
   }
 ]
