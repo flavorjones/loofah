@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.25.0 / 2025-12-15
 
 * Extract `Loofah::HTML5::Scrub.allowed_uri?` which operates on a string. Previously this logic was coupled to the parsed tree in `.scrub_uri_attribute`. #300 @flavorjones
 * Tightened up how entities and control characters are handled when detecting allowed URIs. #301 @flavorjones
