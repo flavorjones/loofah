@@ -14,6 +14,7 @@ module Loofah
       CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
+      URI_PROTOCOL_REGEX = /\A[a-z][a-z0-9+\-.]*:/ # RFC 3986
 
       class << self
         def allowed_element?(element_name)
@@ -140,23 +141,33 @@ module Loofah
           attr_node.value = values.join(" ")
         end
 
-        def scrub_uri_attribute(attr_node)
-          # this block lifted nearly verbatim from HTML5 sanitization
-          val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(CONTROL_CHARACTERS, "").downcase
-          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ &&
-              !SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0])
-            attr_node.remove
-            return true
-          elsif val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0] == "data"
-            # permit only allowed data mediatypes
-            mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
-            mediatype, _ = mediatype.split(";")[0..1] if mediatype
-            if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
-              attr_node.remove
-              return true
+        # Returns true if the given URI string is safe, false otherwise.
+        # This method can be used to validate URI attribute values without
+        # requiring a Nokogiri DOM node.
+        def allowed_uri?(uri_string)
+          # this logic lifted nearly verbatim from HTML5 sanitization
+          val_unescaped = CGI.unescapeHTML(uri_string).gsub(CONTROL_CHARACTERS, "").downcase
+          if URI_PROTOCOL_REGEX.match?(val_unescaped)
+            protocol = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0]
+            return false unless SafeList::ALLOWED_PROTOCOLS.include?(protocol)
+
+            if protocol == "data"
+              # permit only allowed data mediatypes
+              mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
+              mediatype, _ = mediatype.split(/[;,]/)[0..1] if mediatype
+              return false if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
             end
           end
-          false
+          true
+        end
+
+        def scrub_uri_attribute(attr_node)
+          if allowed_uri?(attr_node.value)
+            false
+          else
+            attr_node.remove
+            true
+          end
         end
 
         #
