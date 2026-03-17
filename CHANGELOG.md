@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.25.1 / 2026-03-17
+
+* Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes unescaped whitespace entities and rejects schemas containing them. See [GHSA-46fp-8f5p-pf2m](https://github.com/flavorjones/loofah/security/advisories/GHSA-46fp-8f5p-pf2m). #302 @flavorjones
+
 ## 2.25.0 / 2025-12-15
 
 * Extract `Loofah::HTML5::Scrub.allowed_uri?` which operates on a string. Previously this logic was coupled to the parsed tree in `.scrub_uri_attribute`. #300 @flavorjones
