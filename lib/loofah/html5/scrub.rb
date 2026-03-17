@@ -145,15 +145,18 @@ module Loofah
         # This method can be used to validate URI attribute values without
         # requiring a Nokogiri DOM node.
         def allowed_uri?(uri_string)
-          # this logic lifted nearly verbatim from HTML5 sanitization
-          val_unescaped = CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")).gsub("&colon;", ":").downcase
-          if URI_PROTOCOL_REGEX.match?(val_unescaped)
-            protocol = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[0]
+          # Replace control characters both before and after unescaping.
+          uri_string = CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, ""))
+            .gsub(CONTROL_CHARACTERS, "")
+            .gsub("&colon;", ":")
+            .downcase
+          if URI_PROTOCOL_REGEX.match?(uri_string)
+            protocol = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[0]
             return false unless SafeList::ALLOWED_PROTOCOLS.include?(protocol)
 
             if protocol == "data"
               # permit only allowed data mediatypes
-              mediatype = val_unescaped.split(SafeList::PROTOCOL_SEPARATOR)[1]
+              mediatype = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[1]
               mediatype, _ = mediatype.split(/[;,]/)[0..1] if mediatype
               return false if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
             end

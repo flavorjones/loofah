@@ -354,6 +354,24 @@
   },
 
   {
+    "name": "should_not_fall_for_xss_image_hack_9b",
+    "input": "<img src=\"jav&#9;ascript:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_10b",
+    "input": "<img src=\"java&#10;script:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_11b",
+    "input": "<img src=\"java&#13;script:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
     "name": "should_sanitize_half_open_scripts",
     "input": "<img src=\"javascript:alert('XSS')\"",
     "libxml": "<img>",
