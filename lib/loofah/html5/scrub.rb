@@ -71,7 +71,7 @@ module Loofah
             end
 
             next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
-              attr_name == "xlink:href" &&
+              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
               attr_node.value =~ /^\s*[^#\s].*/m
 
             attr_node.remove

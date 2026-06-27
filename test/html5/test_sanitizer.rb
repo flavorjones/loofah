@@ -310,35 +310,38 @@ class Html5TestSanitizer < Loofah::TestCase
 
     tag_name_dc = tag_name.downcase
 
-    define_method "test_#{tag_name}_should_allow_local_href" do
-      input = %(<#{tag_name} xlink:href="#foo"/>)
-      output = "<#{tag_name_dc} xlink:href='#foo'></#{tag_name_dc}>"
-      xhtmloutput = "<#{tag_name} xlink:href='#foo'></#{tag_name}>"
-      check_sanitization(input, output, xhtmloutput, xhtmloutput)
-    end
+    ["xlink:href", "href"].each do |attr_name|
+      define_method "test_#{tag_name}_should_allow_local_#{attr_name}" do
+        input = %(<#{tag_name} #{attr_name}="#foo"/>)
+        output = "<#{tag_name_dc} #{attr_name}='#foo'></#{tag_name_dc}>"
+        xhtmloutput = "<#{tag_name} #{attr_name}='#foo'></#{tag_name}>"
+        check_sanitization(input, output, xhtmloutput)
+      end
 
-    define_method "test_#{tag_name}_should_allow_local_href_with_newline" do
-      input = %(<#{tag_name} xlink:href="\n#foo"/>)
+      define_method "test_#{tag_name}_should_allow_local_#{attr_name}_with_newline" do
+        input = %(<#{tag_name} #{attr_name}="\n#foo"/>)
 
-      check_sanitization(
-        input,
-        "<#{tag_name_dc} xlink:href='\n#foo'></#{tag_name_dc}>",
-        "<#{tag_name_dc} xlink:href='&#10;#foo'></#{tag_name_dc}>", # nekohtml
-      )
-    end
+        check_sanitization(
+          input,
+          "<#{tag_name_dc} #{attr_name}='\n#foo'></#{tag_name_dc}>",
+          "<#{tag_name_dc} #{attr_name}='&#10;#foo'></#{tag_name_dc}>", # nekohtml
+          "<#{tag_name_dc} #{attr_name}='#foo'></#{tag_name_dc}>", # libxml2 serialization drops newline from 'href'
+        )
+      end
 
-    define_method "test_#{tag_name}_should_forbid_nonlocal_href" do
-      input = %(<#{tag_name} xlink:href="http://bad.com/foo"/>)
-      output = "<#{tag_name_dc}></#{tag_name_dc}>"
-      xhtmloutput = "<#{tag_name}></#{tag_name}>"
-      check_sanitization(input, output, xhtmloutput, xhtmloutput)
-    end
+      define_method "test_#{tag_name}_should_forbid_nonlocal_#{attr_name}" do
+        input = %(<#{tag_name} #{attr_name}="http://bad.com/foo"/>)
+        output = "<#{tag_name_dc}></#{tag_name_dc}>"
+        xhtmloutput = "<#{tag_name}></#{tag_name}>"
+        check_sanitization(input, output, xhtmloutput)
+      end
 
-    define_method "test_#{tag_name}_should_forbid_nonlocal_href_with_newline" do
-      input = %(<#{tag_name} xlink:href="\nhttp://bad.com/foo"/>)
-      output = "<#{tag_name_dc}></#{tag_name_dc}>"
-      xhtmloutput = "<#{tag_name}></#{tag_name}>"
-      check_sanitization(input, output, xhtmloutput, xhtmloutput)
+      define_method "test_#{tag_name}_should_forbid_nonlocal_#{attr_name}_with_newline" do
+        input = %(<#{tag_name} #{attr_name}="\nhttp://bad.com/foo"/>)
+        output = "<#{tag_name_dc}></#{tag_name_dc}>"
+        xhtmloutput = "<#{tag_name}></#{tag_name}>"
+        check_sanitization(input, output, xhtmloutput)
+      end
     end
   end
 
