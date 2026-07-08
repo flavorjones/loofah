@@ -174,6 +174,45 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("jav&#x09;ascript:alert(1)"))
     end
 
+    it "disallows javascript URIs with named whitespace character references splitting the scheme" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&Tab;script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&NewLine;script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&Tab;javascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&NewLine;javascript:alert(1)"))
+    end
+
+    it "disallows javascript URIs with named whitespace character references before the scheme separator" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&Tab;:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&NewLine;:alert(1)"))
+    end
+
+    it "disallows javascript URIs combining named whitespace and named colon references" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&Tab;script&colon;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&NewLine;script&colon;alert(1)"))
+    end
+
+    it "disallows javascript URIs with double-encoded named whitespace character references" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&amp;Tab;script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&amp;NewLine;script:alert(1)"))
+    end
+
+    it "disallows javascript URIs where stripping an embedded control character reveals a named whitespace reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&Ta&#0;b;script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&New&#0;Line;script:alert(1)"))
+    end
+
+    it "allows wrong-cased named whitespace references, which browsers do not decode" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&tab;script:alert(1)"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&NEWLINE;script:alert(1)"))
+    end
+
+    it "does not mutate a frozen argument" do
+      frozen_uri = "JAVA&Tab;SCRIPT&colon;alert(1)"
+
+      assert_predicate(frozen_uri, :frozen?)
+      refute(Loofah::HTML5::Scrub.allowed_uri?(frozen_uri))
+    end
+
     it "disallows vbscript URIs" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript:msgbox(1)"))
     end

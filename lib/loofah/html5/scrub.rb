@@ -39,6 +39,10 @@ module Loofah
         \z
       }x
 
+      # HTML5 named character references for whitespace that browsers strip from
+      # URIs. CGI.unescapeHTML does not decode these, so they are handled explicitly.
+      WHITESPACE_CHARACTER_REFERENCES = /&(Tab|NewLine);/
+
       class << self
         def allowed_element?(element_name)
           ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include?(element_name)
@@ -168,11 +172,15 @@ module Loofah
         # This method can be used to validate URI attribute values without
         # requiring a Nokogiri DOM node.
         def allowed_uri?(uri_string)
-          # Replace control characters both before and after unescaping.
+          # Control characters are stripped both before and after unescaping, since
+          # unescaping can produce them. That strip must precede
+          # WHITESPACE_CHARACTER_REFERENCES: removing a control character can reveal a
+          # named whitespace reference.
           uri_string = CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, ""))
-            .gsub(CONTROL_CHARACTERS, "")
-            .gsub("&colon;", ":")
-            .downcase
+          uri_string.gsub!(CONTROL_CHARACTERS, "")
+          uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
+          uri_string.gsub!("&colon;", ":")
+          uri_string.downcase!
           if URI_PROTOCOL_REGEX.match?(uri_string)
             protocol = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[0]
             return false unless SafeList::ALLOWED_PROTOCOLS.include?(protocol)
