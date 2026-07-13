@@ -987,7 +987,6 @@ module Loofah
         "data",
         "ed2k",
         "fax",
-        "feed",
         "ftp",
         "gopher",
         "http",

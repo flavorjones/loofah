@@ -227,6 +227,16 @@ class Html5TestSanitizer < Loofah::TestCase
     end
   end
 
+  def test_should_disallow_feed_uris
+    input = %(<a href="feed:https://example.com/rss.xml">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output)
+
+    input = %(<a href="feed:javascript:alert(1)">foo</a>)
+    output = "<a>foo</a>"
+    check_sanitization(input, output)
+  end
+
   ["image/gif", "image/jpeg", "image/png", "text/css", "text/plain"].each do |data_uri_type|
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
       input = %(<a href="data:#{data_uri_type}">foo</a>)
