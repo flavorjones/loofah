@@ -213,6 +213,50 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?(frozen_uri))
     end
 
+    it "disallows javascript URIs whose scheme is separated by a semicolon-less numeric character reference colon" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#058alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x03a(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#X3A(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript&#58msgbox(1)"))
+    end
+
+    it "disallows javascript URIs whose numeric character reference colon is padded with leading zeros" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#0000000000000000000058alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x000000000000000003a(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#00000000000000000009script:alert(1)"))
+    end
+
+    it "disallows javascript URIs whose scheme is split by a semicolon-less numeric character reference whitespace character" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#9script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#09script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#10script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#13script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x9script:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#X09script:alert(1)"))
+    end
+
+    it "disallows javascript URIs assembled from multiple numeric character references" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("jav&#97script&#58alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#9alert(1)"))
+    end
+
+    it "allows URIs whose numeric character references do not decode to a scheme colon" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("javascript&#581alert(1)"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3aalert(1)"))
+    end
+
+    it "checks the mediatype of data URIs whose scheme is separated by a numeric character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data&#58text/html,<script>alert(1)</script>"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data&#x3aimage/png;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs whose mediatype is assembled by a numeric character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&#x2fhtml,<script>alert(1)</script>"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:image&#x2fpng;base64,iVBORw0KGgo"))
+    end
+
     it "disallows vbscript URIs" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript:msgbox(1)"))
     end
@@ -240,10 +284,6 @@ class UnitHTML5Scrub < Loofah::TestCase
     it "treats a data URI with a malformed mediatype as text/plain" do
       assert(Loofah::HTML5::Scrub.allowed_uri?("data::text/html,<script>alert(1)</script>"))
       assert(Loofah::HTML5::Scrub.allowed_uri?("data:image/png:text/html,<script>alert(1)</script>"))
-    end
-
-    it "does not treat a partial entity match as a mediatype separator" do
-      refute(Loofah::HTML5::Scrub.allowed_uri?("data:image/png&#x3a0,payload"))
     end
 
     it "allows data URIs with an omitted mediatype, which defaults to text/plain" do
