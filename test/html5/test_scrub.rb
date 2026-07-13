@@ -192,5 +192,10 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("data:image/svg+xml,<svg onload=alert(1)>"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("data:foo"))
     end
+
+    it "disallows data URIs with a literal &#x70 in the mediatype" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:&#x70text/html,<script>alert(1)</script>"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:image/png&#x70,payload"))
+    end
   end
 end

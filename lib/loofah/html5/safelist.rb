@@ -978,7 +978,7 @@ module Loofah
         "stroke-opacity",
       ])
 
-      PROTOCOL_SEPARATOR = /:|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A/i
+      PROTOCOL_SEPARATOR = /:|(&#0*58)|(&#x0*3a)|(%|&#37;)3A/i
 
       ACCEPTABLE_PROTOCOLS = Set.new([
         "afs",
