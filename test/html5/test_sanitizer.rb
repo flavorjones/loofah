@@ -229,8 +229,8 @@ class Html5TestSanitizer < Loofah::TestCase
 
   ["image/gif", "image/jpeg", "image/png", "text/css", "text/plain"].each do |data_uri_type|
     define_method "test_should_allow_data_#{data_uri_type}_uris" do
-      input = %(<a href="data:#{data_uri_type}">foo</a>)
-      output = "<a href='data:#{data_uri_type}'>foo</a>"
+      input = %(<a href="data:#{data_uri_type},">foo</a>)
+      output = "<a href='data:#{data_uri_type},'>foo</a>"
       check_sanitization(input, output)
 
       input = %(<a href="data:#{data_uri_type};base64,R0lGODlhAQABA">foo</a>)
@@ -239,8 +239,8 @@ class Html5TestSanitizer < Loofah::TestCase
     end
 
     define_method "test_should_allow_uppercase_data_#{data_uri_type}_uris" do
-      input = %(<a href="DATA:#{data_uri_type.upcase}">foo</a>)
-      output = "<a href='DATA:#{data_uri_type.upcase}'>foo</a>"
+      input = %(<a href="DATA:#{data_uri_type.upcase},">foo</a>)
+      output = "<a href='DATA:#{data_uri_type.upcase},'>foo</a>"
       check_sanitization(input, output)
     end
   end
@@ -268,6 +268,30 @@ class Html5TestSanitizer < Loofah::TestCase
     input = %(<svg><use href="data:image/svg+xml;base64,PHN2ZyBpZD0neCcgeG1s"/></svg>)
     output = "<svg><use></use></svg>"
 
+    check_sanitization(input, output)
+  end
+
+  def test_should_allow_data_uris_with_an_omitted_mediatype
+    input = %(<a href="data:,hello">foo</a>)
+    output = "<a href='data:,hello'>foo</a>"
+    check_sanitization(input, output)
+
+    input = %(<a href="data:;base64,aGVsbG8=">foo</a>)
+    output = "<a href='data:;base64,aGVsbG8='>foo</a>"
+    check_sanitization(input, output)
+  end
+
+  def test_should_treat_a_malformed_data_uri_mediatype_as_text_plain
+    input = %(<a href="data::text/html,x">foo</a>)
+    output = "<a href='data::text/html,x'>foo</a>"
+    check_sanitization(input, output)
+
+    input = %(<a href="data:image/png:text/html,x">foo</a>)
+    output = "<a href='data:image/png:text/html,x'>foo</a>"
+    check_sanitization(input, output)
+
+    input = %(<a href="data:&#58text/html,payload">foo</a>)
+    output = "<a href='data::text/html,payload'>foo</a>"
     check_sanitization(input, output)
   end
 

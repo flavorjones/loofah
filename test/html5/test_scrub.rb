@@ -197,5 +197,74 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("data:&#x70text/html,<script>alert(1)</script>"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("data:image/png&#x70,payload"))
     end
+
+    it "treats a data URI with a malformed mediatype as text/plain" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data::text/html,<script>alert(1)</script>"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:image/png:text/html,<script>alert(1)</script>"))
+    end
+
+    it "does not treat a partial entity match as a mediatype separator" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:image/png&#x3a0,payload"))
+    end
+
+    it "allows data URIs with an omitted mediatype, which defaults to text/plain" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:,hello"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:;base64,aGVsbG8="))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:;charset=utf-8,hello"))
+    end
+
+    it "disallows data URIs with no mediatype and no data" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:"))
+    end
+  end
+
+  describe ".data_uri_mediatype" do
+    it "returns the mediatype of a valid data URI" do
+      assert_equal("image/png", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png,x"))
+      assert_equal("text/html", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/html,x"))
+      assert_equal("image/svg+xml", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/svg+xml,x"))
+    end
+
+    it "returns the type/subtype without parameters" do
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain;charset=utf-8,x"))
+    end
+
+    it "ignores the base64 flag" do
+      assert_equal("image/png", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png;base64,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain;charset=utf-8;base64,x"))
+    end
+
+    it "defaults an omitted mediatype to text/plain" do
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:;base64,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:;charset=utf-8,x"))
+    end
+
+    it "falls back to text/plain for a malformed mediatype" do
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data::text/html,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png:text/html,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:foo,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/,x"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:/plain,x"))
+    end
+
+    it "does not treat a partial entity match as a separator" do
+      assert_equal("image/png&#x3a0", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png&#x3a0,payload"))
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/pngΠ,payload"))
+    end
+
+    it "strips whitespace around the mediatype" do
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data: text/plain ,x"))
+    end
+
+    it "splits on the first comma" do
+      assert_equal("text/plain", Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain,a,b,c"))
+    end
+
+    it "returns nil when the required comma is absent" do
+      assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:"))
+      assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png"))
+      assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain"))
+    end
   end
 end
