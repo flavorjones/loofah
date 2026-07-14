@@ -16,6 +16,29 @@ module Loofah
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
       URI_PROTOCOL_REGEX = /\A[a-z][a-z0-9+\-.]*:/ # RFC 3986
 
+      # Matches a valid MIME type "essence" (type "/" subtype, no parameters), used to
+      # decide whether a data: URI mediatype is well-formed; a non-match is not a valid
+      # MIME type, which the data: URL processor treats as text/plain. Specs:
+      #
+      #   https://mimesniff.spec.whatwg.org/#valid-mime-type
+      #   https://mimesniff.spec.whatwg.org/#mime-type-essence
+      #   https://mimesniff.spec.whatwg.org/#http-token-code-point
+      #
+      # The character class below is the HTTP token set (tchar) from RFC 9110 section
+      # 5.6.2, https://www.rfc-editor.org/rfc/rfc9110#name-tokens :
+      #
+      #   tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^"
+      #         / "_" / "`" / "|" / "~" / DIGIT / ALPHA
+      #
+      # ALPHA is written a-z, not a-zA-Z, because allowed_uri? downcases the input first.
+      DATA_URI_MEDIATYPE = %r{
+        \A
+        [a-z0-9!\#$%&'*+\-.^_`|~]+   # type:    1*tchar
+        /                            # "/" is not a tchar, so it is the sole delimiter
+        [a-z0-9!\#$%&'*+\-.^_`|~]+   # subtype: 1*tchar
+        \z
+      }x
+
       class << self
         def allowed_element?(element_name)
           ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include?(element_name)
@@ -156,9 +179,7 @@ module Loofah
 
             if protocol == "data"
               # permit only allowed data mediatypes
-              mediatype = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[1]
-              mediatype, _ = mediatype.split(/[;,]/)[0..1] if mediatype
-              return false if mediatype && !SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(mediatype)
+              return false unless SafeList::ALLOWED_URI_DATA_MEDIATYPES.include?(data_uri_mediatype(uri_string))
             end
           end
           true
@@ -237,6 +258,20 @@ module Loofah
             string.encode!(origenc) if origenc
             string
           end
+        end
+
+        private
+
+        # Returns the mediatype of a data: URI per RFC 2397, or nil when the
+        # required comma is absent. allowed_uri? entity-decodes, downcases, and
+        # strips control characters before calling this. An omitted or malformed
+        # mediatype resolves to "text/plain", matching the WHATWG data: URL processor.
+        def data_uri_mediatype(uri_string)
+          metadata, comma, _data = uri_string.delete_prefix("data:").partition(",")
+          return nil if comma.empty?
+
+          mediatype = metadata.delete_suffix(";base64").split(";", 2).first.to_s.strip
+          mediatype.match?(DATA_URI_MEDIATYPE) ? mediatype : "text/plain"
         end
       end
     end
