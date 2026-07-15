@@ -605,6 +605,11 @@ module Loofah
         "stroke",
       ])
 
+      SVG_HREF_ATTRIBUTES = Set.new([
+        "xlink:href",
+        "href",
+      ])
+
       SVG_ALLOW_LOCAL_HREF = Set.new([
         "altGlyph",
         "animate",

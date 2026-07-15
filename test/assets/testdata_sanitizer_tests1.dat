@@ -372,6 +372,36 @@
   },
 
   {
+    "name": "should_not_fall_for_xss_image_hack_named_tab",
+    "input": "<img src=\"jav&Tab;ascript:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_named_newline",
+    "input": "<img src=\"java&NewLine;script:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_named_tab_leading",
+    "input": "<img src=\"&Tab;javascript:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_named_newline_leading",
+    "input": "<img src=\"&NewLine;javascript:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
+    "name": "should_not_fall_for_xss_image_hack_named_tab_before_colon",
+    "input": "<img src=\"javascript&Tab;:alert('XSS');\" />",
+    "libxml": "<img>"
+  },
+
+  {
     "name": "should_sanitize_half_open_scripts",
     "input": "<img src=\"javascript:alert('XSS')\"",
     "libxml": "<img>",

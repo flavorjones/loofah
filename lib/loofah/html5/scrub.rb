@@ -14,7 +14,16 @@ module Loofah
       CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
-      URI_PROTOCOL_REGEX = /\A[a-z][a-z0-9+\-.]*:/ # RFC 3986
+
+      # Decimal (`&#58`) or hexadecimal (`&#x3a`) form, with or without the trailing semicolon that
+      # CGI.unescapeHTML requires but browsers do not.
+      NUMERIC_CHARACTER_REFERENCE = /&#(x[0-9a-f]+|[0-9]+);?/i
+
+      # A scheme (RFC 3986) followed by a protocol separator. The separator must recognize the same
+      # encoded-colon forms as PROTOCOL_SEPARATOR, otherwise a scheme split by an encoded colon (for
+      # example "javascript&#58alert(1)") would not be recognized as having a scheme and would skip
+      # protocol validation.
+      URI_PROTOCOL_REGEX = /\A[a-z][a-z0-9+\-.]*#{SafeList::PROTOCOL_SEPARATOR}/
 
       # Matches a valid MIME type "essence" (type "/" subtype, no parameters), used to
       # decide whether a data: URI mediatype is well-formed; a non-match is not a valid
@@ -38,6 +47,10 @@ module Loofah
         [a-z0-9!\#$%&'*+\-.^_`|~]+   # subtype: 1*tchar
         \z
       }x
+
+      # HTML5 named character references for whitespace that browsers strip from
+      # URIs. CGI.unescapeHTML does not decode these, so they are handled explicitly.
+      WHITESPACE_CHARACTER_REFERENCES = /&(Tab|NewLine);/
 
       class << self
         def allowed_element?(element_name)
@@ -71,7 +84,7 @@ module Loofah
             end
 
             next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
-              attr_name == "xlink:href" &&
+              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
               attr_node.value =~ /^\s*[^#\s].*/m
 
             attr_node.remove
@@ -164,15 +177,20 @@ module Loofah
           attr_node.value = values.join(" ")
         end
 
-        # Returns true if the given URI string is safe, false otherwise.
-        # This method can be used to validate URI attribute values without
-        # requiring a Nokogiri DOM node.
+        # Returns true if the given URI string is safe, false otherwise. This method can be used to
+        # validate URI attribute values without requiring a Nokogiri DOM node.
         def allowed_uri?(uri_string)
-          # Replace control characters both before and after unescaping.
-          uri_string = CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, ""))
-            .gsub(CONTROL_CHARACTERS, "")
-            .gsub("&colon;", ":")
-            .downcase
+          # CGI.unescapeHTML decodes numeric references only when they carry a trailing semicolon, so
+          # also decode the semicolon-less ones, which browsers still decode and execute. Normalizing
+          # more aggressively than a browser only rejects more, which is safe. Control characters are
+          # stripped both before and after decoding, since decoding can produce them. That strip must
+          # precede WHITESPACE_CHARACTER_REFERENCES: removing a control character can reveal a named
+          # whitespace reference.
+          uri_string = decode_numeric_character_references(CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")))
+          uri_string.gsub!(CONTROL_CHARACTERS, "")
+          uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
+          uri_string.gsub!("&colon;", ":")
+          uri_string.downcase!
           if URI_PROTOCOL_REGEX.match?(uri_string)
             protocol = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[0]
             return false unless SafeList::ALLOWED_PROTOCOLS.include?(protocol)
@@ -183,6 +201,26 @@ module Loofah
             end
           end
           true
+        end
+
+        def decode_numeric_character_references(string)
+          string.gsub(NUMERIC_CHARACTER_REFERENCE) do |reference|
+            digits = ::Regexp.last_match(1)
+            hexadecimal = digits.start_with?("x", "X")
+            digits = digits[1..-1] if hexadecimal
+            significant_digits = digits.sub(/\A0+/, "")
+
+            # The largest code point is U+10FFFF: 7 decimal or 6 hexadecimal significant digits.
+            # Anything longer is out of range; skip it without building a large integer from it.
+            next reference if significant_digits.length > (hexadecimal ? 6 : 7)
+
+            codepoint = significant_digits.to_i(hexadecimal ? 16 : 10)
+            begin
+              codepoint.chr(Encoding::UTF_8)
+            rescue RangeError
+              reference
+            end
+          end
         end
 
         def scrub_uri_attribute(attr_node)
