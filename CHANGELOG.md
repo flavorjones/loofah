@@ -1,5 +1,14 @@
 # Changelog
 
+## next / unreleased
+
+### Improved
+
+* Harden `data:` URI mediatype parsing in `Loofah::HTML5::Scrub.allowed_uri?`. The mediatype is now parsed following the [WHATWG data: URL spec](https://fetch.spec.whatwg.org/#data-urls) and [RFC 2397](https://www.rfc-editor.org/rfc/rfc2397) instead of simply being split on a colon. A `data:` URI with an omitted or malformed mediatype is now treated as `text/plain` and allowed, and one without the required comma is now rejected. #305 @flavorjones
+* Remove `feed` from the default set of allowed protocols. The [feed URI scheme](https://en.wikipedia.org/wiki/Feed_URI_scheme) was never accepted as a standard protocol, and no major browser supports it. Removing it reduces the attack surface particularly for non-browser contexts. #304 @flavorjones
+* Remove a vestigial `&#x70` alternative from `Loofah::HTML5::SafeList::PROTOCOL_SEPARATOR`. This appears to be an ancient typo dating back to pre-extraction Rails circa 2007. #305 @flavorjones
+
+
 ## 2.25.1 / 2026-03-17
 
 * Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes unescaped whitespace entities and rejects schemas containing them. See [GHSA-46fp-8f5p-pf2m](https://github.com/flavorjones/loofah/security/advisories/GHSA-46fp-8f5p-pf2m). #302 @flavorjones
