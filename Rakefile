@@ -7,7 +7,6 @@ require "rake/testtask"
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = Dir["test/**/*.rb"]
-  t.verbose = true
 end
 
 desc "generate safelists from W3C specifications"
