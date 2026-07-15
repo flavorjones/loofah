@@ -376,7 +376,7 @@ class Html5TestSanitizer < Loofah::TestCase
   ##
   require "json"
   Dir[File.join(File.dirname(__FILE__), "..", "assets", "testdata_sanitizer_tests1.dat")].each do |filename|
-    JSON.parse(File.read(filename)).each do |test|
+    JSON.parse(File.read(filename), allow_comments: true).each do |test|
       it "testdata sanitizer #{test["name"]}" do
         test.delete("name")
         input = test.delete("input")
