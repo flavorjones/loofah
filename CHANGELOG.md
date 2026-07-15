@@ -1,6 +1,12 @@
 # Changelog
 
-## next / unreleased
+## 2.25.2 / 2026-07-15
+
+### Security
+
+* Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes numeric character references without semicolons (e.g. `javascript&#58alert(1)`), which browsers decode and execute, and rejects schemes split by them. See [GHSA-5qhf-9phg-95m2](https://github.com/flavorjones/loofah/security/advisories/GHSA-5qhf-9phg-95m2). @flavorjones
+* Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes the named character references `&Tab;` and `&NewLine;`, which `CGI.unescapeHTML` does not decode and browsers strip from URIs, and rejects schemes split by them (e.g. `java&Tab;script:alert(1)`). See [GHSA-8whx-365g-h9vv](https://github.com/flavorjones/loofah/security/advisories/GHSA-8whx-365g-h9vv). @flavorjones
+* Ensure that both `href` and `xlink:href` attributes on SVG elements like `use` are restricted to local (same-document) references. Previously only `xlink:href` was restricted, allowing the SVG 2 `href` attribute to reference external documents. See [GHSA-9wjq-cp2p-hrgf](https://github.com/flavorjones/loofah/security/advisories/GHSA-9wjq-cp2p-hrgf). @flavorjones
 
 ### Improved
 
