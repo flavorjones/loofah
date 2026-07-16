@@ -114,6 +114,7 @@ module Loofah
         "option",
         "output",
         "p",
+        "picture",
         "pre",
         "q",
         "s",
@@ -121,6 +122,7 @@ module Loofah
         "section",
         "select",
         "small",
+        "source",
         "span",
         "strike",
         "strong",
@@ -295,8 +297,10 @@ module Loofah
         "selected",
         "shape",
         "size",
+        "sizes",
         "span",
         "src",
+        "srcset",
         "start",
         "style",
         "summary",
@@ -589,6 +593,10 @@ module Loofah
         "src",
         "xlink:href",
         "xml:base",
+      ])
+
+      ATTR_VAL_IS_SRCSET = Set.new([
+        "srcset",
       ])
 
       SVG_ATTR_VAL_ALLOWS_REF = Set.new([
