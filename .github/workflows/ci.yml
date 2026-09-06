@@ -28,6 +28,20 @@ jobs:
           bundler-cache: true
       - run: bundle exec rake rubocop
 
+  lint-actions:
+    name: GitHub Actions audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Run actionlint
+        uses: rhysd/actionlint@v1.7.11
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@v0.6.2
+        with:
+          advanced-security: false
+
   test:
     needs: ["rubocop"]
     strategy:
