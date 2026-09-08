@@ -91,7 +91,7 @@ jobs:
           ruby-version: "3.4"
           bundler-cache: true
           rubygems: latest
-      - run: |
+      - run: | # zizmor: ignore[adhoc-packages] -- deliberately injects this checkout of loofah into the downstream project
           git clone --depth=1 ${{matrix.url}} ${{matrix.name}}
           cd ${{matrix.name}}
           bundle add loofah --path ".."
