@@ -504,6 +504,30 @@ class IntegrationTestScrubbers < Loofah::TestCase
             assert_equal doc, result
           end
         end
+
+        context ":double_breakpoint" do
+          it "replaces double line breaks in fragments" do
+            doc = klass.parse("<div>#{BREAKPOINT_FRAGMENT}</div>")
+            result = doc.scrub!(:double_breakpoint)
+
+            assert_equal BREAKPOINT_RESULT, doc.xpath("./div").inner_html.delete("\n")
+            assert_equal doc, result
+          end
+
+          it "scrubs each fragment paragraph once" do
+            doc = klass.parse("<div><p>a<br><br>b</p><p>c<br><br>d</p></div>")
+            doc.scrub!(:double_breakpoint)
+
+            assert_equal "<p>a</p><p>b</p><p>c</p><p>d</p>", doc.xpath("./div").inner_html.delete("\n")
+          end
+
+          it "preserves a trailing single break" do
+            doc = klass.parse("<div><p>a<br><br>b<br></p></div>")
+            doc.scrub!(:double_breakpoint)
+
+            assert_equal "<p>a</p><p>b<br></p>", doc.xpath("./div").inner_html.delete("\n")
+          end
+        end
       end
 
       context "#text" do
