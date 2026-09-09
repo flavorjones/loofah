@@ -315,6 +315,36 @@ class IntegrationTestAdHoc < Loofah::TestCase
           end
         end
 
+        context "xss protection from srcset attribute" do
+          it "sanitizes a disallowed scheme in any srcset candidate" do
+            # for CVE-2024-8372
+            # see: https://nvd.nist.gov/vuln/detail/CVE-2024-8372
+            html = %{<img src="https://example.com/ok.jpg" srcset="https://example.com/a.jpg 1x, javascript:alert(1) 2x">}
+
+            sanitized = scrub_fragment(html, :escape)
+
+            assert_nil sanitized.at_css("img")["srcset"]
+            assert sanitized.at_css("img")["src"]
+          end
+
+          it "sanitizes a disallowed data: mediatype in srcset" do
+            # for CVE-2024-8372 (data:image/svg+xml vector)
+            html = %{<img src="https://example.com/ok.jpg" srcset="data:image/svg+xml;base64,PHN2Zz4= 1x">}
+
+            sanitized = scrub_fragment(html, :escape)
+
+            assert_nil sanitized.at_css("img")["srcset"]
+          end
+
+          it "sanitizes a disallowed scheme in a <source> srcset" do
+            html = %{<picture><source srcset="https://example.com/a.avif 1x, vbscript:msgbox 2x"><img src="https://example.com/ok.jpg"></picture>}
+
+            sanitized = scrub_fragment(html, :escape)
+
+            assert_nil sanitized.at_css("source")["srcset"]
+          end
+        end
+
         #
         #  brought up by https://github.com/flavorjones/loofah/issues/80
         #

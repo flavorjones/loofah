@@ -3,6 +3,7 @@
 require "cgi/escape"
 require "cgi/util" if RUBY_VERSION < "3.5"
 require "crass"
+require "strscan"
 
 module Loofah
   module HTML5 # :nodoc:
@@ -77,6 +78,10 @@ module Loofah
 
             if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
               next if scrub_uri_attribute(attr_node)
+            end
+
+            if SafeList::ATTR_VAL_IS_SRCSET.include?(attr_name)
+              next if scrub_srcset_attribute(attr_node)
             end
 
             if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
@@ -230,6 +235,49 @@ module Loofah
             attr_node.remove
             true
           end
+        end
+
+        #
+        #  "srcset" is a list of "URL descriptor" candidates, not a single URL,
+        #  so each candidate URL is validated independently via allowed_uri?
+        #  (fail-closed). See the srcset tests for CVE-2024-8372.
+        #
+        def scrub_srcset_attribute(attr_node)
+          disallowed = srcset_candidate_urls(attr_node.value).any? do |url|
+            !allowed_uri?(url)
+          end
+
+          if disallowed
+            attr_node.remove
+            true
+          else
+            false
+          end
+        end
+
+        #  Splits a "srcset" value into its candidate URLs. Per the WHATWG srcset
+        #  parsing rules a URL token is delimited by ASCII whitespace, not by
+        #  commas, so a comma inside a data: URL stays part of that URL.
+        def srcset_candidate_urls(value)
+          urls = []
+          scanner = StringScanner.new(value.to_s)
+
+          until scanner.eos?
+            scanner.skip(/[\t\n\f\r ,]+/)
+            break if scanner.eos?
+
+            url = scanner.scan(/[^\t\n\f\r ]+/)
+
+            if url.end_with?(",")
+              url = url.sub(/,+\z/, "")
+            else
+              scanner.skip(/[^,]*/)
+            end
+
+            urls << url unless url.empty?
+          end
+
+          urls
         end
 
         #
