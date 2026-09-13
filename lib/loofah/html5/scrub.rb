@@ -180,6 +180,17 @@ module Loofah
         # Returns true if the given URI string is safe, false otherwise. This method can be used to
         # validate URI attribute values without requiring a Nokogiri DOM node.
         def allowed_uri?(uri_string)
+          # The character-reference regexps are UTF-8, so the input has to be transcoded before it can
+          # be matched against them. String#encode is a no-op on a string already tagged UTF-8, so an
+          # invalid byte sequence has to be rejected separately.
+          return false unless uri_string.valid_encoding?
+
+          begin
+            uri_string = uri_string.encode(Encoding::UTF_8)
+          rescue EncodingError
+            return false
+          end
+
           # CGI.unescapeHTML decodes numeric references only when they carry a trailing semicolon, so
           # also decode the semicolon-less ones, which browsers still decode and execute. Normalizing
           # more aggressively than a browser only rejects more, which is safe. Control characters are
