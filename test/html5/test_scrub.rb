@@ -116,6 +116,26 @@ class UnitHTML5Scrub < Loofah::TestCase
   end
 
   describe ".allowed_uri?" do
+    it "transcodes a string in another encoding before checking it" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("http://example.com/é".encode(Encoding::ISO_8859_1)))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("http://example.com".encode(Encoding::UTF_16LE)))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript:alert('é')".encode(Encoding::ISO_8859_1)))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript:alert(1)".encode(Encoding::UTF_16LE)))
+    end
+
+    it "rejects a string with an invalid byte sequence" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("\xFFjavascript&#58alert(1)".b.force_encoding(Encoding::UTF_8)))
+    end
+
+    it "rejects a string that has no UTF-8 representation" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("http://example.com/\xE9".b))
+    end
+
+    it "accepts ASCII-only strings in other ASCII-compatible encodings" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("http://example.com".b))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript:alert(1)".encode(Encoding::US_ASCII)))
+    end
+
     it "allows http URIs" do
       assert(Loofah::HTML5::Scrub.allowed_uri?("http://example.com"))
     end
