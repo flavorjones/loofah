@@ -13,6 +13,7 @@ module Loofah
       CSS_IMPORTANT = "!important"
       CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
+      CSS_URLISH_NODES = [:url, :bad_url, :bad_string]
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
       # Decimal (`&#58`) or hexadecimal (`&#x3a`) form, with or without the trailing semicolon that
@@ -124,15 +125,12 @@ module Loofah
         end
 
         def scrub_css(style)
-          url_flags = [:url, :bad_url]
           style_tree = Crass.parse_properties(style)
           sanitized_tree = []
 
           style_tree.each do |node|
             next unless node[:node] == :property
-            next if node[:children].any? do |child|
-              url_flags.include?(child[:node])
-            end
+            next if node[:children].any? { |child| CSS_URLISH_NODES.include?(child[:node]) }
 
             name = node[:name].downcase
             next unless SafeList::ALLOWED_CSS_PROPERTIES.include?(name) ||
@@ -156,7 +154,7 @@ module Loofah
                 if !SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first) ||
                     SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
                     (keyword =~ CSS_KEYWORDISH)
-                  keyword
+                  child[:raw]
                 end
               else
                 child[:raw]
@@ -166,12 +164,37 @@ module Loofah
             next if value.empty?
 
             value << CSS_WHITESPACE << CSS_IMPORTANT if node[:important]
+            # Dropping tokens can join the survivors into new ones (`url/(a)*/(b)` becomes `url/*/`),
+            # so the rebuilt string may tokenize differently from the original and stringify
+            # differently again. Keep a property only if its rebuilt string survives a parse and
+            # stringify unchanged, so the tokens checked are exactly the tokens a browser will see.
             propstring = format("%s:%s", name, value)
             sanitized_node = Crass.parse_properties(propstring).first
+            next unless Crass::Parser.stringify(sanitized_node) == propstring
+            next if css_property_unsafe?(sanitized_node)
+
             sanitized_tree << sanitized_node << CRASS_SEMICOLON
           end
 
           Crass::Parser.stringify(sanitized_tree)
+        end
+
+        # Dropping a token joins its neighbours, which can build a token that was not in the input:
+        # dropping the string from `url\28 "x"linear-gradient(red)` leaves one function token. So the
+        # rebuilt property is checked for functions and strings, which the input check never sees.
+        def css_property_unsafe?(node)
+          node[:children].any? do |child|
+            case child[:node]
+            when *CSS_URLISH_NODES
+              true
+            when :string
+              !CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES.match?(child[:raw])
+            when :function
+              !SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase(:ascii))
+            else
+              false
+            end
+          end
         end
 
         def scrub_attribute_that_allows_local_ref(attr_node)

@@ -23,6 +23,19 @@ class UnitHTML5Scrub < Loofah::TestCase
         )
       end
 
+      it "disallows functions whose name only matches the safelist under Unicode case folding" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:s\u212aew(1deg)"))
+      end
+
+      it "keeps the rest of a property whose unsafe function is dropped" do
+        assert_equal("margin:0;", Loofah::HTML5::Scrub.scrub_css("margin:0 clamp(1rem, 2vw, 2rem)"))
+        assert_equal("border:1px solid;", Loofah::HTML5::Scrub.scrub_css("border:1px solid color(display-p3 1 0 0)"))
+      end
+
+      it "keeps the rest of a property whose quote-containing string is dropped" do
+        assert_equal("font-family:, serif;", Loofah::HTML5::Scrub.scrub_css(%{font-family:"Rock 'n' Roll", serif}))
+      end
+
       it "disallows unsafe functions" do
         assert_equal(
           "",
@@ -83,6 +96,46 @@ class UnitHTML5Scrub < Loofah::TestCase
           "font:13px/1.5 Arial, sans-serif;",
           Loofah::HTML5::Scrub.scrub_css("font: 13px/1.5 Arial, sans-serif;"),
         )
+      end
+    end
+
+    describe "url()" do
+      it "removes properties with a url()" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:url(http://example.com/x.png),auto"))
+      end
+
+      it "does not decode escaped parentheses into a url()" do
+        {
+          "cursor:url\\28 http://example.com/x.png\\29,auto" => "cursor:url\\28 http://example.com/x.png\\29,auto;",
+          "cursor:url\\000028 http://example.com/x.png\\000029,auto" => "cursor:url\\000028 http://example.com/x.png\\000029,auto;",
+          "cursor:url\\(http://example.com/x.png\\),auto" => "cursor:url\\(http://example.com/x.png\\),auto;",
+          "list-style:url\\28 http://example.com/b.png\\29" => "list-style:url\\28 http://example.com/b.png\\29;",
+          "c\\75 rsor:url\\28 http://example.com/x.png\\29,auto" => "cursor:url\\28 http://example.com/x.png\\29,auto;",
+          'cursor:url\\28 "http://example.com/x.png"\\29,auto' => 'cursor:url\\28 "http://example.com/x.png"\\29,auto;',
+          "cursor:url\\5c 28 http://example.com/x.png\\5c 29,auto" => "cursor:url\\5c 28 http://example.com/x.png\\5c 29,auto;",
+        }.each do |input, expected|
+          assert_equal(expected, Loofah::HTML5::Scrub.scrub_css(input))
+        end
+      end
+
+      it "does not decode escaped comments" do
+        assert_equal(
+          "cursor:url\\2f\\2a\\2a\\2f\\28 http://example.com/x.png\\29,auto;",
+          Loofah::HTML5::Scrub.scrub_css("cursor:url\\2f\\2a\\2a\\2f\\28 http://example.com/x.png\\29,auto"),
+        )
+        assert_equal(
+          "cursor:var\\2f\\2a\\2a\\2f\\28 --x\\29;",
+          Loofah::HTML5::Scrub.scrub_css("cursor:var\\2f\\2a\\2a\\2f\\28 --x\\29"),
+        )
+      end
+
+      it "does not decode escapes into unterminated blocks or strings" do
+        assert_equal("cursor:\\28\\22;", Loofah::HTML5::Scrub.scrub_css("cursor:\\28\\22"))
+        assert_equal("cursor:\\22;", Loofah::HTML5::Scrub.scrub_css("cursor:\\22"))
+      end
+
+      it "removes properties whose surviving tokens join into a comment" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:url/(a)*/(http://example.com/x.png),auto"))
       end
     end
 
