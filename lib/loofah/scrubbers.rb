@@ -380,7 +380,7 @@ module Loofah
             # already unlinked
             next if child.parent.nil?
 
-            if child.name == "br" && child.next_sibling.name == "br"
+            if child.name == "br" && child.next_sibling&.name == "br"
               new_paragraph = paragraph_node.add_previous_sibling("<p>").first
               child.next_sibling.unlink
               child.unlink
