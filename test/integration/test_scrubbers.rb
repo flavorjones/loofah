@@ -248,6 +248,14 @@ class IntegrationTestScrubbers < Loofah::TestCase
             assert_equal BREAKPOINT_RESULT, doc.xpath("/html/body").inner_html.delete("\n")
             assert_equal doc, result
           end
+
+          it "keeps a trailing single line break after a double line break" do
+            doc = klass.parse("<html><body><p>a<br><br>b<br></p></body></html>")
+            result = doc.scrub!(:double_breakpoint)
+
+            assert_equal "<p>a</p><p>b<br></p>", doc.xpath("/html/body").inner_html.delete("\n")
+            assert_equal doc, result
+          end
         end
       end
 
