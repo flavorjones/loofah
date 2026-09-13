@@ -19,6 +19,9 @@
 
 * Ensure `Loofah::HTML5::Scrub.scrub_css` does not decode CSS escapes in identifiers. Previously, escaped parentheses (e.g. `url\28 http://example.com/\29`) came out as a live `url()`, which could make the viewer's browser fetch an attacker-chosen URL. See [GHSA-m3x9-938q-5767](https://github.com/flavorjones/loofah/security/advisories/GHSA-m3x9-938q-5767). @flavorjones
 
+### Security
+
+* Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes the named character reference `&sol;`, which `CGI.unescapeHTML` does not decode and browsers read as `/`, and rejects `data:` URIs that disguise a disallowed mediatype with it (e.g. `data:text&sol;html,<script>alert(1)</script>`). Previously that mediatype was treated as malformed and fell back to the allowed `text/plain`. Only v2.25.2 is affected. See [GHSA-jcff-cj73-4w4f](https://github.com/flavorjones/loofah/security/advisories/GHSA-jcff-cj73-4w4f). @flavorjones
 
 ## 2.25.2 / 2026-07-15
 

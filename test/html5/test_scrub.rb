@@ -330,6 +330,34 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert(Loofah::HTML5::Scrub.allowed_uri?("data:image&#x2fpng;base64,iVBORw0KGgo"))
     end
 
+    it "checks the mediatype of data URIs whose mediatype is assembled by a named solidus character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&sol;html,<script>alert(1)</script>"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&sol;html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:image&sol;png;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs whose scheme and mediatype are both assembled by named references" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data&colon;text&sol;html,<script>alert(1)</script>"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data&colon;image&sol;png;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs with a double-encoded named solidus character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&amp;sol;html,<script>alert(1)</script>"))
+    end
+
+    it "checks the mediatype of data URIs where stripping an embedded control character reveals a named solidus reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&#0;ol;html,<script>alert(1)</script>"))
+    end
+
+    it "checks the mediatype of data URIs where removing a named whitespace reference reveals a named solidus reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&Tab;ol;html,<script>alert(1)</script>"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&NewLine;ol;html,<script>alert(1)</script>"))
+    end
+
+    it "allows wrong-cased named solidus references, which browsers do not decode" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:text&SOL;html,<script>alert(1)</script>"))
+    end
+
     it "disallows vbscript URIs" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript:msgbox(1)"))
     end

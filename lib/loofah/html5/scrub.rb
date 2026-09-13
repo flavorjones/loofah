@@ -53,6 +53,15 @@ module Loofah
       # URIs. CGI.unescapeHTML does not decode these, so they are handled explicitly.
       WHITESPACE_CHARACTER_REFERENCES = /&(Tab|NewLine);/
 
+      # HTML5 named character references for the delimiters that decide how a URI parses:
+      # ":" ends the scheme, and "/" separates the type and subtype of a data: mediatype.
+      # CGI.unescapeHTML does not decode these either. Together with
+      # WHITESPACE_CHARACTER_REFERENCES these are every named character reference that
+      # decodes to U+0009, U+000A, U+002F, or U+003A, so no other named reference can
+      # change how a URI parses.
+      DELIMITER_CHARACTER_REFERENCES = { "&colon;" => ":", "&sol;" => "/" }.freeze
+      DELIMITER_CHARACTER_REFERENCE = Regexp.union(DELIMITER_CHARACTER_REFERENCES.keys)
+
       class << self
         def allowed_element?(element_name)
           ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include?(element_name)
@@ -234,12 +243,12 @@ module Loofah
           # also decode the semicolon-less ones, which browsers still decode and execute. Normalizing
           # more aggressively than a browser only rejects more, which is safe. Control characters are
           # stripped both before and after decoding, since decoding can produce them. That strip must
-          # precede WHITESPACE_CHARACTER_REFERENCES: removing a control character can reveal a named
-          # whitespace reference.
+          # precede the named reference substitutions: removing a control character can reveal a
+          # named reference.
           uri_string = decode_numeric_character_references(CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")))
           uri_string.gsub!(CONTROL_CHARACTERS, "")
           uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
-          uri_string.gsub!("&colon;", ":")
+          uri_string.gsub!(DELIMITER_CHARACTER_REFERENCE, DELIMITER_CHARACTER_REFERENCES)
           uri_string.downcase!
           if URI_PROTOCOL_REGEX.match?(uri_string)
             protocol = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[0]
