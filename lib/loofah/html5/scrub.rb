@@ -60,11 +60,7 @@ module Loofah
         #  alternative implementation of the html5lib attribute scrubbing algorithm
         def scrub_attributes(node)
           node.attribute_nodes.each do |attr_node|
-            attr_name = if attr_node.namespace
-              "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
-            else
-              attr_node.node_name
-            end
+            attr_name = prefixed_attribute_name(attr_node)
 
             if DATA_ATTRIBUTE_NAME.match?(attr_name)
               next
@@ -75,20 +71,7 @@ module Loofah
               next
             end
 
-            if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
-              next if scrub_uri_attribute(attr_node)
-            end
-
-            if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
-              scrub_attribute_that_allows_local_ref(attr_node)
-            end
-
-            next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
-              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
-              attr_node.value =~ /^\s*[^#\s].*/m
-
-            attr_node.remove
-            next
+            scrub_attribute_value(node, attr_node, attr_name)
           end
 
           scrub_css_attribute(node)
@@ -100,6 +83,39 @@ module Loofah
           end
 
           force_correct_attribute_escaping!(node)
+        end
+
+        #  The name an attribute is matched by in the safelists, qualified by its namespace prefix.
+        def prefixed_attribute_name(attr_node)
+          if attr_node.namespace
+            "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
+          else
+            attr_node.node_name
+          end
+        end
+
+        #  Apply the html5lib value rules to an attribute that is already permitted by name.
+        #  Returns true when `scrub_uri_attribute` removed the attribute, in which case the caller
+        #  should stop scrubbing it.
+        def scrub_attribute_value(node, attr_node, attr_name = prefixed_attribute_name(attr_node))
+          if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
+            return true if scrub_uri_attribute(attr_node)
+          end
+
+          if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
+            scrub_attribute_that_allows_local_ref(attr_node)
+          end
+
+          # The whitespace run is `[^\S\n]*` rather than `\s*` so that it cannot cross a line
+          # boundary. With `\s*` the engine rescanned the entire run from every line start,
+          # which is quadratic in the length of an all-whitespace value.
+          if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
+              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
+              attr_node.value =~ /^[^\S\n]*[^#\s]/
+            attr_node.remove
+          end
+
+          false
         end
 
         def scrub_css_attribute(node)

@@ -342,6 +342,13 @@ class Html5TestSanitizer < Loofah::TestCase
         xhtmloutput = "<#{tag_name}></#{tag_name}>"
         check_sanitization(input, output, xhtmloutput)
       end
+
+      define_method "test_#{tag_name}_should_forbid_nonlocal_#{attr_name}_after_a_local_ref" do
+        input = %(<#{tag_name} #{attr_name}="#foo\nhttp://bad.com/foo"/>)
+        output = "<#{tag_name_dc}></#{tag_name_dc}>"
+        xhtmloutput = "<#{tag_name}></#{tag_name}>"
+        check_sanitization(input, output, xhtmloutput)
+      end
     end
   end
 

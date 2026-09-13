@@ -366,4 +366,62 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain"))
     end
   end
+
+  describe ".prefixed_attribute_name" do
+    it "qualifies a namespaced attribute with its prefix" do
+      node = Loofah.html4_fragment(%(<svg><use xlink:href="#p"></use></svg>)).at_css("use")
+
+      assert_equal(["xlink:href"], node.attribute_nodes.map { |a| Loofah::HTML5::Scrub.prefixed_attribute_name(a) })
+    end
+
+    it "uses the bare name when there is no namespace" do
+      node = Loofah.html4_fragment(%(<a href="#p"></a>)).at_css("a")
+
+      assert_equal(["href"], node.attribute_nodes.map { |a| Loofah::HTML5::Scrub.prefixed_attribute_name(a) })
+    end
+  end
+
+  describe ".scrub_attribute_value" do
+    it "reports that a removed uri attribute needs no further scrubbing" do
+      node = Loofah.html4_fragment(%(<a href="javascript:alert(1)"></a>)).at_css("a")
+
+      assert(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_empty(node.attribute_nodes)
+    end
+
+    it "reports that a permitted uri attribute still needs scrubbing" do
+      node = Loofah.html4_fragment(%(<a href="http://example.com/"></a>)).at_css("a")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_equal("http://example.com/", node["href"])
+    end
+
+    it "removes an svg href that is not a local reference" do
+      node = Loofah.html4_fragment(%(<svg><use href="http://bad.com/x"></use></svg>)).at_css("use")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_empty(node.attribute_nodes)
+    end
+
+    it "keeps an svg href that is a local reference" do
+      node = Loofah.html4_fragment(%(<svg><use href="#p"></use></svg>)).at_css("use")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_equal("#p", node["href"])
+    end
+  end
+
+  describe ".scrub_attributes" do
+    it "keeps scrubbing the remaining attributes after removing one" do
+      fragment = Loofah.html4_fragment(%(<svg><use href="http://bad.com/x" fill="url(http://bad.com/) #fff"></use></svg>))
+
+      assert_equal(%(<svg><use fill="#fff"></use></svg>), fragment.scrub!(:strip).to_s)
+    end
+
+    it "keeps scrubbing the remaining attributes after a uri attribute is removed" do
+      fragment = Loofah.html4_fragment(%(<svg><use href="javascript:alert(1)" fill="url(http://bad.com/) #fff"></use></svg>))
+
+      assert_equal(%(<svg><use fill="#fff"></use></svg>), fragment.scrub!(:strip).to_s)
+    end
+  end
 end

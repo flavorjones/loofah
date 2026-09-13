@@ -5,6 +5,13 @@
 ### Fixed
 
 * Fix `:double_breakpoint`, which left document fragments unchanged despite its documented example. The scrubber now changes only paragraphs inside the scrubbed node, and its run time on a document grows linearly, not quadratically, with the paragraph count. #309 @OskarEichler
+### Security
+
+* Fix quadratic-time scrubbing of the `href` and `xlink:href` attributes of SVG elements. Only Ruby 3.1 and earlier are affected, because Ruby 3.2 introduced linear-time regexp matching. See [GHSA-mf2j-8f84-cc9q](https://github.com/flavorjones/loofah/security/advisories/GHSA-mf2j-8f84-cc9q). @flavorjones
+
+### Added
+
+* `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
 
 
 ## 2.25.2 / 2026-07-15
