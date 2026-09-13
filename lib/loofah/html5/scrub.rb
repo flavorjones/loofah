@@ -265,10 +265,10 @@ module Loofah
 
         def cdata_escape(node)
           escaped_text = escape_tags(node.text)
-          if Nokogiri.jruby?
-            node.document.create_text_node(escaped_text)
-          else
+          if node.cdata?
             node.document.create_cdata(escaped_text)
+          else
+            node.document.create_text_node(escaped_text)
           end
         end
 

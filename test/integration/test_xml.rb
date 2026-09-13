@@ -30,6 +30,18 @@ class IntegrationTestXml < Loofah::TestCase
           assert_equal "Abe Vigoda", employees.first.inner_text
         end
       end
+
+      context ":whitewash" do
+        it "escapes CDATA content" do
+          xml = Loofah.xml_document("<div><p>hello<![CDATA[</p><script>alert(1)</script><p>]]>world</p></div>")
+          xml.scrub!(:whitewash)
+
+          assert_equal(
+            "<p>hello<![CDATA[&lt;/p&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;p&gt;]]>world</p>",
+            xml.at_css("p").to_xml,
+          )
+        end
+      end
     end
 
     context "xml fragment" do
@@ -54,6 +66,18 @@ class IntegrationTestXml < Loofah::TestCase
 
           assert_equal 1, employees.length
           assert_equal "Abe Vigoda", employees.first.inner_text
+        end
+      end
+
+      context ":whitewash" do
+        it "escapes CDATA content" do
+          xml = Loofah.xml_fragment("<p>hello<![CDATA[</p><script>alert(1)</script><p>]]>world</p>")
+          xml.scrub!(:whitewash)
+
+          assert_equal(
+            "<p>hello<![CDATA[&lt;/p&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;p&gt;]]>world</p>",
+            xml.to_s,
+          )
         end
       end
     end
