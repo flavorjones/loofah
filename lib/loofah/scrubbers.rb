@@ -201,7 +201,11 @@ module Loofah
             return CONTINUE if node.namespaces.empty?
           end
         when Nokogiri::XML::Node::TEXT_NODE, Nokogiri::XML::Node::CDATA_SECTION_NODE
-          return CONTINUE
+          if HTML5::Scrub.cdata_needs_escaping?(node)
+            node.before(HTML5::Scrub.cdata_escape(node))
+          else
+            return CONTINUE
+          end
         end
         node.remove
         STOP
