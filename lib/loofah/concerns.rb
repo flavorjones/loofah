@@ -123,10 +123,16 @@ module Loofah
   end
 
   module DocumentDecorator # :nodoc:
+    class << self
+      def decorate(object)
+        object.decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
+        object.decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
+      end
+    end
+
     def initialize(*args, &block)
       super
-      decorators(Nokogiri::XML::Node) << ScrubBehavior::Node
-      decorators(Nokogiri::XML::NodeSet) << ScrubBehavior::NodeSet
+      DocumentDecorator.decorate(self)
     end
   end
 
