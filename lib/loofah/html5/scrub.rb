@@ -239,13 +239,13 @@ module Loofah
             return false
           end
 
+          # Decode character references before stripping anything, as a browser does: an HTML parser
+          # decodes the attribute value, then the URL parser strips characters from the result. A
+          # semicolon-less numeric reference ends at the first character that cannot extend it, so
+          # stripping that character first would let the reference run on into the following text.
           # CGI.unescapeHTML decodes numeric references only when they carry a trailing semicolon, so
-          # also decode the semicolon-less ones, which browsers still decode and execute. Normalizing
-          # more aggressively than a browser only rejects more, which is safe. Control characters are
-          # stripped both before and after decoding, since decoding can produce them. That strip must
-          # precede the named reference substitutions: removing a control character can reveal a
-          # named reference.
-          uri_string = decode_numeric_character_references(CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")))
+          # the semicolon-less ones are decoded separately.
+          uri_string = CGI.unescapeHTML(decode_numeric_character_references(uri_string))
           uri_string.gsub!(CONTROL_CHARACTERS, "")
           uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
           uri_string.gsub!(DELIMITER_CHARACTER_REFERENCE, DELIMITER_CHARACTER_REFERENCES)

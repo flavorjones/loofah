@@ -233,9 +233,9 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("java\nscript:alert(1)"))
     end
 
-    it "disallows javascript URIs with control characters in HTML entities" do
-      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#1\x0015;cript:alert(1)"))
-      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x\t73;cript:alert(1)"))
+    it "allows URIs with control characters inside character references, which browsers do not rejoin" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&#1\x0015;cript:alert(1)"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&#x\t73;cript:alert(1)"))
     end
 
     it "disallows javascript URIs with entity-encoded control characters splitting the scheme" do
@@ -313,6 +313,48 @@ class UnitHTML5Scrub < Loofah::TestCase
     it "disallows javascript URIs assembled from multiple numeric character references" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("jav&#97script&#58alert(1)"))
       refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#9alert(1)"))
+    end
+
+    it "disallows javascript URIs whose semicolon-less numeric character reference colon is terminated by a stripped character" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\talert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\nalert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\ralert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\falert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\x00alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\x7falert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u0080alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u00a0alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u0101alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a`alert`"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#X3A alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript&#x3a alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58 1,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58\t1,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58\u00a01,alert(1)"))
+    end
+
+    it "disallows javascript URIs whose semicolon-less numeric character reference colon is followed by a character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#x61;lert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#97;lert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58&#49;,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58&#x31;,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#x20;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&Tab;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&NewLine;alert(1)"))
+    end
+
+    it "disallows javascript URIs whose scheme letter is a semicolon-less numeric character reference terminated by a stripped character" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a\tavascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("ja&#x76\tascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x73\ncript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a\ravascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x76\tbscript:msgbox(1)"))
+    end
+
+    it "disallows javascript URIs whose scheme letter is a semicolon-less numeric character reference followed by a character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a&#x61;vascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x73&#99;ript:alert(1)"))
     end
 
     it "allows URIs whose numeric character references do not decode to a scheme colon" do
