@@ -12,6 +12,9 @@
 ### Added
 
 * `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
+### Security
+
+* Ensure that `href` and `xlink:href` on SVG `textPath` and `mpath` elements are restricted to local (same-document) references. Previously `SVG_ALLOW_LOCAL_HREF` spelled `textPath` in lowercase, which never matched the name the HTML5 parser assigns inside `<svg>`, and omitted `mpath` entirely. See [GHSA-345x-3rq2-jfrm](https://github.com/flavorjones/loofah/security/advisories/GHSA-345x-3rq2-jfrm). @flavorjones
 
 
 ## 2.25.2 / 2026-07-15
