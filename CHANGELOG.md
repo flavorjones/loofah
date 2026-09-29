@@ -22,6 +22,10 @@
 ### Security
 
 * Ensure `Loofah::HTML5::Scrub.allowed_uri?` recognizes the named character reference `&sol;`, which `CGI.unescapeHTML` does not decode and browsers read as `/`, and rejects `data:` URIs that disguise a disallowed mediatype with it (e.g. `data:text&sol;html,<script>alert(1)</script>`). Previously that mediatype was treated as malformed and fell back to the allowed `text/plain`. Only v2.25.2 is affected. See [GHSA-jcff-cj73-4w4f](https://github.com/flavorjones/loofah/security/advisories/GHSA-jcff-cj73-4w4f). @flavorjones
+### Security
+
+* Ensure `Loofah::HTML5::Scrub.allowed_uri?` rejects schemes split by a numeric character reference without a semicolon that ends at a character `allowed_uri?` strips (e.g. `javascript&#x3a alert(1)`) or at another character reference (e.g. `javascript&#x3a&#x61;lert(1)`). Character references are now decoded before anything is stripped, as browsers do. See [GHSA-p9wj-w8xq-vjx6](https://github.com/flavorjones/loofah/security/advisories/GHSA-p9wj-w8xq-vjx6). @flavorjones
+
 
 ## 2.25.2 / 2026-07-15
 
