@@ -84,6 +84,8 @@ class Html5TestSanitizer < Loofah::TestCase
         outputs << "<table><tbody><tr><#{tag_name} title='1'>foo</#{tag_name}></tr></tbody></table>" # libgumbo
       when "colgroup", "tbody", "tfoot", "thead"
         outputs << "foo<table><#{tag_name} title='1'></#{tag_name}></table>" # libgumbo
+      when "source"
+        outputs << "<source title='1'>foo" # libgumbo treats <source> as void
       when "br"
         outputs << "<br title='1'>foo<br>"
       end
@@ -197,6 +199,48 @@ class Html5TestSanitizer < Loofah::TestCase
     input = '<p contenteditable="false">Hi!</p>'
     output = '<p contenteditable="false">Hi!</p>'
 
+    check_sanitization(input, output)
+  end
+
+  def test_should_allow_picture_source_responsive_image
+    input = %(<picture><source srcset="a.avif"><img src="a.jpg" alt="x"></picture>)
+    check_sanitization(
+      input,
+      %(<picture><source srcset="a.avif"><img src="a.jpg" alt="x"></source></picture>), # libxml
+      %(<picture><source srcset="a.avif"><img src="a.jpg" alt="x"></picture>), # libgumbo
+      %(<picture><source srcset="a.avif"><img alt="x" src="a.jpg"></picture>), # nekohtml (jruby)
+    )
+  end
+
+  def test_should_allow_srcset_with_multiple_safe_urls
+    input = %(<img src="ok.jpg" srcset="https://example.com/a.jpg 1x, https://example.com/b.jpg 2x">)
+    output = %(<img src="ok.jpg" srcset="https://example.com/a.jpg 1x, https://example.com/b.jpg 2x">)
+    check_sanitization(input, output)
+  end
+
+  def test_should_allow_srcset_with_safe_data_uri
+    input = %(<img srcset="data:image/png;base64,iVBORw0K 1x">)
+    output = %(<img srcset="data:image/png;base64,iVBORw0K 1x">)
+    check_sanitization(input, output)
+
+    # the comma inside the data: URL must stay part of that URL even when a
+    # second candidate follows (candidate commas only separate after the URL)
+    input = %(<img srcset="data:image/png;base64,iVBORw0K 1x, https://example.com/b.jpg 2x">)
+    output = %(<img srcset="data:image/png;base64,iVBORw0K 1x, https://example.com/b.jpg 2x">)
+    check_sanitization(input, output)
+  end
+
+  def test_should_disallow_srcset_with_unsafe_uris
+    input = %(<img src="ok.jpg" srcset="javascript:alert(1) 1x">)
+    output = %(<img src="ok.jpg">)
+    check_sanitization(input, output)
+
+    input = %(<img src="ok.jpg" srcset="https://example.com/a.jpg 1x, javascript:alert(1) 2x">)
+    output = %(<img src="ok.jpg">)
+    check_sanitization(input, output)
+
+    input = %(<img srcset="data:text/html,xx 1x">)
+    output = %(<img>)
     check_sanitization(input, output)
   end
 
