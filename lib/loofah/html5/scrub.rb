@@ -9,7 +9,7 @@ module Loofah
     module Scrub
       CONTROL_CHARACTERS = /[`\u0000-\u0020\u007f\u0080-\u0101]/
       CSS_KEYWORDISH = /\A(#[0-9a-fA-F]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|-?\d{0,3}\.?\d{0,10}(ch|cm|r?em|ex|in|lh|mm|pc|pt|px|Q|vmax|vmin|vw|vh|%|,|\))?)\z/ # rubocop:disable Layout/LineLength
-      CRASS_SEMICOLON = { node: :semicolon, raw: ";" }
+      CRASS_SEMICOLON = { node: :semicolon, raw: ";" }.freeze
       CSS_IMPORTANT = "!important"
       CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
@@ -287,7 +287,7 @@ module Loofah
           "<" => "&lt;",
           ">" => "&gt;",
           "&" => "&amp;",
-        }
+        }.freeze
 
         def escape_tags(string)
           # modified version of CGI.escapeHTML from ruby 3.1
