@@ -420,7 +420,7 @@ module Loofah
       newline_block_elements: NewlineBlockElements,
       unprintable: Unprintable,
       double_breakpoint: DoubleBreakpoint,
-    }
+    }.freeze
 
     class << self
       #
