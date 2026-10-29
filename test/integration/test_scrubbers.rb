@@ -59,16 +59,23 @@ class IntegrationTestScrubbers < Loofah::TestCase
     ["ignores a newline between the line breaks", "<p>a<br>\n<br>b</p>", "<p>a</p><p>b</p>"],
     ["ignores mixed whitespace between the line breaks", "<p>a<br>\t \r\n <br>b</p>", "<p>a</p><p>b</p>"],
     ["keeps whitespace inside the surrounding text", "<p>a <br><br> b</p>", "<p>a </p><p> b</p>"],
+    ["keeps newlines inside the surrounding text", "<p>a\nb<br><br>c\nd</p>", "<p>a\nb</p><p>c\nd</p>"],
     ["keeps inline elements and comments", "<p>x <b>y</b><!-- c --><br><br><i>z</i> w</p>", "<p>x <b>y</b><!-- c --></p><p><i>z</i> w</p>"],
     ["keeps a trailing single line break after a double line break", "<p>a<br><br>b<br></p>", "<p>a</p><p>b<br></p>"],
     ["splits every paragraph", "<p>a<br><br>b</p>text<p>c<br><br>d</p>", "<p>a</p><p>b</p>text<p>c</p><p>d</p>"],
     ["splits a paragraph inside another element", "<div><p>a<br><br>b</p></div>", "<div><p>a</p><p>b</p></div>"],
     ["splits a paragraph inside a list item", "<ul><li><p>a<br><br>b</p></li></ul>", "<ul><li><p>a</p><p>b</p></li></ul>"],
+    ["splits at each pair of a run of line breaks", "<p>a<br><br><br><br>b</p>", "<p>a</p><p></p><p>b</p>"],
+    ["keeps the odd line break of a run", "<p>a<br><br><br>b</p>", "<p>a</p><p><br>b</p>"],
+    ["leaves an empty paragraph before a leading double line break", "<p><br><br>a</p>", "<p></p><p>a</p>"],
+    ["leaves an empty paragraph after a trailing double line break", "<p>a<br><br></p>", "<p>a</p><p></p>"],
+    ["does not copy the paragraph's attributes", "<p class=\"c\">a<br><br>b</p>", "<p>a</p><p>b</p>"],
     ["leaves a paragraph without line breaks alone", "<p>a</p>", "<p>a</p>"],
     ["leaves whitespace in a paragraph without a double line break alone", "<p>a <b>b</b> <i>c</i><br></p>", "<p>a <b>b</b> <i>c</i><br></p>"],
     ["leaves a single line break alone", "<p>a<br>b</p>", "<p>a<br>b</p>"],
     ["leaves line breaks separated by text alone", "<p>a<br>b<br>c</p>", "<p>a<br>b<br>c</p>"],
     ["leaves line breaks separated by a comment alone", "<p>a<br><!-- c --><br>b</p>", "<p>a<br><!-- c --><br>b</p>"],
+    ["leaves line breaks separated by a non-breaking space alone", "<p>a<br>&nbsp;<br>b</p>", "<p>a<br>&nbsp;<br>b</p>"],
     ["leaves line breaks inside an inline element alone", "<p><b>a<br><br>b</b> <i>c</i></p>", "<p><b>a<br><br>b</b> <i>c</i></p>"],
     ["leaves line breaks outside a paragraph alone", "<div>a<br><br>b</div>", "<div>a<br><br>b</div>"],
   ]
@@ -273,9 +280,17 @@ class IntegrationTestScrubbers < Loofah::TestCase
             it description do
               doc = klass.parse("<html><body>#{input}</body></html>")
               doc.scrub!(:double_breakpoint)
+              expected_doc = klass.parse("<html><body>#{expected}</body></html>")
 
-              assert_equal expected, doc.xpath("/html/body").inner_html.delete("\n")
+              assert_equal expected_doc.xpath("/html/body").inner_html, doc.xpath("/html/body").inner_html
             end
+          end
+
+          it "replaces double line breaks only inside the scrubbed paragraph" do
+            doc = klass.parse("<html><body><p>a<br><br>b</p><p>c<br><br>d</p></body></html>")
+            doc.at_css("p").scrub!(:double_breakpoint)
+
+            assert_equal "<p>a</p><p>b</p><p>c<br><br>d</p>", doc.xpath("/html/body").inner_html.delete("\n")
           end
 
           it "replaces double line breaks only inside the scrubbed node" do
@@ -555,7 +570,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
               doc = klass.parse(input)
               doc.scrub!(:double_breakpoint)
 
-              assert_equal expected, doc.to_html.delete("\n")
+              assert_equal klass.parse(expected).to_html, doc.to_html
             end
           end
         end
