@@ -256,6 +256,13 @@ class IntegrationTestScrubbers < Loofah::TestCase
             assert_equal "<p>a</p><p>b<br></p>", doc.xpath("/html/body").inner_html.delete("\n")
             assert_equal doc, result
           end
+
+          it "replaces double line breaks only inside the scrubbed node" do
+            doc = klass.parse("<html><body><div><p>a<br><br>b</p></div><p>c<br><br>d</p></body></html>")
+            doc.at_css("div").scrub!(:double_breakpoint)
+
+            assert_equal "<div><p>a</p><p>b</p></div><p>c<br><br>d</p>", doc.xpath("/html/body").inner_html.delete("\n")
+          end
         end
       end
 
@@ -514,26 +521,28 @@ class IntegrationTestScrubbers < Loofah::TestCase
         end
 
         context ":double_breakpoint" do
-          it "replaces double line breaks in fragments" do
-            doc = klass.parse("<div>#{BREAKPOINT_FRAGMENT}</div>")
+          it "replaces double line breaks with paragraph tags" do
+            doc = klass.parse(BREAKPOINT_FRAGMENT)
             result = doc.scrub!(:double_breakpoint)
 
-            assert_equal BREAKPOINT_RESULT, doc.xpath("./div").inner_html.delete("\n")
+            assert_equal BREAKPOINT_RESULT, doc.to_html.delete("\n")
             assert_equal doc, result
           end
 
-          it "scrubs each fragment paragraph once" do
-            doc = klass.parse("<div><p>a<br><br>b</p><p>c<br><br>d</p></div>")
-            doc.scrub!(:double_breakpoint)
+          it "replaces double line breaks in every paragraph" do
+            doc = klass.parse("<p>a<br><br>b</p><p>c<br><br>d</p>")
+            result = doc.scrub!(:double_breakpoint)
 
-            assert_equal "<p>a</p><p>b</p><p>c</p><p>d</p>", doc.xpath("./div").inner_html.delete("\n")
+            assert_equal "<p>a</p><p>b</p><p>c</p><p>d</p>", doc.to_html.delete("\n")
+            assert_equal doc, result
           end
 
-          it "preserves a trailing single break" do
-            doc = klass.parse("<div><p>a<br><br>b<br></p></div>")
-            doc.scrub!(:double_breakpoint)
+          it "keeps a trailing single line break after a double line break" do
+            doc = klass.parse("<p>a<br><br>b<br></p>")
+            result = doc.scrub!(:double_breakpoint)
 
-            assert_equal "<p>a</p><p>b<br></p>", doc.xpath("./div").inner_html.delete("\n")
+            assert_equal "<p>a</p><p>b<br></p>", doc.to_html.delete("\n")
+            assert_equal doc, result
           end
         end
       end
