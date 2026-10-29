@@ -65,6 +65,7 @@ class IntegrationTestScrubbers < Loofah::TestCase
     ["splits every paragraph", "<p>a<br><br>b</p>text<p>c<br><br>d</p>", "<p>a</p><p>b</p>text<p>c</p><p>d</p>"],
     ["splits a paragraph inside another element", "<div><p>a<br><br>b</p></div>", "<div><p>a</p><p>b</p></div>"],
     ["splits a paragraph inside a list item", "<ul><li><p>a<br><br>b</p></li></ul>", "<ul><li><p>a</p><p>b</p></li></ul>"],
+    ["splits a nested paragraph", "<p>a<br><br><object><p>b<br><br>c</p></object></p>", "<p>a</p><p><object><p>b</p><p>c</p></object></p>"],
     ["splits at each pair of a run of line breaks", "<p>a<br><br><br><br>b</p>", "<p>a</p><p></p><p>b</p>"],
     ["keeps the odd line break of a run", "<p>a<br><br><br>b</p>", "<p>a</p><p><br>b</p>"],
     ["leaves an empty paragraph before a leading double line break", "<p><br><br>a</p>", "<p></p><p>a</p>"],

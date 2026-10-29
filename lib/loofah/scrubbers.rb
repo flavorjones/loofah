@@ -365,7 +365,8 @@ module Loofah
     #
     class DoubleBreakpoint < Scrubber
       def initialize # rubocop:disable Lint/MissingSuper
-        @direction = :top_down
+        # a top-down walk would empty a paragraph before reaching a paragraph nested in it
+        @direction = :bottom_up
       end
 
       def scrub(node)
