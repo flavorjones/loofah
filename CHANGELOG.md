@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Fixed
+
+* Fix `:double_breakpoint`, which left document fragments unchanged despite its documented example. The scrubber now changes only paragraphs inside the scrubbed node, and its run time on a document grows linearly, not quadratically, with the paragraph count. #309 @OskarEichler
+
+
 ## 2.25.2 / 2026-07-15
 
 ### Security
