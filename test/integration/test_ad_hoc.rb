@@ -438,14 +438,12 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
           it "handles < character in an attribute" do
             input = %{<div alt="this < that">wave</div>}
-            expected = if html_version == :html4
-              %{<div alt="this &lt; that">wave</div>}
-            else
-              %{<div alt="this < that">wave</div>}
-            end
+            possible_answers = [%{<div alt="this &lt; that">wave</div>}]
+            # Before sparklemotion/nokogiri#3741, the HTML5 serializer did not escape < in attribute values
+            possible_answers << %{<div alt="this < that">wave</div>} if html_version == :html5
             actual = scrub_fragment(input, :escape)
 
-            assert_equal(expected, actual.to_html)
+            assert_includes(possible_answers, actual.to_html)
           end
 
           it "handles multiple < characters" do
