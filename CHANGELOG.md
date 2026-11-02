@@ -9,15 +9,15 @@
 * Ensure `Loofah::HTML5::Scrub.scrub_css` does not decode CSS escapes in identifiers. Previously, escaped parentheses (e.g. `url\28 http://example.com/\29`) came out as a live `url()`, which could make the viewer's browser fetch an attacker-chosen URL. See [GHSA-m3x9-938q-5767](https://github.com/flavorjones/loofah/security/advisories/GHSA-m3x9-938q-5767). @flavorjones
 * Ensure that `href` and `xlink:href` on SVG `textPath` and `mpath` elements are restricted to local (same-document) references. Previously `SVG_ALLOW_LOCAL_HREF` spelled `textPath` in lowercase, which never matched the name the HTML5 parser assigns inside `<svg>`, and omitted `mpath` entirely. See [GHSA-345x-3rq2-jfrm](https://github.com/flavorjones/loofah/security/advisories/GHSA-345x-3rq2-jfrm). @flavorjones
 * Fix quadratic-time scrubbing of the `href` and `xlink:href` attributes of SVG elements. Only Ruby 3.1 and earlier are affected, because Ruby 3.2 introduced linear-time regexp matching. See [GHSA-mf2j-8f84-cc9q](https://github.com/flavorjones/loofah/security/advisories/GHSA-mf2j-8f84-cc9q). @flavorjones
-
-### Added
-
-* `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
 * Ensure HTML5 scrubber output does not turn into new markup when a browser parses it again. The fix is in Nokogiri v1.19.5, which escapes `<` and `>` in attribute values as the HTML standard requires, so Loofah now requires Nokogiri >= 1.19.5. See [GHSA-h6v6-rg66-fqj4](https://github.com/flavorjones/loofah/security/advisories/GHSA-h6v6-rg66-fqj4). @flavorjones @hackvertor
 
 ### Dependencies
 
-* Loofah now requires Ruby >= 3.2, the minimum that Nokogiri v1.19.x supports. We don't like dropping Ruby versions in a patch release, and we're sorry for the inconvenience, but it's the only way to make sure everyone gets the security fix.
+* Loofah now requires Ruby >= 3.2, the minimum that Nokogiri v1.19.x supports. We don't like dropping Ruby versions in a patch release, and we're sorry for the inconvenience, but it's the only way to make sure everyone gets the security fix in [GHSA-h6v6-rg66-fqj4](https://github.com/flavorjones/loofah/security/advisories/GHSA-h6v6-rg66-fqj4).
+
+### Added
+
+* `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
 
 ### Fixed
 
