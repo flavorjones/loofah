@@ -55,17 +55,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { ruby: "2.5", runs-on: "ubuntu-24.04" }
-          - { ruby: "2.6", runs-on: "ubuntu-24.04" }
-          - { ruby: "2.7", runs-on: "ubuntu-24.04" }
-          - { ruby: "3.0", runs-on: "ubuntu-24.04" }
-          - { ruby: "3.1", runs-on: "ubuntu-24.04" }
           - { ruby: "3.2", runs-on: "ubuntu-latest" }
           - { ruby: "3.3", runs-on: "ubuntu-latest" }
           - { ruby: "3.4", runs-on: "ubuntu-latest" }
           - { ruby: "head", runs-on: "ubuntu-latest" }
           - { ruby: "truffleruby-head", runs-on: "ubuntu-latest" }
-          - { ruby: "jruby-9.4", runs-on: "ubuntu-latest" }
           - { ruby: "jruby-10.0", runs-on: "ubuntu-latest" }
           - { ruby: "jruby-head", runs-on: "ubuntu-latest" }
     permissions:
@@ -79,7 +73,6 @@ jobs:
         with:
           ruby-version: ${{matrix.ruby}}
           bundler-cache: true
-          rubygems: 3.3.26 # for ruby 2.5
       - run: bundle exec rake test
 
   # borrowed from nokogiri/.github/workflows/downstream.yml

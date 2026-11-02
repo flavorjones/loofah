@@ -146,7 +146,7 @@ module Loofah
               SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
               SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
 
-            value = node[:children].map do |child|
+            value = node[:children].filter_map do |child|
               case child[:node]
               when :whitespace
                 CSS_WHITESPACE
@@ -168,7 +168,7 @@ module Loofah
               else
                 child[:raw]
               end
-            end.compact.join.strip
+            end.join.strip
 
             next if value.empty?
 
@@ -211,7 +211,7 @@ module Loofah
 
           nodes = Crass::Parser.new(attr_node.value).parse_component_values
 
-          values = nodes.map do |node|
+          values = nodes.filter_map do |node|
             case node[:node]
             when :url
               if node[:value].start_with?("#")
@@ -220,7 +220,7 @@ module Loofah
             when :hash, :ident, :string
               node[:raw]
             end
-          end.compact
+          end
 
           attr_node.value = values.join(" ")
         end

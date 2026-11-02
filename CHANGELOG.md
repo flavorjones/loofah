@@ -15,6 +15,10 @@
 * `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
 * Ensure HTML5 scrubber output does not turn into new markup when a browser parses it again. The fix is in Nokogiri v1.19.5, which escapes `<` and `>` in attribute values as the HTML standard requires, so Loofah now requires Nokogiri >= 1.19.5. See [GHSA-h6v6-rg66-fqj4](https://github.com/flavorjones/loofah/security/advisories/GHSA-h6v6-rg66-fqj4). @flavorjones @hackvertor
 
+### Dependencies
+
+* Loofah now requires Ruby >= 3.2, the minimum that Nokogiri v1.19.x supports. We don't like dropping Ruby versions in a patch release, and we're sorry for the inconvenience, but it's the only way to make sure everyone gets the security fix.
+
 ### Fixed
 
 * Fix `:double_breakpoint`, which left document fragments unchanged despite its documented example. The scrubber now changes only paragraphs inside the scrubbed node, and its run time on a document grows linearly, not quadratically, with the paragraph count. #309 @OskarEichler
