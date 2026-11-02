@@ -1,6 +1,6 @@
 # Changelog
 
-## next / unreleased
+## 2.25.3 / 2026-11-01
 
 ### Security
 
