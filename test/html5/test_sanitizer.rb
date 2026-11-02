@@ -342,6 +342,40 @@ class Html5TestSanitizer < Loofah::TestCase
         xhtmloutput = "<#{tag_name}></#{tag_name}>"
         check_sanitization(input, output, xhtmloutput)
       end
+
+      define_method "test_#{tag_name}_should_forbid_nonlocal_#{attr_name}_after_a_local_ref" do
+        input = %(<#{tag_name} #{attr_name}="#foo\nhttp://bad.com/foo"/>)
+        output = "<#{tag_name_dc}></#{tag_name_dc}>"
+        xhtmloutput = "<#{tag_name}></#{tag_name}>"
+        check_sanitization(input, output, xhtmloutput)
+      end
+    end
+  end
+
+  ["textPath", "mpath"].each do |tag_name|
+    ["xlink:href", "href"].each do |attr_name|
+      define_method "test_svg_#{tag_name}_should_allow_local_#{attr_name}_in_html5_svg_content" do
+        skip("html5 not supported") unless Loofah.html5_support?
+
+        input = %(<svg><#{tag_name} #{attr_name}="#foo" onclick="alert(1)"></#{tag_name}></svg>)
+
+        assert_equal(%(<svg><#{tag_name} #{attr_name}="#foo"></#{tag_name}></svg>), sanitize_html5(input))
+      end
+
+      define_method "test_svg_#{tag_name}_should_forbid_nonlocal_#{attr_name}_in_html5_svg_content" do
+        skip("html5 not supported") unless Loofah.html5_support?
+
+        input = %(<svg><#{tag_name} #{attr_name}="http://bad.com/foo"></#{tag_name}></svg>)
+
+        assert_equal("<svg><#{tag_name}></#{tag_name}></svg>", sanitize_html5(input))
+      end
+
+      define_method "test_svg_#{tag_name}_should_forbid_nonlocal_#{attr_name}_in_html4_svg_content" do
+        input = %(<svg><#{tag_name} #{attr_name}="http://bad.com/foo"></#{tag_name}></svg>)
+        tag_name_dc = tag_name.downcase
+
+        assert_equal("<svg><#{tag_name_dc}></#{tag_name_dc}></svg>", sanitize_html4(input))
+      end
     end
   end
 

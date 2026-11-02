@@ -23,6 +23,19 @@ class UnitHTML5Scrub < Loofah::TestCase
         )
       end
 
+      it "disallows functions whose name only matches the safelist under Unicode case folding" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:s\u212aew(1deg)"))
+      end
+
+      it "keeps the rest of a property whose unsafe function is dropped" do
+        assert_equal("margin:0;", Loofah::HTML5::Scrub.scrub_css("margin:0 clamp(1rem, 2vw, 2rem)"))
+        assert_equal("border:1px solid;", Loofah::HTML5::Scrub.scrub_css("border:1px solid color(display-p3 1 0 0)"))
+      end
+
+      it "keeps the rest of a property whose quote-containing string is dropped" do
+        assert_equal("font-family:, serif;", Loofah::HTML5::Scrub.scrub_css(%{font-family:"Rock 'n' Roll", serif}))
+      end
+
       it "disallows unsafe functions" do
         assert_equal(
           "",
@@ -83,6 +96,46 @@ class UnitHTML5Scrub < Loofah::TestCase
           "font:13px/1.5 Arial, sans-serif;",
           Loofah::HTML5::Scrub.scrub_css("font: 13px/1.5 Arial, sans-serif;"),
         )
+      end
+    end
+
+    describe "url()" do
+      it "removes properties with a url()" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:url(http://example.com/x.png),auto"))
+      end
+
+      it "does not decode escaped parentheses into a url()" do
+        {
+          "cursor:url\\28 http://example.com/x.png\\29,auto" => "cursor:url\\28 http://example.com/x.png\\29,auto;",
+          "cursor:url\\000028 http://example.com/x.png\\000029,auto" => "cursor:url\\000028 http://example.com/x.png\\000029,auto;",
+          "cursor:url\\(http://example.com/x.png\\),auto" => "cursor:url\\(http://example.com/x.png\\),auto;",
+          "list-style:url\\28 http://example.com/b.png\\29" => "list-style:url\\28 http://example.com/b.png\\29;",
+          "c\\75 rsor:url\\28 http://example.com/x.png\\29,auto" => "cursor:url\\28 http://example.com/x.png\\29,auto;",
+          'cursor:url\\28 "http://example.com/x.png"\\29,auto' => 'cursor:url\\28 "http://example.com/x.png"\\29,auto;',
+          "cursor:url\\5c 28 http://example.com/x.png\\5c 29,auto" => "cursor:url\\5c 28 http://example.com/x.png\\5c 29,auto;",
+        }.each do |input, expected|
+          assert_equal(expected, Loofah::HTML5::Scrub.scrub_css(input))
+        end
+      end
+
+      it "does not decode escaped comments" do
+        assert_equal(
+          "cursor:url\\2f\\2a\\2a\\2f\\28 http://example.com/x.png\\29,auto;",
+          Loofah::HTML5::Scrub.scrub_css("cursor:url\\2f\\2a\\2a\\2f\\28 http://example.com/x.png\\29,auto"),
+        )
+        assert_equal(
+          "cursor:var\\2f\\2a\\2a\\2f\\28 --x\\29;",
+          Loofah::HTML5::Scrub.scrub_css("cursor:var\\2f\\2a\\2a\\2f\\28 --x\\29"),
+        )
+      end
+
+      it "does not decode escapes into unterminated blocks or strings" do
+        assert_equal("cursor:\\28\\22;", Loofah::HTML5::Scrub.scrub_css("cursor:\\28\\22"))
+        assert_equal("cursor:\\22;", Loofah::HTML5::Scrub.scrub_css("cursor:\\22"))
+      end
+
+      it "removes properties whose surviving tokens join into a comment" do
+        assert_empty(Loofah::HTML5::Scrub.scrub_css("cursor:url/(a)*/(http://example.com/x.png),auto"))
       end
     end
 
@@ -180,9 +233,9 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("java\nscript:alert(1)"))
     end
 
-    it "disallows javascript URIs with control characters in HTML entities" do
-      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#1\x0015;cript:alert(1)"))
-      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x\t73;cript:alert(1)"))
+    it "allows URIs with control characters inside character references, which browsers do not rejoin" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&#1\x0015;cript:alert(1)"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("java&#x\t73;cript:alert(1)"))
     end
 
     it "disallows javascript URIs with entity-encoded control characters splitting the scheme" do
@@ -262,6 +315,48 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#9alert(1)"))
     end
 
+    it "disallows javascript URIs whose semicolon-less numeric character reference colon is terminated by a stripped character" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\talert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\nalert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\ralert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\falert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\x00alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\x7falert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u0080alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u00a0alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a\u0101alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a`alert`"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#X3A alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("vbscript&#x3a alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58 1,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58\t1,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58\u00a01,alert(1)"))
+    end
+
+    it "disallows javascript URIs whose semicolon-less numeric character reference colon is followed by a character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#x61;lert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#97;lert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58&#49;,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#58&#x31;,alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&#x20;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&Tab;alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3a&NewLine;alert(1)"))
+    end
+
+    it "disallows javascript URIs whose scheme letter is a semicolon-less numeric character reference terminated by a stripped character" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a\tavascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("ja&#x76\tascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x73\ncript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a\ravascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x76\tbscript:msgbox(1)"))
+    end
+
+    it "disallows javascript URIs whose scheme letter is a semicolon-less numeric character reference followed by a character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("&#x6a&#x61;vascript:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("java&#x73&#99;ript:alert(1)"))
+    end
+
     it "allows URIs whose numeric character references do not decode to a scheme colon" do
       assert(Loofah::HTML5::Scrub.allowed_uri?("javascript&#581alert(1)"))
       assert(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3aalert(1)"))
@@ -275,6 +370,34 @@ class UnitHTML5Scrub < Loofah::TestCase
     it "checks the mediatype of data URIs whose mediatype is assembled by a numeric character reference" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&#x2fhtml,<script>alert(1)</script>"))
       assert(Loofah::HTML5::Scrub.allowed_uri?("data:image&#x2fpng;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs whose mediatype is assembled by a named solidus character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&sol;html,<script>alert(1)</script>"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&sol;html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:image&sol;png;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs whose scheme and mediatype are both assembled by named references" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data&colon;text&sol;html,<script>alert(1)</script>"))
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data&colon;image&sol;png;base64,iVBORw0KGgo"))
+    end
+
+    it "checks the mediatype of data URIs with a double-encoded named solidus character reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&amp;sol;html,<script>alert(1)</script>"))
+    end
+
+    it "checks the mediatype of data URIs where stripping an embedded control character reveals a named solidus reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&#0;ol;html,<script>alert(1)</script>"))
+    end
+
+    it "checks the mediatype of data URIs where removing a named whitespace reference reveals a named solidus reference" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&Tab;ol;html,<script>alert(1)</script>"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("data:text&s&NewLine;ol;html,<script>alert(1)</script>"))
+    end
+
+    it "allows wrong-cased named solidus references, which browsers do not decode" do
+      assert(Loofah::HTML5::Scrub.allowed_uri?("data:text&SOL;html,<script>alert(1)</script>"))
     end
 
     it "disallows vbscript URIs" do
@@ -364,6 +487,64 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:"))
       assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:image/png"))
       assert_nil(Loofah::HTML5::Scrub.send(:data_uri_mediatype, "data:text/plain"))
+    end
+  end
+
+  describe ".prefixed_attribute_name" do
+    it "qualifies a namespaced attribute with its prefix" do
+      node = Loofah.html4_fragment(%(<svg><use xlink:href="#p"></use></svg>)).at_css("use")
+
+      assert_equal(["xlink:href"], node.attribute_nodes.map { |a| Loofah::HTML5::Scrub.prefixed_attribute_name(a) })
+    end
+
+    it "uses the bare name when there is no namespace" do
+      node = Loofah.html4_fragment(%(<a href="#p"></a>)).at_css("a")
+
+      assert_equal(["href"], node.attribute_nodes.map { |a| Loofah::HTML5::Scrub.prefixed_attribute_name(a) })
+    end
+  end
+
+  describe ".scrub_attribute_value" do
+    it "reports that a removed uri attribute needs no further scrubbing" do
+      node = Loofah.html4_fragment(%(<a href="javascript:alert(1)"></a>)).at_css("a")
+
+      assert(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_empty(node.attribute_nodes)
+    end
+
+    it "reports that a permitted uri attribute still needs scrubbing" do
+      node = Loofah.html4_fragment(%(<a href="http://example.com/"></a>)).at_css("a")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_equal("http://example.com/", node["href"])
+    end
+
+    it "removes an svg href that is not a local reference" do
+      node = Loofah.html4_fragment(%(<svg><use href="http://bad.com/x"></use></svg>)).at_css("use")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_empty(node.attribute_nodes)
+    end
+
+    it "keeps an svg href that is a local reference" do
+      node = Loofah.html4_fragment(%(<svg><use href="#p"></use></svg>)).at_css("use")
+
+      refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+      assert_equal("#p", node["href"])
+    end
+  end
+
+  describe ".scrub_attributes" do
+    it "keeps scrubbing the remaining attributes after removing one" do
+      fragment = Loofah.html4_fragment(%(<svg><use href="http://bad.com/x" fill="url(http://bad.com/) #fff"></use></svg>))
+
+      assert_equal(%(<svg><use fill="#fff"></use></svg>), fragment.scrub!(:strip).to_s)
+    end
+
+    it "keeps scrubbing the remaining attributes after a uri attribute is removed" do
+      fragment = Loofah.html4_fragment(%(<svg><use href="javascript:alert(1)" fill="url(http://bad.com/) #fff"></use></svg>))
+
+      assert_equal(%(<svg><use fill="#fff"></use></svg>), fragment.scrub!(:strip).to_s)
     end
   end
 end

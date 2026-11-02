@@ -13,6 +13,7 @@ module Loofah
       CSS_IMPORTANT = "!important"
       CSS_WHITESPACE = " "
       CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES = /\A(["'])?[^"']+\1\z/
+      CSS_URLISH_NODES = [:url, :bad_url, :bad_string]
       DATA_ATTRIBUTE_NAME = /\Adata-[\w-]+\z/
 
       # Decimal (`&#58`) or hexadecimal (`&#x3a`) form, with or without the trailing semicolon that
@@ -52,6 +53,15 @@ module Loofah
       # URIs. CGI.unescapeHTML does not decode these, so they are handled explicitly.
       WHITESPACE_CHARACTER_REFERENCES = /&(Tab|NewLine);/
 
+      # HTML5 named character references for the delimiters that decide how a URI parses:
+      # ":" ends the scheme, and "/" separates the type and subtype of a data: mediatype.
+      # CGI.unescapeHTML does not decode these either. Together with
+      # WHITESPACE_CHARACTER_REFERENCES these are every named character reference that
+      # decodes to U+0009, U+000A, U+002F, or U+003A, so no other named reference can
+      # change how a URI parses.
+      DELIMITER_CHARACTER_REFERENCES = { "&colon;" => ":", "&sol;" => "/" }.freeze
+      DELIMITER_CHARACTER_REFERENCE = Regexp.union(DELIMITER_CHARACTER_REFERENCES.keys)
+
       class << self
         def allowed_element?(element_name)
           ::Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.include?(element_name)
@@ -60,11 +70,7 @@ module Loofah
         #  alternative implementation of the html5lib attribute scrubbing algorithm
         def scrub_attributes(node)
           node.attribute_nodes.each do |attr_node|
-            attr_name = if attr_node.namespace
-              "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
-            else
-              attr_node.node_name
-            end
+            attr_name = prefixed_attribute_name(attr_node)
 
             if DATA_ATTRIBUTE_NAME.match?(attr_name)
               next
@@ -75,20 +81,7 @@ module Loofah
               next
             end
 
-            if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
-              next if scrub_uri_attribute(attr_node)
-            end
-
-            if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
-              scrub_attribute_that_allows_local_ref(attr_node)
-            end
-
-            next unless SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
-              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
-              attr_node.value =~ /^\s*[^#\s].*/m
-
-            attr_node.remove
-            next
+            scrub_attribute_value(node, attr_node, attr_name)
           end
 
           scrub_css_attribute(node)
@@ -102,28 +95,58 @@ module Loofah
           force_correct_attribute_escaping!(node)
         end
 
+        #  The name an attribute is matched by in the safelists, qualified by its namespace prefix.
+        def prefixed_attribute_name(attr_node)
+          if attr_node.namespace
+            "#{attr_node.namespace.prefix}:#{attr_node.node_name}"
+          else
+            attr_node.node_name
+          end
+        end
+
+        #  Apply the html5lib value rules to an attribute that is already permitted by name.
+        #  Returns true when `scrub_uri_attribute` removed the attribute, in which case the caller
+        #  should stop scrubbing it.
+        def scrub_attribute_value(node, attr_node, attr_name = prefixed_attribute_name(attr_node))
+          if SafeList::ATTR_VAL_IS_URI.include?(attr_name)
+            return true if scrub_uri_attribute(attr_node)
+          end
+
+          if SafeList::SVG_ATTR_VAL_ALLOWS_REF.include?(attr_name)
+            scrub_attribute_that_allows_local_ref(attr_node)
+          end
+
+          # The whitespace run is `[^\S\n]*` rather than `\s*` so that it cannot cross a line
+          # boundary. With `\s*` the engine rescanned the entire run from every line start,
+          # which is quadratic in the length of an all-whitespace value.
+          if SafeList::SVG_ALLOW_LOCAL_HREF.include?(node.name) &&
+              SafeList::SVG_HREF_ATTRIBUTES.include?(attr_name) &&
+              attr_node.value =~ /^[^\S\n]*[^#\s]/
+            attr_node.remove
+          end
+
+          false
+        end
+
         def scrub_css_attribute(node)
           style = node.attributes["style"]
           style.value = scrub_css(style.value) if style
         end
 
         def scrub_css(style)
-          url_flags = [:url, :bad_url]
           style_tree = Crass.parse_properties(style)
           sanitized_tree = []
 
           style_tree.each do |node|
             next unless node[:node] == :property
-            next if node[:children].any? do |child|
-              url_flags.include?(child[:node])
-            end
+            next if node[:children].any? { |child| CSS_URLISH_NODES.include?(child[:node]) }
 
             name = node[:name].downcase
             next unless SafeList::ALLOWED_CSS_PROPERTIES.include?(name) ||
               SafeList::ALLOWED_SVG_PROPERTIES.include?(name) ||
               SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first)
 
-            value = node[:children].map do |child|
+            value = node[:children].filter_map do |child|
               case child[:node]
               when :whitespace
                 CSS_WHITESPACE
@@ -140,22 +163,47 @@ module Loofah
                 if !SafeList::SHORTHAND_CSS_PROPERTIES.include?(name.split("-").first) ||
                     SafeList::ALLOWED_CSS_KEYWORDS.include?(keyword) ||
                     (keyword =~ CSS_KEYWORDISH)
-                  keyword
+                  child[:raw]
                 end
               else
                 child[:raw]
               end
-            end.compact.join.strip
+            end.join.strip
 
             next if value.empty?
 
             value << CSS_WHITESPACE << CSS_IMPORTANT if node[:important]
+            # Dropping tokens can join the survivors into new ones (`url/(a)*/(b)` becomes `url/*/`),
+            # so the rebuilt string may tokenize differently from the original and stringify
+            # differently again. Keep a property only if its rebuilt string survives a parse and
+            # stringify unchanged, so the tokens checked are exactly the tokens a browser will see.
             propstring = format("%s:%s", name, value)
             sanitized_node = Crass.parse_properties(propstring).first
+            next unless Crass::Parser.stringify(sanitized_node) == propstring
+            next if css_property_unsafe?(sanitized_node)
+
             sanitized_tree << sanitized_node << CRASS_SEMICOLON
           end
 
           Crass::Parser.stringify(sanitized_tree)
+        end
+
+        # Dropping a token joins its neighbours, which can build a token that was not in the input:
+        # dropping the string from `url\28 "x"linear-gradient(red)` leaves one function token. So the
+        # rebuilt property is checked for functions and strings, which the input check never sees.
+        def css_property_unsafe?(node)
+          node[:children].any? do |child|
+            case child[:node]
+            when *CSS_URLISH_NODES
+              true
+            when :string
+              !CSS_PROPERTY_STRING_WITHOUT_EMBEDDED_QUOTES.match?(child[:raw])
+            when :function
+              !SafeList::ALLOWED_CSS_FUNCTIONS.include?(child[:name].downcase(:ascii))
+            else
+              false
+            end
+          end
         end
 
         def scrub_attribute_that_allows_local_ref(attr_node)
@@ -163,7 +211,7 @@ module Loofah
 
           nodes = Crass::Parser.new(attr_node.value).parse_component_values
 
-          values = nodes.map do |node|
+          values = nodes.filter_map do |node|
             case node[:node]
             when :url
               if node[:value].start_with?("#")
@@ -172,7 +220,7 @@ module Loofah
             when :hash, :ident, :string
               node[:raw]
             end
-          end.compact
+          end
 
           attr_node.value = values.join(" ")
         end
@@ -191,16 +239,16 @@ module Loofah
             return false
           end
 
+          # Decode character references before stripping anything, as a browser does: an HTML parser
+          # decodes the attribute value, then the URL parser strips characters from the result. A
+          # semicolon-less numeric reference ends at the first character that cannot extend it, so
+          # stripping that character first would let the reference run on into the following text.
           # CGI.unescapeHTML decodes numeric references only when they carry a trailing semicolon, so
-          # also decode the semicolon-less ones, which browsers still decode and execute. Normalizing
-          # more aggressively than a browser only rejects more, which is safe. Control characters are
-          # stripped both before and after decoding, since decoding can produce them. That strip must
-          # precede WHITESPACE_CHARACTER_REFERENCES: removing a control character can reveal a named
-          # whitespace reference.
-          uri_string = decode_numeric_character_references(CGI.unescapeHTML(uri_string.gsub(CONTROL_CHARACTERS, "")))
+          # the semicolon-less ones are decoded separately.
+          uri_string = CGI.unescapeHTML(decode_numeric_character_references(uri_string))
           uri_string.gsub!(CONTROL_CHARACTERS, "")
           uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
-          uri_string.gsub!("&colon;", ":")
+          uri_string.gsub!(DELIMITER_CHARACTER_REFERENCE, DELIMITER_CHARACTER_REFERENCES)
           uri_string.downcase!
           if URI_PROTOCOL_REGEX.match?(uri_string)
             protocol = uri_string.split(SafeList::PROTOCOL_SEPARATOR)[0]

@@ -623,7 +623,8 @@ module Loofah
         "pattern",
         "radialGradient",
         "set",
-        "textpath",
+        "mpath",
+        "textPath",
         "tref",
         "use",
       ])
