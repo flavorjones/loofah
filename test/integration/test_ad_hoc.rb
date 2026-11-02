@@ -438,12 +438,10 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
           it "handles < character in an attribute" do
             input = %{<div alt="this < that">wave</div>}
-            possible_answers = [%{<div alt="this &lt; that">wave</div>}]
-            # Before sparklemotion/nokogiri#3741, the HTML5 serializer did not escape < in attribute values
-            possible_answers << %{<div alt="this < that">wave</div>} if html_version == :html5
+            expected = %{<div alt="this &lt; that">wave</div>}
             actual = scrub_fragment(input, :escape)
 
-            assert_includes(possible_answers, actual.to_html)
+            assert_equal(expected, actual.to_html)
           end
 
           it "handles multiple < characters" do
@@ -461,6 +459,14 @@ class IntegrationTestAdHoc < Loofah::TestCase
 
             assert_equal(expected, actual.to_html)
           end
+        end
+
+        it "does not let an attribute value become markup when stripped MathML is reparsed" do
+          html = %{<math><mtext><mglyph><textarea><a title="</textarea><img src=x onerror=alert(1)>">}
+
+          reparsed = fragment(scrub_fragment(html, :strip).to_html)
+
+          assert_nil(reparsed.at_css("[onerror]"))
         end
       end
     end

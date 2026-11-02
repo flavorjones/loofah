@@ -46,5 +46,5 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.5.0"
 
   spec.add_dependency("crass", ["~> 1.0.2"])
-  spec.add_dependency("nokogiri", [">= 1.12.0"])
+  spec.add_dependency("nokogiri", [">= 1.19.5"])
 end

@@ -13,6 +13,7 @@
 ### Added
 
 * `Loofah::HTML5::Scrub.prefixed_attribute_name` and `Loofah::HTML5::Scrub.scrub_attribute_value` expose the html5lib attribute name and value rules, so downstream consumers can apply them instead of carrying their own copy. @flavorjones
+* Ensure HTML5 scrubber output does not turn into new markup when a browser parses it again. The fix is in Nokogiri v1.19.5, which escapes `<` and `>` in attribute values as the HTML standard requires, so Loofah now requires Nokogiri >= 1.19.5. See [GHSA-h6v6-rg66-fqj4](https://github.com/flavorjones/loofah/security/advisories/GHSA-h6v6-rg66-fqj4). @flavorjones @hackvertor
 
 ### Fixed
 
