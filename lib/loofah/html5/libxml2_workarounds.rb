@@ -22,7 +22,7 @@ module Loofah
       "action",
       "src",
       "name",
-    ])
-    BROKEN_ESCAPING_ATTRIBUTES_QUALIFYING_TAG = { "name" => "a" }
+    ]).freeze
+    BROKEN_ESCAPING_ATTRIBUTES_QUALIFYING_TAG = { "name" => "a" }.freeze
   end
 end
