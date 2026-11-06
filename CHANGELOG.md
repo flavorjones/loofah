@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Improved
+
+* Restrict `href` and `xlink:href` on the SVG `font-face-uri` element to local (same-document) references. The element is not in the default safelist, but an application that permits it now gets the same restriction as `use`. Previously an external reference survived scrubbing, and server-side SVG renderers such as `rsvg-convert` and `wkhtmltoimage` fetched it. #327 @flavorjones (reported by @diegoDrp-Dev)
+
+
 ## 2.25.3 / 2026-11-01
 
 ### Security
