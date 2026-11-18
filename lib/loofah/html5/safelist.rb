@@ -619,6 +619,7 @@ module Loofah
         "cursor",
         "feImage",
         "filter",
+        "font-face-uri",
         "linearGradient",
         "pattern",
         "radialGradient",
