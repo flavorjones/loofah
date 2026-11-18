@@ -362,6 +362,13 @@ class UnitHTML5Scrub < Loofah::TestCase
       assert(Loofah::HTML5::Scrub.allowed_uri?("javascript&#x3aalert(1)"))
     end
 
+    it "rejects a URI whose character references decode to a surrogate" do
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#xD800;:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#XDFFF;:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("javascript&#55296;:alert(1)"))
+      refute(Loofah::HTML5::Scrub.allowed_uri?("http://example.com/&#38;#xD800;"))
+    end
+
     it "checks the mediatype of data URIs whose scheme is separated by a numeric character reference" do
       refute(Loofah::HTML5::Scrub.allowed_uri?("data&#58text/html,<script>alert(1)</script>"))
       assert(Loofah::HTML5::Scrub.allowed_uri?("data&#x3aimage/png;base64,iVBORw0KGgo"))
