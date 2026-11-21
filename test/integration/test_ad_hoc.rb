@@ -82,6 +82,12 @@ class IntegrationTestAdHoc < Loofah::TestCase
           assert(nodes.last.attributes["href"])
         end
 
+        def test_href_with_an_escaped_surrogate_character_reference
+          html = %{<a href="javascript&amp;#xD800;:alert(1)">x</a>}
+
+          assert_equal("<a>x</a>", scrub_fragment(html, :strip).to_html)
+        end
+
         def test_css_sanitization
           html = "<p style='background-color: url(\"http://foo.com/\") ; background-color: #000 ;' />"
           sane = Nokogiri::HTML(scrub_fragment(html, :escape).to_xml)

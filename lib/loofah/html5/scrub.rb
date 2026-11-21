@@ -245,7 +245,16 @@ module Loofah
           # stripping that character first would let the reference run on into the following text.
           # CGI.unescapeHTML decodes numeric references only when they carry a trailing semicolon, so
           # the semicolon-less ones are decoded separately.
-          uri_string = CGI.unescapeHTML(decode_numeric_character_references(uri_string))
+          begin
+            uri_string = CGI.unescapeHTML(decode_numeric_character_references(uri_string))
+          rescue RangeError
+            return false
+          end
+
+          # CGI.unescapeHTML decodes a reference to a surrogate, such as "&#xD800;", to invalid UTF-8
+          # (TruffleRuby raises RangeError instead).
+          return false unless uri_string.valid_encoding?
+
           uri_string.gsub!(CONTROL_CHARACTERS, "")
           uri_string.gsub!(WHITESPACE_CHARACTER_REFERENCES, "")
           uri_string.gsub!(DELIMITER_CHARACTER_REFERENCE, DELIMITER_CHARACTER_REFERENCES)

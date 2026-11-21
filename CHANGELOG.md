@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Fixed
+
+* Fix `Loofah::HTML5::Scrub.allowed_uri?`, which raised `ArgumentError` (`RangeError` on TruffleRuby) on a URI containing a numeric character reference to a surrogate, such as `&#xD800;`. Every scrubber that checks URI attributes raised with it. It now returns `false`, so the scrubbers remove the attribute. #330 @flavorjones (reported by @Hama1cco)
+
+
 ## 2.25.3 / 2026-11-01
 
 ### Security
