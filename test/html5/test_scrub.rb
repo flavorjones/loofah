@@ -532,6 +532,26 @@ class UnitHTML5Scrub < Loofah::TestCase
       refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
       assert_equal("#p", node["href"])
     end
+
+    [:html4_fragment, :html5_fragment].each do |parse|
+      ["href", "xlink:href"].each do |attr_name|
+        it "removes a font-face-uri #{attr_name} that is not a local reference (#{parse})" do
+          skip("html5 not supported") if parse == :html5_fragment && !Loofah.html5_support?
+          node = Loofah.send(parse, %(<svg><font-face-uri #{attr_name}="http://bad.com/x"></font-face-uri></svg>)).at_css("font-face-uri")
+
+          refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+          assert_empty(node.attribute_nodes)
+        end
+
+        it "keeps a font-face-uri #{attr_name} that is a local reference (#{parse})" do
+          skip("html5 not supported") if parse == :html5_fragment && !Loofah.html5_support?
+          node = Loofah.send(parse, %(<svg><font-face-uri #{attr_name}="#p"></font-face-uri></svg>)).at_css("font-face-uri")
+
+          refute(Loofah::HTML5::Scrub.scrub_attribute_value(node, node.attribute_nodes.first))
+          assert_equal(["#p"], node.attribute_nodes.map(&:value))
+        end
+      end
+    end
   end
 
   describe ".scrub_attributes" do
