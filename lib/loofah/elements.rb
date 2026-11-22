@@ -95,4 +95,5 @@ module Loofah
   end
 
   ::Loofah::MetaHelpers.add_downcased_set_members_to_all_set_constants(::Loofah::Elements)
+  ::Loofah::Elements.constants.each { |name| ::Loofah::Elements.const_get(name).freeze }
 end
