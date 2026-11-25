@@ -1,5 +1,12 @@
 # Changelog
 
+## next / unreleased
+
+### Fixed
+
+* Fix `:nofollow`, `:noopener`, `:noreferrer` and `:targetblank`, which skipped a link nested inside another link. The scrubbers now change every `a` element, at any depth. #332 @flavorjones (reported by @L3DigitalNet)
+
+
 ## 2.25.3 / 2026-11-01
 
 ### Security

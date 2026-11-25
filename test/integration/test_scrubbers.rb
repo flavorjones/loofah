@@ -40,6 +40,10 @@ class IntegrationTestScrubbers < Loofah::TestCase
   NOREFERRER_WITH_REL_FRAGMENT = '<a href="http://www.example.com/" rel="noopener">Click here</a>'
   NOREFERRER_WITH_REL_RESULT = '<a href="http://www.example.com/" rel="noopener noreferrer">Click here</a>'
 
+  # the HTML4 parsers nest links inside `button`, the HTML5 parser inside a table cell; neither nests the other's input
+  NESTED_LINK_HTML4_FRAGMENT = '<a href="/one">1<button><a href="/two">2</a></button></a>'
+  NESTED_LINK_HTML5_FRAGMENT = '<a href="/one">1<table><tr><td><a href="/two">2</a></td></tr></table></a>'
+
   UNPRINTABLE_FRAGMENT = "<b>Lo\u2029ofah ro\u2028cks!</b><script>x\u2028y</script>"
   UNPRINTABLE_RESULT = "<b>Loofah rocks!</b><script>xy</script>"
 
@@ -543,6 +547,27 @@ class IntegrationTestScrubbers < Loofah::TestCase
 
               assert_equal NOREFERRER_WITH_REL_RESULT, doc.xpath("./div").inner_html
               assert_equal doc, result
+            end
+          end
+        end
+
+        context "a hyperlink nested inside another hyperlink" do
+          let(:nested_link_fragment) { html5? ? NESTED_LINK_HTML5_FRAGMENT : NESTED_LINK_HTML4_FRAGMENT }
+
+          {
+            nofollow: ["rel", "nofollow"],
+            noopener: ["rel", "noopener"],
+            noreferrer: ["rel", "noreferrer"],
+            targetblank: ["target", "_blank"],
+          }.each do |scrubber, (attribute, value)|
+            it "is scrubbed by :#{scrubber}" do
+              doc = klass.parse("<div>#{nested_link_fragment}</div>")
+
+              assert(doc.at_css("a a"), "expected the parser to keep the inner link nested")
+
+              doc.scrub!(scrubber)
+
+              assert_equal([value, value], doc.css("a").map { |link| link[attribute] })
             end
           end
         end

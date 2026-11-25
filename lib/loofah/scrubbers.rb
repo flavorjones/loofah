@@ -230,7 +230,7 @@ module Loofah
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
 
         append_attribute(node, "rel", "nofollow")
-        STOP
+        CONTINUE
       end
     end
 
@@ -259,7 +259,7 @@ module Loofah
 
         node.set_attribute("target", "_blank") if href && href[0] != "#"
 
-        STOP
+        CONTINUE
       end
     end
 
@@ -281,7 +281,7 @@ module Loofah
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
 
         append_attribute(node, "rel", "noopener")
-        STOP
+        CONTINUE
       end
     end
 
@@ -303,7 +303,7 @@ module Loofah
         return CONTINUE unless (node.type == Nokogiri::XML::Node::ELEMENT_NODE) && (node.name == "a")
 
         append_attribute(node, "rel", "noreferrer")
-        STOP
+        CONTINUE
       end
     end
 
